@@ -1,0 +1,104 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="mobsystem" extends="common-component-define"
+		namespace="/mobsystem">						
+		
+		<action name="SelMobMuneAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.SelMobMuneAction">
+		</action>
+		<action name="InsertMobMuneAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.InsertMobMuneAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertJsonCreateAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.InsertJsonCreateAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertFiledInfoAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.InsertFiledInfoAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertButRightAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.InsertButRightAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertPrivAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.InsertPrivAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="InsertPostPrivAction"
+			class="com.ztesoft.mobile.v2.action.common.InsertPostPrivAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="InsertRolePrivAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.InsertRolePrivAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertFiledNodeAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.InsertFiledNodeAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertStatDisplayAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.InsertStatDisplayAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertStatTransferAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.InsertStatTransferAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertSearchTabAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.InsertSearchTabAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="InsertMobInterfaceMngAction"
+			class="com.ztesoft.mobile.outsystem.action.InsertMobInterfaceMngAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertMobileOtherSysManagerAction"
+			class="com.ztesoft.mobile.outsystem.action.InsertMobileOtherSysManagerAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertOtherApkManagerAction"
+			class="com.ztesoft.mobile.outsystem.action.InsertOtherApkManagerAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertMobilePhoneVersionAction"
+			class="com.ztesoft.mobile.outsystem.action.InsertMobilePhoneVersionAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertMobEnumManAction"
+			class="com.ztesoft.mobile.outsystem.action.InsertMobEnumManAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertMobSysFiledMappingAction"
+			class="com.ztesoft.mobile.outsystem.action.InsertMobSysFiledMappingAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+			<action name="InsertMobileApkFunctionAction"
+			class="com.ztesoft.mobile.outsystem.action.InsertMobileApkFunctionAction">
+			<interceptor-ref name="transactionController"/>
+		</action>
+
+        <action name="ApkRegManageAction"
+			class="com.ztesoft.mobile.outsystem.action.ApkRegManageAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="ApkAuditManageAction"
+			class="com.ztesoft.mobile.outsystem.action.ApkAuditManageAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="InsertMobileParamAction"
+			class="com.ztesoft.mobile.v2.action.common.InsertMobileParamAction">
+			<interceptor-ref name="transactionController"/>
+		</action>
+	</package>
+</xwork>
+

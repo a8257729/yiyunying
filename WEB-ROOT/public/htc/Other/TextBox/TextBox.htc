@@ -1,0 +1,762 @@
+<!--************************************************************
+	版权说明: 
+	文件名: TextBox.htc
+	文件创建日期: 2004-05-11
+	作者: shi.qiong
+	功能描述: 支持密码、整数及普通字符串输入			  
+	************************************************************
+	[属性]:
+	defaultValue: 默认值
+	nullable: 是否可空,true/false
+	dataType: 类型,password=密码,float=浮点数,int=整数,string=字符串,其它:字符串	
+	minLength: 最小长度
+	maxLength: 最大长度
+	min: 最小值
+	max: 最大值
+	fraction: 小数位数(浮点数)
+	successRegExp: 有效校验，内部使用正则表达式
+	editable: 是否可以输入
+	value: 控件的值
+	************************************************************	
+	[方法]：
+	loadArrayDesc：导入数组描述信息	
+	loadXmlDesc：导入XML描述信息		
+	************************************************************
+	[事件]：
+	onchanged：数据发生变化后，对外响应的事件		 
+	************************************************************
+	[变更记录]
+	1)
+	修改人： Congling
+	修改日期： 2004/6/4
+	修改记录列表：
+		enabled 变成 editable
+		validateString变为successRegExp
+		增加int/float类型的min/max
+		添加float类型fraction的支持	
+	2)
+	修改人： lin.zhaohua
+	修改日期： 2004/6/7
+	修改记录列表：		
+	************************************************************  -->
+
+
+<PUBLIC:COMPONENT tagName="TextBox">
+   <PUBLIC:DEFAULTS viewLinkContent/>
+   
+   <public:property name="controlType" get="getControlType"/>
+   <!--默认值-->
+   <public:property name="defaultValue" get="getDefaultValue" put="setDefaultValue" />
+   <!--能否为空-->
+   <public:property name="nullable" get="getNullable" put="setNullable" /> 
+   <!--类型,password=密码,int=整数,float=浮点数,其它：字符串(string)-->
+   <public:property name="dataType" get="getDataType" put="setDataType" />
+   <!--
+		password/字符串有效性校验
+   -->  
+   <!--最小长度-->
+   <public:property name="minLength" get="getMinLength" put="setMinLength" />
+   <!--最大长度-->
+   <public:property name="maxLength" get="getMaxLength" put="setMaxLength" />
+   <!--有效校验，内部使用正则表达式-->
+   <public:property name="successRegExp" get="getSuccessRegExp" put="setSuccessRegExp" />
+   
+   <!--整数/浮点数校验-->
+   <!--最小值-->
+   <public:property name="min" get="getMin" put="setMin" />
+   <!--最大值-->
+   <public:property name="max" get="getMax" put="setMax" />
+   <!--小数位，只有DataType==float有效 -->
+   <public:property name="fraction" get="getFraction" put="setFraction" />
+   
+   <!--是否可以输入-->
+   <public:property name="editable" get="getEditable" put="setEditable" />
+   <!--值-->
+   <public:property name="value" get="getValue" put="setValue" />
+   <!--
+	返回显示值
+   <public:method name="getValue" />
+	-->
+	<!--装入数组描述信息--->
+   <public:method name="loadArrayDesc" /> 
+   <!-- 装入XML描述信息 -->
+	<public:method name="loadXmlDesc" />
+	<!-- 数据变化后，对外响应事件 -->
+   <public:event name="onchanged" id="_evtonchanged" />
+</PUBLIC:COMPONENT>
+<!--
+<link href="/IOMPROJ/public/css/style.css" rel="stylesheet" type="text/css">
+HEIGHT:15;BACKGROUND-WHITE: lavender;BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; width:80%; BORDER-BOTTOM-STYLE: none
+-->
+
+<style>
+.htcTextBox{font-size:12px;color:#000000; background-color: #FFFFFF; border:1 solid #6CB2FF;padding-top: 2px;padding-left: 3px;height: 18px; width:120px} 
+</style>
+<div id="divText" style="width:100%"></div>
+
+
+<script language=javascript>
+
+//for output
+var g_sDefaultValue = "";
+var g_bNullable = true;
+var g_bValue = "";
+var g_sDataType = "string";
+//var g_bIsNumber = false;
+var g_bMinLength = -1;
+var g_bMaxLength = -1;
+var g_bSuccessRegExp = "";
+var g_bEditable = true;
+var g_sOrgText = "";
+var g_bFloatNumber = false;
+
+var g_nMin = Number.MIN_VALUE;
+var g_nMax = Number.MAX_VALUE;
+var g_iFraction = -1;
+
+function getControlType()
+{
+	return "TextBox";
+}
+
+
+function getDefaultValue()
+{
+	return g_sDefaultValue;
+}
+
+function setDefaultValue(val)
+{
+	g_sDefaultValue = val;
+}
+
+function getNullable()
+{
+	return g_bNullable;
+}
+
+function setNullable(val)
+{
+	//g_bNullable = val;
+	if (val.toString() == "true")	
+	{
+		g_bNullable = true;
+	}
+	if (val.toString() == "false") 
+	{
+		g_bNullable = false;
+	}
+}
+
+function getEditable()
+{
+	return g_bEditable;
+}
+
+function setEditable(bEnabled)
+{
+	//g_bEditable = bEnabled;
+	if (bEnabled.toString() == "true")	
+	{
+		g_bEditable = true;
+	}
+	if (bEnabled.toString() == "false") 
+	{
+		g_bEditable = false;
+	}
+	
+	//相应处理
+	if (document.getElementById("htcCtl1") != null)
+	{
+		document.getElementById("htcCtl1").disabled = !g_bEditable;
+		
+		
+		document.getElementById("htcCtl1").style.backgroundColor= (g_bEditable?"white":"gainsboro");
+		
+		//divText.style.backgroundColor = "darkgray";
+	}	
+	
+	
+	
+}
+
+function getMinLength()
+{
+	return g_bMinLength;
+}
+
+function setMinLength(val)
+{
+	g_bMinLength = val;
+}
+
+function getMaxLength()
+{
+	return g_bMaxLength;
+}
+
+function setMaxLength(val)
+{
+	g_bMaxLength = val;
+}
+
+function getSuccessRegExp()
+{
+	return g_bSuccessRegExp;
+}
+
+function setSuccessRegExp(val)
+{
+	g_bSuccessRegExp = val;
+}
+
+function setValue(v)
+{
+	g_bValue = v;
+	if(v != "")
+	{
+		document.getElementById("htcCtl1").value = v;		
+	}	
+	else
+	{
+		document.getElementById("divText").clearAttributes();
+		ChangeType(g_sDataType);
+	}
+}
+
+function getValue()
+{
+	return document.getElementById("htcCtl1").value;
+}
+
+function getDataType()
+{
+	return g_sDataType;
+}
+
+function setDataType(val)
+{
+	if(g_sDataType != val)
+	{
+		g_sDataType= val;
+	}
+	ChangeType(val);
+	//else
+		//divText.children[0].value="";
+}
+
+
+function getMin()
+{
+	return g_nMin;
+}
+
+function setMin(min)
+{
+	g_nMin = min;
+}
+
+function getMax()
+{
+	return g_nMax;
+}
+
+function setMax(max)
+{
+	g_nMax = max;
+}
+
+function getFraction()
+{
+	return g_iFraction;
+}
+
+function setFraction(fraction)
+{
+	g_iFraction = fraction;
+}
+
+//根据所设置的属性，插入相应的TextBox
+function ChangeType(type)
+{
+	switch(type)
+	{
+		case "password":				//密码
+		{
+			var elm = document.createElement("<INPUT class=\"htcTextBox\"  id=\"htcCtl1\"  type=\"password\" >");
+			elm.value = g_sDefaultValue;
+			if(g_bValue != "")
+			{
+				elm.value = g_bValue;
+			}
+			elm.disabled = !g_bEditable;
+			elm.onfocus = OnFocus;
+			elm.onblur = OnBlur;
+			divText.innerHTML = "";
+			divText.appendChild(elm);
+			break;
+		}
+		case "float":
+		{	
+			//g_bIsNumber = false;	
+			g_bFloatNumber = true;       //浮点数
+			var elm = document.createElement("<INPUT class=\"htcTextBox\" id=\"htcCtl1\" type=\"text\" >");			
+			elm.value = g_sDefaultValue;
+			if(g_bValue != "")
+			{
+				elm.value = g_bValue;
+			}
+			elm.disabled = !g_bEditable;
+			elm.onfocus = OnFocus;
+			elm.onblur=OnBlur;
+			divText.innerHTML="";
+			divText.appendChild(elm);
+			break;
+		}
+		case "int":
+		{		
+			//g_bIsNumber = true;       //整数必为数字
+			var elm = document.createElement("<INPUT class=\"htcTextBox\" id=\"htcCtl1\" type=\"text\" >");			
+			elm.value = g_sDefaultValue;
+			if(g_bValue != "")
+			{
+				elm.value = g_bValue;
+			}
+			elm.disabled = !g_bEditable;
+			elm.onfocus = OnFocus;
+			elm.onblur=OnBlur;
+			divText.innerHTML="";
+			divText.appendChild(elm);
+			break;
+		}
+		default:			//一般的字符串输入
+		{
+			var elm = document.createElement("<INPUT class=\"htcTextBox\" id=\"htcCtl1\" type=\"text\" >");
+			elm.value = g_sDefaultValue;
+			if(g_bValue != "")
+			{
+				elm.value = g_bValue;
+			}
+			elm.disabled = !g_bEditable;
+			elm.onfocus = OnFocus;
+			elm.onblur=OnBlur;
+			divText.innerHTML="";
+			divText.appendChild(elm);
+			break;
+		}
+	}
+}
+
+//inner event
+
+//检查数据，是否全部为 规定的格式数据
+function isCharsInBag(s,bag)
+{
+	var i;
+
+	for(i=0; i<s.length; i++)
+	{
+		var c = s.charAt(i);
+		if(bag.indexOf(c)==-1) 
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+//检查输入是否为数字
+function CheckInt(obj)
+{
+	//var obj = event.srcElement;	
+	
+	if(!isCharsInBag(obj.value,"0123456789"))
+	{		
+		ErrorHandle("请检查一下您输入的是否为整数！",2);
+		//obj.value = "";
+		//obj.focus();
+		return false;
+	}
+	var val = parseInt(obj);
+	if(val>g_nMax || val<g_nMin)
+	{	
+		ErrorHandle("输入值必须大于"+g_nMin+"并小于"+g_nMax,2);
+		return false;
+	}
+	return true;
+		
+}
+
+function CheckFloatNumber(obj)
+{
+	//var obj = event.srcElement;	
+	
+	if(!isCharsInBag(obj.value,"0123456789."))
+	//if(!isCharsInBag(obj,"0123456789."))
+	{		
+		ErrorHandle("请检查一下您输入的是否为浮点数！", 2);
+		//obj.value = "";
+		//obj.focus();
+		return false;
+	}
+	
+	var val = parseFloat(obj.value);
+	if(val>g_nMax || val<g_nMin)
+	{		
+		ErrorHandle("输入值必须大于"+g_nMin+"并小于"+g_nMax, 2);
+		return false;
+	}
+	
+	return true;
+}
+
+//检查输入长度是否在允许的范围内
+function CheckLength(obj)
+{
+	if(g_bMinLength!=-1 && obj.value.length < g_bMinLength)
+	{
+		//throw "input length is smaller than min length";		
+		ErrorHandle("您输入的位数太少", 2);
+		//obj.value = "";
+		//obj.focus();		
+		
+		return false;
+	}
+	
+	if(g_bMaxLength!=-1 && obj.value.length > g_bMaxLength)
+	{
+		//throw "input length is larger than max length";		
+		ErrorHandle("您输入的位数超出范围了", 2);
+		//obj.value = "";
+		//obj.focus();
+		return false;
+	}
+		
+	return true;
+}
+
+//检查输入的有效性
+function  CheckSuccessRegExp(obj)
+{
+	var reg = new RegExp(g_bSuccessRegExp);
+	
+	//reg = g_bSuccessRegExp;
+	
+	if(!obj.value.match(reg))
+	{		
+		ErrorHandle("您的输入无效，请重新输入！", 2);
+		//obj.value = "";
+		//obj.focus();
+		return false;
+	}
+	return true;
+
+}
+
+//备份原数据
+function OnFocus()
+{
+	g_sOrgText = event.srcElement.value;
+}
+
+//验证数据
+function OnBlur()
+{
+	var curValObj = event.srcElement;
+	var curVal = event.srcElement.value;
+	
+
+	if(!g_bNullable)            
+	{
+		if(curVal == "")                 //验证输入是否为空
+		{			
+			ErrorHandle( "该项不能为空，请输入！", 2);
+			return;
+		}
+	}	
+	
+	switch(g_sDataType)
+	{
+		case "int":
+			if(!CheckInt(curValObj))
+			{
+				//alert("请输入数字");
+				return;
+			}	
+			break;	
+		case "float":
+			if(!CheckFloatNumber(curValObj))
+			{
+				//alert("请输入数字和'.'");
+				return;
+			}
+			break;
+	}
+	
+	
+	//浮点数需要自动补齐位数--先补齐，再作长度判断
+	if(curVal.length!=0 && g_sDataType == "float"  && g_iFraction!=-1)
+	{
+		do
+		{
+			var index = curVal.indexOf(".");
+			if(index == -1)
+			{
+				if(g_iFraction==0) break;
+				curVal += '.';
+				index = curVal.length-1;
+			}
+			else
+			{
+				if(index==0)
+				{
+					curVal = "0"+curVal;
+					index++;				
+				}	
+				if(g_iFraction==0)
+				{
+					curVal = curVal.substring(0,index);
+					break;
+				}
+			}
+			
+			if(curVal.length-index-1>g_iFraction)
+				curVal = curVal.substring(0,index+g_iFraction);
+			else
+			{
+				for(var i=curVal.length-index-1;i<g_iFraction;i++)
+				{
+					curVal +='0';
+				}
+			}
+		}while(false);
+		event.srcElement.value = curVal;
+	}	
+	
+	
+	if(g_bMaxLength!=-1 || g_bMinLength!=-1)
+	{
+		if(!CheckLength(curValObj))					//验证长度
+		{
+			return;
+		}			        
+	}
+	
+	if(g_bSuccessRegExp) 
+	{
+		if(!CheckSuccessRegExp(curValObj))        //验证数据的有效性
+		{
+			return;
+		}          
+	}	 
+	
+	//数据变化，对外响应事件
+	var orgVal = g_sOrgText;	
+	if(orgVal != curVal)
+	{		
+		var evt = document.createEventObject();
+		evt.orgValue = orgVal;
+		evt.curValue = curVal;
+		_evtonchanged.fire(evt);		
+	}
+	
+}
+
+
+function loadArrayDesc(pmProdsObjects)
+{
+	
+	if (pmProdsObjects==null) return;	
+	
+	if (pmProdsObjects.hasOwnProperty ("minLength")== true )
+	{
+		if(pmProdsObjects.minLength != "")
+		{
+			setMinLength(pmProdsObjects.minLength);
+		}
+		else
+		{
+			setMinLength(-1);	
+		}
+	}
+	
+	if (pmProdsObjects.hasOwnProperty ("maxLength")== true )
+	{
+		if(pmProdsObjects.maxLength != "")
+		{
+			setMaxLength(pmProdsObjects.maxLength);
+		}
+		else
+		{
+			setMaxLength(-1);	
+		}
+	}		
+	
+	if (pmProdsObjects.hasOwnProperty ("min")== true )
+	{
+		if(pmProdsObjects.min != "")
+		{
+			setMin(pmProdsObjects.min);
+		}		
+	}
+	
+	if (pmProdsObjects.hasOwnProperty ("max")== true )
+	{
+		if(pmProdsObjects.max != "")
+		{
+			setMax(pmProdsObjects.max);
+		}	
+	}
+	
+	if (pmProdsObjects.hasOwnProperty ("fraction")== true )
+	{
+		if(pmProdsObjects.fraction != "")
+		{
+			setFraction(pmProdsObjects.fraction);
+		}		
+	}	
+	
+	if (pmProdsObjects.hasOwnProperty ("successRegExp")== true )
+	{
+		setSuccessRegExp(pmProdsObjects.successRegExp);
+	}
+	
+	if (pmProdsObjects.hasOwnProperty ("editable")== true )
+	{
+		//setEditable((pmProdsObjects.editable==true)||(pmProdsObjects.editable==null));
+		setEditable((pmProdsObjects.editable==true)||(pmProdsObjects.editable=="true")||(pmProdsObjects.editable==null));
+	}
+	
+	if (pmProdsObjects.hasOwnProperty ("value")== true )
+	{
+		setValue(pmProdsObjects.value);
+	}
+	
+	
+	if (pmProdsObjects.hasOwnProperty ("defaultValue")== true )
+	{
+		setDefaultValue(pmProdsObjects.defaultValue);
+	}
+		
+	
+	if (pmProdsObjects.hasOwnProperty ("nullable")== true )
+	{
+		setNullable((pmProdsObjects.nullable==null)|| (pmProdsObjects.nullable==true)||(pmProdsObjects.nullable=="true"));
+	}
+	
+	if (pmProdsObjects.hasOwnProperty ("dataType")== true )
+	{		
+		setDataType(pmProdsObjects.dataType);					
+	}
+	else
+	{
+		setDataType("");
+	}
+		
+}
+
+function loadXmlDesc(xmlNode)
+{	
+	//设置属性		
+	var bDefaultValue = xmlNode.getAttribute("defaultValue");
+	if ( bDefaultValue != null )
+	{
+		setDefaultValue(bDefaultValue);
+	}
+	else
+	{
+		setDefaultValue("");
+	}
+	
+	var bMinLength = xmlNode.getAttribute("minLength");
+	if ( bMinLength != null )
+	{
+		setMinLength(bMinLength);
+	}
+	else
+	{
+		setMinLength(-1);
+	}
+	
+	var bMaxLength = xmlNode.getAttribute("maxLength");
+	if ( bMaxLength != null )
+	{
+		setMaxLength(bMaxLength);
+	}
+	else
+	{
+		setMaxLength(-1);
+	}
+	
+	var bMin = xmlNode.getAttribute("min");
+	if ( bMin != null )
+	{
+		setMin(bMin);
+	}
+	
+	var bMax = xmlNode.getAttribute("max");
+	if ( bMax != null )
+	{
+		setMax(bMax);
+	}
+	
+	var bFraction = xmlNode.getAttribute("fraction");
+	if ( bFraction != null )
+	{
+		setFraction(bFraction);
+	}
+	
+	var bSuccessRegExp = xmlNode.getAttribute("successRegExp");
+	if ( bSuccessRegExp != null )
+	{
+		setSuccessRegExp(bSuccessRegExp);
+	}
+	else
+	{
+		setSuccessRegExp("");
+	}
+	
+	var bEnabled = xmlNode.getAttribute("editable");
+	if ( bEnabled != null )
+	{
+		setEditable(bEnabled);
+	}
+	else
+	{
+		setEditable(true);
+	}
+	
+	var bValue = xmlNode.getAttribute("value");
+	if ( bValue != null )
+	{
+		setValue(bValue);
+	}
+	else
+	{
+		setValue("");
+	}
+	
+	var bNullable = xmlNode.getAttribute("nullable");	
+	if ( bNullable != null )
+	{
+		setNullable(bNullable);
+	}
+	else
+	{
+		setNullable(true);
+	}
+	
+	var bDataType = xmlNode.getAttribute("dataType");
+	if ( bDataType != null )
+	{				
+		setDataType(bDataType);
+	}	
+	else
+	{
+		setDataType("");
+	}				
+	
+}
+
+
+</script>

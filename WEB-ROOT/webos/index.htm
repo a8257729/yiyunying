@@ -1,0 +1,338 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>无标题文档</title>
+<link href="css/main.css" rel="stylesheet" type="text/css" />
+		<link href="../webos/css/themesetting.css" rel="stylesheet"  type="text/css" >
+		<link href="../webos/css/skins/black.css" rel="stylesheet" />
+		<link href="../webos/css/powerFloat.css" rel="stylesheet" type="text/css"/>	
+		<link href="../webos/css/smartMenu.css" rel="stylesheet"  type="text/css" />
+		<link href="../webos/css/ebizIndex.css" rel="stylesheet"  type="text/css" />
+		<script src="../webos/js/jquery-1.2.1.pack.js" type="text/javascript"></script>
+		<script  type="text/javascript" src="../webos/js/jquery-1.7.1.min.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery-powerFloat-min.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery-smartMenu.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery-class.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery.artDialog.source.js"></script>
+		<script  type="text/javascript" src="../webos/js/iframeTools.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery.ui.core-min.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery.ui.widget-min.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery.ui.mouse-min.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery.ui.draggable-min.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery.ui.droppable-min.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery.ui.sortable.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery.ui.effect.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery.ui.effect-fade.js"></script>
+		<script  type="text/javascript" src="../webos/js/jquery.ui.effect-blind.js"></script>
+		<script type="text/javascript" src="../webos/js/data.js"></script>
+		<script language="javascript" src="../public/script/helper.js"></script>
+		<script language="javascript" src="../public/script/xworkAction.js"></script>
+		<script language="javascript" src="../public/script/XmlInter.js"></script>
+		<script language="javascript" src="../public/script/FormExt.js"></script>
+		<script language="javascript" src="../public/script/SessionJs.jsp"></script>
+<style type="text/css">
+		
+<!--
+.moth-title {
+	font-family: "微软雅黑";
+	font-size: 15px;
+	color: 026777;
+	font-weight: bold;
+}
+.font {
+	font-family: "Arial", "Helvetica", "sans-serif";
+	font-size: 12px;
+	color: 044551;
+	text-decoration: none;
+}
+.button {
+	font-family: "Arial", "Helvetica", "sans-serif";
+	font-size: 12px;
+	height: 24px;
+	width: 100px;
+}
+.title {
+	font-family: "微软雅黑";
+	font-size: 14px;
+	font-weight: bold;
+	color: 044551;
+}
+.font1 {
+	font-family: "Arial", "Helvetica", "sans-serif";
+	font-size: 12px;
+	font-weight: bold;
+	color: 044551;
+}
+.table {
+	border-bottom-width: 1px;
+	border-bottom-style: dotted;
+	border-bottom-color: 2e98ab;
+}
+-->
+</style>
+<style type="text/css">
+<!--
+.title2 {
+	font-family: "微软雅黑";
+	font-size: 14px;
+	font-weight: bold;
+	color: 3f7781;
+}
+.adv {position:relative;float:left;margin-left:10px; width:546px; height:189px; overflow:hidden;}
+.adv_list img{width:600px; height:300px;border:0}
+.adv_bg {position:absolute; bottom:0;background-color:#000;height:28px;filter: Alpha(Opacity=50);opacity:0.5;z-index:1;cursor:pointer; width:600px; }
+.adv_info{position:absolute; bottom:0; left:5px;height:22px;color:#fff;z-index:2;font-size:14px;cursor:pointer; padding-right:150px}
+.adv_text {position:absolute;width:120px;z-index:3; right:3px; bottom:3px;}
+.adv_ul {position:absolute;list-style-type:none;z-index:4;margin:0; padding:0; bottom:5px; right:3px;}
+.adv_ul li {width:33px;line-height:16px;text-align:center;float:left;display:block;color:#0066aa;background:#cccccc;cursor:pointer;margin-right:1px}
+.adv_ul .adv_on {background:#0066aa;color:#cccccc}
+.adv_list a{position:absolute;}
+-->
+</style>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			var formMsg = function(msgInfo, flag) {
+				var tblStr1 = '<table ' + msgInfo["messageId"] 
+					+ 'width="100%" border="0" cellspacing="0" cellpadding="0">' 
+					+ '<tr><td height="43" class="font1">&nbsp;&nbsp;'+ msgInfo["title"] 
+					+ '</td></tr><tr><td class="font">&nbsp;&nbsp;'+ msgInfo["content"] 
+					+ '</td></tr></table>';
+
+				var tblStr2 = '<table width="100%" border="0" cellspacing="0" cellpadding="0">' +
+							'<tr><td height="30" class="table">&nbsp;</td></tr></table>';
+
+				$("#msg_row").append(tblStr1);
+				//
+				if(flag) {
+					$("#msg_row").append(tblStr2);
+				}
+			};
+			
+			var appendSuf = function() {
+				var sufStr = '<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td height="18">&nbsp;</td></tr></table>';
+				$("#msg_row").append(sufStr);
+			};
+			
+			$.ajax({
+				"async": true,
+				"cache": false,
+				"type": "POST",
+				"dataType":"json",
+				//
+				"url": "/MOBILE/ExtServlet?actionName=system/SelMobileMessageAction",
+				"contentType": "application/x-www-form-urlencoded",
+				"data" :{"optype":"ALL", "pagin":"N"},
+				"success":function(data) {
+					//alert(data);
+					if(data["totalCount"] != 0) {
+						for(var i=0; i<data["Body"].length; i++) {
+							if(i == data["Body"].length-1) {
+								formMsg(data["Body"][i]);
+							} else {
+								formMsg(data["Body"][i], true);
+							}
+						}
+						appendSuf();
+					}
+				},
+				"error": function(xhr) {
+					alert("公告数据获取失败！");
+				}
+			});
+			//$.post("http://localhost:17080/MOBILE/ExtServlet?actionName=system/SelMobileMessageAction", $.param({"optype":"ALL"}));
+		});
+	</script>
+</head>
+
+<body bgcolor="edfbfd" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table width="1000" border="0" align="center" cellpadding="0" cellspacing="0" >
+	<tr><td colspan="3"><br></td></tr>
+  <tr> 
+    <td valign="top"> <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td width="3%" align="right" valign="bottom"><img src="img/index_03.png" width="11" height="36"></td>
+          <td width="92%" background="img/index_05.png"><br></td>
+          <td width="3%" align="left" valign="bottom"><img src="img/index_07.png" width="13" height="36"></td>
+        </tr>
+        <tr> 
+          <td background="img/index_09.png">&nbsp;</td>
+          <td valign="top" background="img/index_10.png"> <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr> 
+                <td width="43%" valign="top"><img src="img/user.png" width="90" height="102"></td>
+                <td width="57%" valign="top" class="font">姓名：张凯<br>
+                  职位：管理员<br>
+                  工号：00240034<br>
+                  待办任务数：23564件<br> </td>
+              </tr>
+              <tr> 
+                <td><input name="Submit" type="submit" class="button" value="个人工作台"></td>
+                <td><input name="Submit2" type="submit" class="button" value=" 个人信息 "></td>
+              </tr>
+              <tr> 
+                <td><input name="Submit3" type="submit" class="button" value=" 应用注册 "></td>
+                <td><input name="Submit4" type="submit" class="button" value=" 服务注册 "></td>
+              </tr>
+            </table></td>
+          <td background="img/index_11.png"></td>
+        </tr>
+        <tr> 
+          <td align="right" valign="top"><img src="img/index_18.png" width="11" height="12"></td>
+          <td background="img/index_19.png">&nbsp;</td>
+          <td align="left" valign="top"><img src="img/index_22.png" width="13" height="12"></td>
+        </tr>
+      </table></td>
+    <td width="564" align="center" valign="middle">
+    	<div id="adv" class="adv">
+		    <div id="adv_bg" class="adv_bg"></div>
+		    <div id="adv_info" class="adv_info"></div>
+		    <div id="adv_list" >
+		        <a href="#" target="_blank"><img src="img/banner.jpg" alt="奥迪" /></a>
+		        <a href="#" target="_blank"><img src="2.jpg" alt="到时" /></a>
+		        <a href="#" target="_blank"><img src="3.jpg" alt="123" /></a>
+		        <a href="#" target="_blank"><img src="4.jpg" alt="343" /></a>
+		    </div>
+			</div>
+    </td>
+    <td width="218" valign="top"> <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td width="3%" align="right" valign="bottom"><img src="img/index_03.png" width="11" height="36"></td>
+          <td width="92%" background="img/index_05.png" class="moth-title">月度好评<br></td>
+          <td width="3%" align="left" valign="bottom"><img src="img/index_07.png" width="13" height="36"></td>
+        </tr>
+        <tr> 
+          <td height="149" background="img/index_09.png">&nbsp;</td>
+          <td background="img/index_10.png"><img src="img/ad.png"></td>
+          <td background="img/index_11.png"></td>
+        </tr>
+        <tr> 
+          <td align="right" valign="top"><img src="img/index_18.png" width="11" height="12"></td>
+          <td background="img/index_19.png">&nbsp;</td>
+          <td align="left" valign="top"><img src="img/index_22.png" width="13" height="12"></td>
+        </tr>
+      </table></td>
+  </tr>
+  <tr> 
+    <td rowspan="2" valign="top"> <table id="msgMain" width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td width="3%" align="right" valign="bottom"><img src="img/index_03.png" width="11" height="36"></td>
+          <td width="92%" background="img/index_05.png" class="title">公告信息<br></td>
+          <td width="3%" align="left" valign="bottom"><img src="img/index_07.png" width="13" height="36"></td>
+        </tr>
+        <tr> 
+          <td height="149" background="img/index_09.png">&nbsp;</td>
+          <td id="msg_row" valign="top" background="img/index_10.png"> 
+		  </td>
+          <td background="img/index_11.png"></td>
+        </tr>
+        <tr> 
+          <td align="right" valign="top"><img src="img/index_18.png" width="11" height="12"></td>
+          <td background="img/index_19.png">&nbsp;</td>
+          <td align="left" valign="top"><img src="img/index_22.png" width="13" height="12"></td>
+        </tr>
+      </table>
+	</td>
+    <td height="416" valign="top"> 
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td width="1%" align="right" valign="bottom"><img src="img/index_03.png" width="11" height="36"></td>
+          <td width="92%" background="img/index_05.png" class="title">应用列表</td>
+          <td width="3%" align="left" valign="bottom"><img src="img/index_07.png" width="13" height="36"></td>
+        </tr>
+        <tr> 
+          <td height="149" background="img/index_09.png"></td>
+          <td valign="top" background="img/index_10.png">
+          	<div  width="535" height="364" id='container-1'>
+	          	<ul>
+	               
+	            </ul>
+	           
+            </div>
+          </td>
+          <td background="img/index_11.png"></td>
+        </tr>
+        <tr> 
+          <td align="right" valign="top"><img src="img/index_18.png" width="11" height="12"></td>
+          <td background="img/index_19.png">&nbsp;</td>
+          <td align="left" valign="top"><img src="img/index_22.png" width="13" height="12"></td>
+        </tr>
+      </table></td>
+    <td valign="top"> <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td width="3%" align="right" valign="bottom"><img src="img/index_03.png" width="11" height="36"></td>
+          <td width="92%" background="img/index_05.png" class="title">应用排行</td>
+          <td width="3%" align="left" valign="bottom"><img src="img/index_07.png" width="13" height="36"></td>
+        </tr>
+        <tr> 
+          <td height="364px" background="img/index_09.png">&nbsp;</td>
+          <td valign="top" background="img/index_10.png">
+          <table width="100%" border="0" cellspacing="2"   cellpadding="0" id="appRanking">
+              
+           </table> 	
+          </td>
+          <td background="img/index_11.png"></td>
+        </tr>
+        <tr> 
+          <td align="right" valign="top"><img src="img/index_18.png" width="11" height="12"></td>
+          <td background="img/index_19.png">&nbsp;</td>
+          <td align="left" valign="top"><img src="img/index_22.png" width="13" height="12"></td>
+        </tr>
+      </table></td>
+  </tr>
+  <tr> 
+    <td colspan="2" valign="top">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr> 
+          <td width="1%" align="right" valign="bottom"><img src="img/index_03.png" width="11" height="36"></td>
+          <td width="92%" background="img/index_05.png" class="title">专题应用<br></td>
+          <td width="1%" align="left" valign="bottom"><img src="img/index_07.png" width="13" height="36"></td>
+        </tr>
+        <tr> 
+          <td height="100" background="img/index_09.png">&nbsp;</td>
+          <td valign="top" background="img/index_10.png">&nbsp; </td>
+          <td background="img/index_11.png"></td>
+        </tr>
+        <tr> 
+          <td align="right" valign="top"><img src="img/index_18.png" width="11" height="12"></td>
+          <td background="img/index_19.png">&nbsp;</td>
+          <td align="left" valign="top"><img src="img/index_22.png" width="13" height="12"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+<script src="js/ebizIndex.js" type="text/javascript"></script>
+<script type="text/javascript">
+    jQuery.fn.extend({
+        advert:function(t){
+            var id="#"+$(this).attr("id");
+            var n = -1, i_count,interval="<ul class='adv_ul'>";
+            i_count=$(id+"_list a").length;
+            for(var i=0;i<i_count;i++){
+                //interval+="<li>"+(i+1)+"</li>";
+                interval+="<li>&nbsp;</li>";
+            }
+            $(id+"_info").after(interval+"<\/ul>");
+            $(id+" li").mouseover(function(e) {
+                e.stopPropagation();
+                n=$(this).index();
+                $(id+"_info").html($(id+"_list a").eq(n).find("img").attr('alt'));
+                $(id+"_list a").filter(":visible").fadeOut(500).parent().children().eq(n).fadeIn(1000);
+                $(this).addClass("adv_on");
+                $(this).siblings().removeAttr("class");
+            });
+            interval = setInterval(showAuto, t);
+            $(this).hover(function(){clearInterval(interval)}, function(){interval = setInterval(showAuto, t)});
+            function showAuto(){
+                n = n >=(i_count-1) ? 0 : ++n;
+                $(id+" li").eq(n).mouseover();
+            }
+            showAuto();
+        }
+    });
+    $(document).ready(function(){
+        $("#adv").advert(3000);
+    });
+</script>
+</html>

@@ -1,0 +1,29 @@
+.tab_blue{
+  behavior:url("Tabstrip.htc");
+  skinPath:images/blue/;
+  maxtabHeight:21;
+  mintabHeight:19;
+  fontColor:#000000;
+  fontColorOver:#000099;
+  fontColorSelect:#999999;
+  lightShadow:#fcfcfe;
+  midShadow:#d0cebf;
+  pageBorder:#919b9c;
+  lightColor:#fcfcfe;
+  darkColor:#f4f3ee;
+}
+
+.tab_mac{
+  behavior:url("Tabstrip.htc");
+  skinPath:images/mac/;
+  maxtabHeight:21;
+  mintabHeight:19;
+  fontColor:#000000;
+  fontColorOver:#ffffff;
+  fontColorSelect:#000000;
+  lightShadow:#fcfcfe;
+  midShadow:#d0cebf;
+  pageBorder:#919b9c;
+  lightColor:#fcfcfe;
+  darkColor:#f4f3ee;
+}

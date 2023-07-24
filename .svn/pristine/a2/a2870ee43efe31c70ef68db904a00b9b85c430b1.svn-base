@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content=" width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>查询宽带账号状态</title>
+		<link rel="stylesheet" type="text/css" href="/MOBILE/report/css/broadband.css"/>
+		<script src="/MOBILE/report/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/MOBILE/report/js/mobileType.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div id="box_top">
+			<div id="top_title">
+				账号查询
+			</div>
+			<div id="top_back">
+				<img src="/MOBILE/report/img/nav_icon_arrow.png" onclick="javascript:window.history.back(-1);" />
+			</div>
+			<div id="reset" >
+				复位
+			</div>
+		</div>
+		<div id="search_area">
+			<div id="search_case">
+				<input type="text" id="search_input" value="" placeholder="请输入宽带账号" />
+				<button onclick="queryInfo()">查询账号</button>
+			</div>
+			
+			<div id="search_tip" style="text-align: left;">
+				账号带0731或者CS校园账号请加域名查询，如15608010801@doushi
+			</div>
+		</div>
+		<div id="split_bar"></div>
+		<div id="result_tip">
+			<span style="margin-left:5%;">查询结果</span>
+		</div>
+	
+		<div id="search_content">
+			<div >
+				<span class="name">宽带账号:</span><span id="account"></span>
+			</div>
+			<!--<div class="result_split_bar"></div>-->
+			<div >
+				<span class="name">宽带状态:</span><span id="state"></span>
+			</div>
+			
+			<div >
+				<span class="name">是否在线:</span><span id="isOnline"></span>
+			</div>
+			
+			<div >
+				<span class="name">速率宽带:</span><span id="rate"></span>
+			</div>
+	
+			<div >
+				<span class="name">是否绑定:</span><span id="isBound"></span>
+			</div>
+			
+			<div >
+				<span class="name">上线失败原因:</span><span id="fail_reason" style="font-size:14px;"></span>
+			</div>
+		</div>
+		<div class="loading"  style="display:none">
+        	<div class="pic">
+        		<img src="/MOBILE/report/img/5-121204193Q9-50.gif"/>
+        	</div>
+    	</div>
+		<div id="top_bg" style="display:none">
+			<div id="top_case">
+				<div id="top_case_title">
+					提示框
+				</div>
+				<div id="top_case_info">
+					没有相关信息
+				</div>
+				<div id="top_case_close">
+					<button>关闭</button>
+				</div>
+			</div>
+		</div>	
+	</body>
+	<script type="text/javascript">
+	
+	
+	function queryInfo(){
+			debugger;
+			$(".loading").css("display","block");//开启遮罩
+			var search_value = $("#search_input").val();
+			//console.log(search_value);
+			var paramId = {	
+				account:search_value.toString()
+			}
+			
+			$.ajax({
+				url:"/MOBILE/api/client/xj/zy/device/query/broadband1",
+				type:"post",
+				data:JSON.stringify(paramId),
+				contentType:"application/json",
+				dataType:"json",
+				success:function(data){
+					console.log("查询成功！");
+					$("#account").text(search_value);
+					$("#state").text(data.resultData.State);
+					$("#isOnline").text(data.resultData.IsOnline);
+					$("#rate").text(data.resultData.Rate);
+					$("#isBound").text(data.resultData.IsBand);
+					$("#fail_reason").text(data.resultData.LastFail);
+					$(".loading").css("display","none");//关闭遮罩
+					$("#reset").unbind("click").click(function(){
+						reset(search_value);
+					})
+						
+				},
+				error:function(e){
+					console.log("参数查询失败");
+				}
+			});
+	
+	}
+	
+	
+	//复位
+	function reset(search_value){
+		debugger;
+		$(".loading").css("display","block");//开启遮罩
+		//var username = $("#account").val();
+		var username = search_value;
+		if(username==null||username==""){
+			alert("宽带账号不能为空");
+			return;
+		}
+		var paramsAccount = {	
+				username:search_value.toString()
+			}
+		
+		$.ajax({
+				url:"/MOBILE/api/client/xj/zy/device/reset/broadband1",
+				type:"post",
+				data:JSON.stringify(paramsAccount),
+				contentType:"application/json",
+				dataType:"json",
+				success:function(data){
+					debugger;
+					console.log("复位成功！");
+					//alert(data.resultMsg);
+					$("#top_case_info").text(data.resultMsg);
+					$(".loading").css("display","none");//关闭遮罩
+					$("#top_bg").css("display","block");
+				},
+				error:function(e){
+					console.log("复位失败!");
+				}
+			});
+		
+	}
+	
+	//关闭提示框
+		$("#top_case_close").click(function(){
+			$("#top_bg").css("display","none");
+		})
+	
+	
+	
+	</script>
+</html>

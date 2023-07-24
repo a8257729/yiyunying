@@ -1,0 +1,11 @@
+<!DOCTYPE xwork PUBLIC "-//OpenSymphony Group//XWork 1.1.1//EN" "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd">
+<xwork>
+    <package name="common-component-define">
+    <result-types>
+            <result-type name="chain" class="com.ztesoft.mobile.common.xwork.result.ActionChainResult"/>
+        </result-types>
+    		 <interceptors>
+						<interceptor name="transactionController" class="com.ztesoft.mobile.common.xwork.interceptor.TransactionControllerInterceptor"/>
+	       </interceptors>
+    </package>
+</xwork>

@@ -1,0 +1,488 @@
+package com.ztesoft.mobile.v2.service.weixin;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import net.sf.json.JSONObject;
+
+import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.Node;
+import org.springframework.stereotype.Service;
+
+import com.ztesoft.android.service.EBizToIomWebservice;
+import com.ztesoft.mobile.common.dao.BaseDAOFactory;
+import com.ztesoft.mobile.common.exception.XMLDocException;
+import com.ztesoft.mobile.common.xwork.execution.Dom4jUtils;
+import com.ztesoft.mobile.v2.core.BaseService;
+import com.ztesoft.mobile.v2.core.Result;
+import com.ztesoft.mobile.v2.dao.weixin.WeChatDAO;
+import com.ztesoft.mobile.v2.dao.weixin.WeChatDAOImpl;
+
+import com.ztesoft.mobile.v2.service.workform.xinjiang.WebService;
+
+/***
+ * ���ù����ܿع���ʵ����
+ * 
+ ** */
+
+@Service("weChatSaService")
+public class WeChatSaServiceImpl extends BaseService implements WeChatSaService
+{
+
+	private static final boolean debug = false;
+
+	private static final Logger logger = Logger.getLogger(WeChatSaServiceImpl.class);
+
+	private static final String[] PARAM_NAME = {"contentXml"};
+	/** װ�ƹ��������б� */
+
+
+	// ���ýӿڷ���
+	private static final EBizToIomWebservice service = new EBizToIomWebservice();
+	private static final WebService ws = new WebService();
+
+	private String callWsService( String reqXml) throws Exception
+	{
+		return service.callWebService("IOM_WEIXIN_URL", WS_NAMESPACE, WS_METHOD_OPERATION_NAME, PARAM_NAME,
+				new String[] {reqXml });
+	}
+	
+	public Result newFaultWorkSheet(Map<String,Object> data) {
+		Result result = null;
+		try {
+
+			StringBuffer dataReqXml=addXMLContent(data);
+			
+			String retXml="";
+			String reqXml = getReqestXml(dataReqXml.toString());
+			retXml = callWsService(reqXml);
+			System.out.println("���ͱ���:"+reqXml);
+			System.out.println("���ر���: + " + retXml);
+            //�ж��Ƿ���ԭ�򷵻�
+			Document doc = Dom4jUtils.fromXML(retXml, "UTF-8");
+            Node resultNode = doc.selectSingleNode("/result/successFlag");
+            String resultVal = resultNode.getText();
+            Node failNode = doc.selectSingleNode("/result/successFlag");
+            String failResult = failNode.getText();
+            logger.debug("the resultVal is :"+resultVal);
+            if ("0".equals(resultVal)) { // �ɹ�
+                result = Result.buildSuccess();
+
+	        } else { // ʧ��
+	            
+	                result = Result.buildInterInfoError(failResult);
+	        }            
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = Result.buildServerError();
+		}
+
+		return result;
+	}
+	
+	
+	private StringBuffer addXMLContent(Map<String, Object> data)
+	{
+	
+		StringBuffer sbReqXml = new StringBuffer();
+		String areaField = (String)data.get("areaField");
+		String service_num = (String)data.get("service_num");
+		String cust_name_encry = "";
+		String cust_name = (String)data.get("cust_name");
+		String address = (String)data.get("address");
+		String phone = (String)data.get("phone");
+		String faultType = (String)data.get("faultType");
+		String csSheetId = getCSSheetId();
+		String buildTime = getCurrentTime();
+		String result = (String) data.get("result");//��Ͻ��
+		
+		if(null != cust_name && !("".equals(cust_name)))
+		{
+			cust_name_encry = cust_name.substring(0, 1)+"*";
+		}
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "areaField" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + areaField + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "compaintPhenomenon" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + "1" + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "CompaintPlace" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + address + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "CompaintContent" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + "һ��һ�뱨��:"+faultType + ";" + result + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "CompaintNum" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + service_num + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "CompaintName" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + cust_name_encry + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "Machine_address" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + address + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "Contact_person" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + cust_name + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "Contact_tele" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + phone + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "linkOrStepName" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + "�ӵ�" + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "csSheetId" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + csSheetId + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "buildTime" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + buildTime + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "dealTime" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + buildTime + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "importance" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + "1130602" + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "repeatComplaint" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + "0" + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "dealDept" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + "4" + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "dealStaff" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + "1" + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "sheetFinishTime" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + buildTime + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "orderStatus" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + "0" + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "sheetStatus" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + "0" + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "signBit" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + csSheetId + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		
+		sbReqXml.append("<fieldInfo>");
+		sbReqXml.append("<fieldEnName>" + "mainSheetFlowNo" + "</fieldEnName>");
+		sbReqXml.append("<fieldContent>" + csSheetId + "</fieldContent>");
+		sbReqXml.append("</fieldInfo>");
+		return sbReqXml;
+		
+	}
+
+	private String getCurrentTime()
+	{
+	   DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String time = df.format(new Date());
+		return time;
+	}
+	
+	private String getCSSheetId()
+	{
+		DateFormat df = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		String str = df.format(new Date());
+		return "YH"+str;
+	}
+
+	public String getReqestXml(String reqXml) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		sb.append("<opDetail>");
+		sb.append("<recordInfo>");
+		sb.append(reqXml);
+		sb.append("</recordInfo>");
+		sb.append("</opDetail>");
+		System.out.println("reqXml=============" + sb.toString());
+		return sb.toString();
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+	public Result checkUserName(JSONObject json)
+	{
+
+		Result result = new Result();
+
+
+
+		Map<Object, Object> resultMap = new HashMap<Object, Object>();
+
+		try
+		{
+			String daoName = WeChatDAOImpl.class.getName();
+			WeChatDAO dao = (WeChatDAO) BaseDAOFactory.getImplDAO(daoName);
+			String userName = json.getString("userName");
+			String cust_name ="";
+			//��ѯ�û���Ϣ
+			Map map = dao.queryUserHouseInfoByCode(json.getString("qrcode"));
+
+			String respXML ="";
+			if (null != map && map.size() > 0)
+			{
+
+				 cust_name = (String) map.get("cust_name");
+
+			}
+			if(userName.equals(cust_name))
+			{
+				result.setResultCode(1000);
+			}
+			else
+			{
+				//��ƥ��У�鲻ͨ��
+				result.setResultCode(2000);
+			}
+
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			result = Result.buildServerError();
+		}
+
+		return result;
+	}
+
+
+	public Result queryInstallationReport(JSONObject json) {
+		String serviceNum = json.getString("serviceNum");
+		Result result = new Result();
+		Map<Object,Object> resultMap = new HashMap<Object, Object>();
+		try {
+			String daoName = WeChatDAOImpl.class.getName();
+			WeChatDAO dao = (WeChatDAO) BaseDAOFactory.getImplDAO(daoName);
+			String ooid = null;
+			try {
+				ooid = dao.queryorderId(serviceNum);
+				logger.info("查询到的ooid:"+ooid);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			String createDate= null;
+			String acceptPower= null;
+			String maxnetspeed = null;
+			try {
+				createDate = dao.createDate(ooid);
+				logger.info("查询到的装机时间:"+createDate);
+				acceptPower = dao.guangshuai(ooid);
+				logger.info("查询到的光衰:"+acceptPower);
+				maxnetspeed = dao.maxnetspeed(ooid,serviceNum);
+				logger.info("查询到的最大速率:"+maxnetspeed);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			resultMap.put("ooid", ooid);
+			resultMap.put("createDate", createDate);
+			resultMap.put("acceptPower", acceptPower);
+			resultMap.put("maxnetspeed", maxnetspeed);
+			result = new Result();
+			result.setResultData(resultMap);
+			result.setResultCode(1000);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setResultCode(2000);
+			result = Result.buildServerError();
+		}
+		return result;
+	}
+
+	public Result queryUserHouseInfoByCode(JSONObject json)
+	{
+		
+		Result result = null;
+		Map<Object, Object> resultMap = new HashMap<Object, Object>();
+		List<Map<Object, Object>> rtList = new ArrayList<Map<Object, Object>>();
+		try
+		{
+			String daoName = WeChatDAOImpl.class.getName();
+			WeChatDAO dao = (WeChatDAO) BaseDAOFactory.getImplDAO(daoName);
+			//��ѯ�û���Ϣ
+			Map map = dao.queryUserHouseInfoByCode(json.getString("qrcode"));
+			rtList.add(map);
+			String respXML ="";
+			if (null != map && map.size() > 0)
+			{
+				String service_num = (String) map.get("service_num");
+				String cust_name = (String) map.get("cust_name");
+				String qrcode = (String) map.get("qrcode");
+				String seq_id = getLogSeqId();
+				 respXML = dao.queryWorkOrderInfo(service_num);
+				//��¼��־service_num
+				dao.insertMap(seq_id, service_num, qrcode, cust_name);
+			}
+			logger.info("the respXML is:"+respXML);
+			List<Map<Object,Object>> workOrderList =  parseSynOrderResponse(respXML);
+			resultMap.put("userInfo", rtList);
+			resultMap.put("workOrderInfo", workOrderList);
+			result = new Result();
+			result.setResultData(resultMap);
+			result.setResultCode(1000);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			result = Result.buildServerError();
+		}
+
+		return result;
+	}
+
+	private String getLogSeqId()
+	{
+		DateFormat df = new SimpleDateFormat("yyMMddHHmmssSSS");
+		String str = df.format(new Date());
+		String timeStr = str.substring(0, 14);
+		Random random = new Random();
+		int s = random.nextInt(90000) % (90000 - 10000 + 1) + 10000;
+		String result = timeStr + s;
+		return result;
+	}
+
+	/** ����������ѯ���� */
+	private List<Map<Object, Object>> parseSynOrderResponse(String respXml)
+	{
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("������ѯ��Ӧ����: " + respXml);
+		}
+
+		Result result = null;
+		List<Map<Object, Object>> rtList1 = new ArrayList<Map<Object, Object>>();
+		Map<Object, Object> dataMap = new HashMap<Object, Object>();
+		List<Map<String, Object>> rtList2 = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> rtList3 = new ArrayList<Map<String, Object>>();
+		try
+		{
+			Document doc = Dom4jUtils.fromXML(respXml, "UTF-8");
+			
+			Map<String, Object> commonMap_ = new HashMap<String, Object>();
+			Node staffNameNode = doc.selectSingleNode("/RESP/FAULT_ORDER/STAFF_NAME");
+			Node staffMobileNode = doc.selectSingleNode("/RESP/FAULT_ORDER/MOBILE_TEL");
+			Node areaFieldNode = doc.selectSingleNode("/RESP/FAULT_ORDER/AREAFIELD");
+			Node besDateNode = doc.selectSingleNode("/RESP/FAULT_ORDER/BESDATE");
+			//����״̬
+			Node orderStateNode = doc.selectSingleNode("/RESP/FAULT_ORDER/ORDER_STATE");
+			Node orderIdNode = doc.selectSingleNode("/RESP/FAULT_ORDER/ORDER_ID");
+			
+			String staffName = staffNameNode == null ? "" : staffNameNode.getText();
+			String staffMobile = staffMobileNode == null ? "" : staffMobileNode.getText();
+			String areaFiled = areaFieldNode == null ? "" : areaFieldNode.getText();
+			String besDate = besDateNode == null ? "" : besDateNode.getText();
+			String orderState = orderStateNode == null ? "" : orderStateNode.getText();
+			String orderId = orderIdNode == null ? "" : orderIdNode.getText();
+			commonMap_.put("STAFF_NAME", staffName);
+			commonMap_.put("MOBILE_TEL", staffMobile);
+			commonMap_.put("AREAFIELD", areaFiled);
+			commonMap_.put("BESDATE", besDate);
+			commonMap_.put("ORDER_STATE", orderState);
+			commonMap_.put("ORDER_ID", orderId);
+			
+			rtList2.add(commonMap_);
+			String rootPath = "";
+			List<Node> rtEleList = doc.selectNodes("/RESP/FAULT_ORDER/WO_WORK_ORDER_LIST/WORK_ORDER");
+
+			int size = rtEleList.size();
+			 
+            logger.debug("the rtEleList size :"+size);
+            logger.debug("the  rtEleList is:"+rtEleList);
+			for (int i = 0; i < size; i++)
+			{
+				Node ele = rtEleList.get(i);
+				Node tacheNameNode = ele.selectSingleNode(rootPath + "TACHE_NAME");
+				Node createDateNode = ele.selectSingleNode(rootPath + "CREATE_DATE");
+				Node workOrderStateNode = ele.selectSingleNode(rootPath + "WORK_ORDER_STATE");
+				Map<String, Object> map_ = new HashMap<String, Object>();
+				map_.put("TACHE_NAME", tacheNameNode == null ? "" : tacheNameNode.getText());
+				map_.put("CREATE_DATE", createDateNode == null ? "" : createDateNode.getText());
+				map_.put("WORK_ORDER_STATE", workOrderStateNode == null ? "" : workOrderStateNode.getText());
+				rtList3.add(map_);
+			}
+
+		}
+		catch (XMLDocException e)
+		{
+			e.printStackTrace();
+			return rtList1;
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+			return rtList1;
+		}
+		dataMap.put("common", rtList2);
+		dataMap.put("datas", rtList3);
+		rtList1.add(dataMap);
+		return rtList1;
+	}
+
+	
+
+	
+
+	
+
+	
+
+}

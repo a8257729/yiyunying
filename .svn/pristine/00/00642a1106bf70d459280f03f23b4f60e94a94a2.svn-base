@@ -1,0 +1,24 @@
+<HTML>
+<HEAD>
+<TITLE>TEST</TITLE>
+<style>
+.edSelect {behavior:url(EdSelect.htc);font-size:12px}
+</style>
+</HEAD>
+
+<BODY>
+1.按Enter键开始添加输入新的选项...<br>
+2.按Del键删除当前选项...<br>
+3.按Esc键查看当前选项的text和value值...<br>
+4.按BackSpace键删除当前选项的前一个字符...<br>
+<select  class='edSelect' id='xxx'>
+<option></option>
+<option value='boolean'>boolean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+<option value='int'>     int                 </option>
+<option value='string'>string                </option>
+</select>
+
+</script>
+</BODY>
+</HTML>
+

@@ -1,0 +1,25 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="message" extends="common-component-define"
+		namespace="/message">
+
+		<action name="OptMobileMessageAction"
+			class="com.ztesoft.mobile.message.action.OptMobileMessageAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="PublicMessageManageAction"
+			class="com.ztesoft.mobile.message.action.PublicMessageManageAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		
+		<action name="PublicNoticeManageAction"
+			class="com.ztesoft.mobile.v2.action.common.PublicNoticeManageAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+	</package>
+</xwork>

@@ -1,0 +1,95 @@
+package com.ztesoft.mobile.v2.entity.workform.xinjiang.kt;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.dom4j.Node;
+
+import com.ztesoft.mobile.v2.entity.workform.xinjiang.WorkOrder;
+
+public class WorkOrderKt extends WorkOrder {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7820623558004321456L;
+	
+	public static final String TOTAL_COUNT_NODE = "totalCount";
+	
+	public static final String WORK_ORDER_ID_NODE = "WorkOrderID";
+	
+	public static final String ORDER_ID_NODE = "OrderID";
+	
+	public static final String ORDER_CODE_NODE = "OrderCode";
+	
+	public static final String PROD_NAME_NODE = "ProdName";
+	
+	public static final String SERVICE_NAME_NODE = "ServiceName";
+	
+	public static final String CUST_NAME_NODE = "CustName";
+	
+	public static final String CONTACT_PHONE_NODE = "ContactPhone";
+	
+	public static final String ACC_NBR_NODE = "AccNbr";
+	
+	public static final String CUST_LINK_PERSON_NODE = "CustLinkPerson";
+	
+	public static final String CUST_LINK_PHONE_NODE = "CustLinkPhone";
+	
+	public static final String TACHE_NAME_NODE = "TacheName";
+	
+	public static final String TACHE_CODE_NODE = "TacheCode";
+	
+	public static final String ACTIVATETIME_NODE = "Activatetime";
+	
+	public static final String ADDRESS_NODE = "Address";
+	
+	
+	public static final String SLANUM_NODE = "Slanum";
+	
+	public static final String SLATIME_NODE = "SlaTime";
+	
+	public static final String CREATE_DATE_NODE = "CreateDate";
+	
+	public static final String WORK_ORDER_TYPE_NODE = "WorkOrderType";
+	
+	public static final String ORDERTIMEOUTFLAG_NODE = "Ordertimeoutflag";
+	
+	public static final String WORK_ORDER_LIST_NODE = "WorkOrderList";
+	
+	public static final String PRODUCT_LIST_NODE = "ProductList";
+	
+	public static final String ACCEPT_DATE_NODE = "AcceptDate";
+
+	public static final String ORDER_URGE_FLAG = "orderUrgeFlag";
+
+	public static final String NEED_CS_NODE = "NeedCs";
+	
+	public static final String BOOKSTATE_NODE = "BookState";
+	
+	public static final String ISPAUSE_NODE = "IsPause";
+	
+
+	public static final Map<String, String> FIELD_MAPPING = new HashMap<String, String>();
+	static {
+
+		FIELD_MAPPING.put(WORK_ORDER_ID_NODE, "workOrderID");
+		FIELD_MAPPING.put(ORDER_CODE_NODE, "orderCode");
+		FIELD_MAPPING.put(PROD_NAME_NODE, "prodName");
+		FIELD_MAPPING.put(SERVICE_NAME_NODE, "serviceName");
+		FIELD_MAPPING.put(CUST_NAME_NODE, "custName");
+		FIELD_MAPPING.put(CONTACT_PHONE_NODE, "contactPhone");
+		FIELD_MAPPING.put(CUST_LINK_PERSON_NODE, "custLinkPerson");
+		FIELD_MAPPING.put(CUST_LINK_PHONE_NODE, "custLinkPhone");
+		FIELD_MAPPING.put(TACHE_NAME_NODE, "tacheName");
+		FIELD_MAPPING.put(ACTIVATETIME_NODE, "activatetime");
+		FIELD_MAPPING.put(ADDRESS_NODE, "address");
+		
+		FIELD_MAPPING.put(SLANUM_NODE, "slanum");
+		FIELD_MAPPING.put(SLATIME_NODE, "slaTime");
+		FIELD_MAPPING.put(WORK_ORDER_TYPE_NODE, "workOrderType");
+		FIELD_MAPPING.put(ORDERTIMEOUTFLAG_NODE, "ordertimeoutflag");	
+	
+	}
+}
+

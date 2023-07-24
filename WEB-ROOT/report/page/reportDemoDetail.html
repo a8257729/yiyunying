@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>在途装机工单</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js" ></script>
+		<script src="../js/template.min.js" ></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title" class="mui-title">详情</h1>
+			
+		</header>
+		<div class="mui-content">
+			<div id="content"></div>
+			<script id="tpl" type="text/html">
+			<table id="tabel" class="am-table am-table-bordered am-table-centered am-table-striped">
+				<thead>
+					<tr>
+						<th>定单号码</th>
+						<th>业务号码</th>
+						<th>受理时间</th>
+						<th>装机地址</th>
+						<th>预约时间</th>
+						<th>挂起原因</th>
+					</tr>
+					
+				</thead>
+				<tbody>
+					{{each dataArr as item i}}
+					<tr class="mui-tr">
+						<th>{{item[0]}}</th>
+						<td>{{item[1]}}</td>
+						<td>{{item[2]}}</td>
+						<td>{{item[3]}}</td>
+						<td>{{item[4]}}</td>	
+						<td>{{item[5]}}</td>
+					</tr>
+					{{/each}}
+					
+				</tbody>
+			</table>
+			</script>
+		</div>
+		<script>
+						
+			
+			var data = {
+				dataArr:[["2017454545","A323232","2017-02-22 15:33:00","地址ADSDSDS","2017-02-22 15:33:16","无"],["2017454545","A323232","2017-02-22 15:33:00","地址ADSDSDS","2017-02-22 15:33:16","无"],["2017454545","A323232","2017-02-22 15:33:00","地址ADSDSDS","2017-02-22 15:33:16","无"],["2017454545","A323232","2017-02-22 15:33:00","地址ADSDSDS","2017-02-22 15:33:16","无"]]
+			};
+			console.log(data);
+			var html = template('tpl', data);
+			document.getElementById('content').innerHTML = html;            
+			
+		</script>
+	</body>
+
+</html>

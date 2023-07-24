@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8" addBOMForNewFiles="with NO BOM">
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/eoms/common/helper/DAOHelper.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/common/dao/jdbc/BaseJDBCDAOImpl.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/common/db/ConnectionAdapters.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/common/xwork/execution/Dom4jUtils.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/controller/building/BuilDingController.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/controller/common/CommonBaseController.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/controller/common/StaffController.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/controller/lightcat/LightCatSnController.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/controller/speed/SpeedController.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/dao/app/MobileDataInstallDAO.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/dao/app/MobileDataInstallDAOImpl.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/dao/workfloworder/hunan/WorkFlowDao.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/service/app/MobileDataInstallService.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/service/app/MobileDataInstallServiceImpl.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/service/workform/xinjiang/bz/MyWorkOrderBzService.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/service/workform/xinjiang/zy/WorkOrderZyServiceImpl.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/com/ztesoft/mobile/v2/util/HttpUtil.java" charset="UTF-8" />
+    <file url="file://D:/kangkang/springproject" charset="UTF-8" />
+    <file url="PROJECT" charset="GBK" />
+  </component>
+</project>

@@ -1,0 +1,578 @@
+package com.ztesoft.mobile.service.rest;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import net.sf.json.JSONObject;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.cxf.jaxrs.ext.MessageContext;
+import org.springframework.stereotype.Service;
+
+import com.ztesoft.android.dao.ServiceDAO;
+import com.ztesoft.android.dao.ServiceDAOImpl;
+import com.ztesoft.android.util.ZipUtil;
+import com.ztesoft.mobile.common.dao.BaseDAOFactory;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import com.ztesoft.mobile.outsystem.dao.MobileInterfaceManagerDAO;
+import com.ztesoft.mobile.outsystem.dao.MobileInterfaceManagerDAOImpl;
+import com.ztesoft.mobile.outsystem.dao.RestServiceDAO;
+import com.ztesoft.mobile.outsystem.dao.RestServiceDAOImpl;
+import com.ztesoft.mobile.service.bo.ResponseObject;
+import com.ztesoft.mobile.service.handler.Handler;
+import com.ztesoft.mobile.service.handler.HandlerFactory;
+import com.ztesoft.mobile.systemMonitor.dao.MobileFuncCallRecordDAO;
+import com.ztesoft.mobile.systemMonitor.dao.MobileFuncCallRecordDAOImpl;
+import com.ztesoft.mobile.systemMonitor.dao.MobileSessionRecordDAO;
+import com.ztesoft.mobile.systemMonitor.dao.MobileSessionRecordDAOImpl;
+
+
+/**
+ * 
+ * @author heison.yee<br />
+ *<br />
+ * <b>Android客户端访问RESTful的WS服务的约定规则：</b><br />
+ * 原则上来说，客户端发出的请求的必须经由RESTful风格的WS服务，<br />
+ * 并且，请求的任何服务都必须由客户端发起的请求URI进行<b>唯一</b>的标识，<br />
+ * 也就是说，客户端发起的请求与服务端接收到的请求进而调用哪个服务是1:1对应的。<br />
+ * <br />
+ * 开发上，原则上禁止URI+POST的数据来进行服务的定位。<br />
+ * 也就说，这里将不会去解析POST过来的数据，然后再去定位具体是调用哪个RESTful服务。<br />
+ * <br />
+ * 对于目前来说，有两种情况：（1）配置化实现（不需硬编码）；（2）二次开发（硬编码实现）。<br />
+ * 对于目前这两种情况，我们有如下的统一约定：<br />
+ * 1、《配置化实现》<br />
+ * 如果是置化实现的话，访问的PATH的格式则应该是如下的路径格式：<br />
+ *	http://localhost:7001/MOBILE/rest/mobileService/conigserv/ + 页面代码（TEACH_NAME）;<br />
+ * 例如，页面代码（TEACH_NAME）是initCommonPage，那么将是会从MOBILE_JSON_CREATE查询出其一一映射的接口服务编码，该接口服务编码，<br />
+ * 与REST_SERVICE的接口服务编码是一致的，并且是一一对应的；<br />
+ * 此时，而客户端的发起请求的URI则应该是：<br>http://localhost:7001/MOBILE/rest/mobileService/conigserv/initCommonPage；</br>
+ *
+ * 2、《二次开发》<br />
+ * 如果是二次开发的话，访问的URI的格式则应该是如下的路径格式：<br />
+ * 		http://localhost:7001/MOBILE/rest/mobileService/appserv/ + 服务编码(REST_SERVICE_CODE）;<br />
+ * 例如，服务编码是IOM，REST_SERVICE_TYPE为1（接口），那么将是会调用MOBILE_INTERFACE_MAPPING表里配置的接口服务编码，<br />
+ * 而客户端的发起请求的URI则应该是：<br>http://localhost:7001/MOBILE/rest/mobileService/appserv/IOM；</br>
+ * 如果，是需要由指定的实现类来响应请求的话，那么则需在REST表将REST_SERVICE_TYPE设为0（具体实现类）
+ * 其中上述的REST_SERVICE_TYPE（REST服务类型），REST_SERVICE_CODE（REST服务编码）均是REST_SERVICE表的字段；<br />
+ * 
+ * REST_SERVICE_TYPE:0（特殊用途）；1（接口）；2（具体实现类）
+ */
+
+
+@Service("mobileService")
+@Path("/mobileService")
+public class MobileService {
+
+	@Context 
+  private MessageContext messageContext;
+	@Context 
+  private ServletContext servletConfig;
+
+	/**
+	 * 配置化开发
+	 */
+	public static final String CONFIG_SERV 	= "configserv";
+	/**
+	 * 二次开发
+	 */
+	public static final String APP_SERV 	= "appserv";	
+	/**
+	 * 透传，转发报文，不做任何处理
+	 */
+	public static final String DIRECT_SERV 	= "directserv";			
+
+	/**
+	 * path + code组合成唯一的URI来确认REST服务。
+	 * 
+	 * @param path 		请求URI
+	 * @param params 	POST过来的数据
+	 * @return
+	 */
+	@POST
+	@Path("/{path}")
+	@Produces("application/x-www-form-urlencoded;charset=ISO-8859-1")
+	@Consumes("application/x-www-form-urlencoded;")
+	public String legacyserv(@PathParam("path")String path, @FormParam("params") String params, @FormParam("os") String os)  throws Exception {
+		System.out.println("请求的PATH是：" + path);
+		System.out.println("获取的params字符串是: "+ params);
+		System.out.println("获取的os字符串是：" + os);
+		
+		String nParams = null;
+		if("ios".equalsIgnoreCase(os)) {
+			nParams = ZipUtil.uncompress(params);
+		} else {
+			nParams = params;
+		}
+		//组装数据，丢到Map里
+		Map paramMap = new HashMap(8);
+		paramMap.put("path", path);
+		
+		if("andrmob".equals(path)) {
+			String jsonPara = URLDecoder.decode(nParams, "UTF-8");
+			JSONObject jsonObj = new JSONObject().fromObject(jsonPara);
+			String code = jsonObj.getString("actionName");
+			paramMap.put("code", code);
+		} else {
+			paramMap.put("code", path);
+		}
+		paramMap.put("params", nParams);
+		paramMap.put("os", os);
+		
+		Map rtMap  = this.getHandlerResult(paramMap);
+		
+		String rtStr =  MapUtils.getString(rtMap, "response");
+		System.out.println("返回到客户端的数据: " + rtStr);
+		return rtStr;
+	}	
+	
+	
+	/**
+	 * path + code组合成唯一的URI来确认REST服务。
+	 * 
+	 * @param path 		请求URI
+	 * @param code		请求编码
+	 * @param params 	POST过来的数据
+	 * @return
+	 * @throws DataAccessException 
+	 */
+	@POST
+	@Path("/{path}/{code}")
+	@Produces("application/x-www-form-urlencoded;charset=utf-8")
+	public String restserv(@PathParam("path")String path, @PathParam("code")String code, @FormParam("params") String params, @FormParam("os") String os) throws DataAccessException {
+		System.out.println("请求的PATH是：" + path+ ", 服务编码是：" + code);
+		
+		try {
+			params = java.net.URLDecoder.decode(params,"utf-8");
+			System.out.println("返回到客户端的数据params: " + params);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		//组装数据，丢到Map里
+		Map paramMap = new HashMap(8);
+		paramMap.put("path", path);
+		paramMap.put("code", code);
+		paramMap.put("params", params);
+        paramMap.put("os", os);
+		
+		Map rtMap  = this.getHandlerResult(paramMap);
+		String rtStr =  MapUtils.getString(rtMap, "response");
+		
+		try {
+			String rtStr2 = java.net.URLEncoder.encode(rtStr,"utf-8");
+			System.out.println("返回到客户端的数据params: " + rtStr2);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("返回到客户端的数据2: " + rtStr);
+		return rtStr;
+	}
+	@POST
+	@Path("/{path}/{code}")
+	@Produces("application/x-www-form-urlencoded;charset=ISO-8859-1")
+	//@Consumes(MediaType.TEXT_PLAIN)  
+	public String restserv2(@PathParam("path")String path, @PathParam("code")String code, String params, @FormParam("os") String os) throws DataAccessException {
+		System.out.println("调用restserv2, 请求的PATH是：" + path+ ", 服务编码是：" + code);
+		try {
+			params = java.net.URLDecoder.decode(params,"utf-8");
+			System.out.println("返回到客户端的数据params: " + params);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		//组装数据，丢到Map里
+		Map paramMap = new HashMap(8);
+		paramMap.put("path", path);
+		paramMap.put("code", code);
+		paramMap.put("params", params);
+        paramMap.put("os", os);
+		
+		System.out.println("客户端返回的数据是：" +params);
+		
+		Map rtMap  = this.getHandlerResult(paramMap);
+		String rtStr =  MapUtils.getString(rtMap, "response");
+		System.out.println("返回到客户端的数据: " + rtStr);
+		return rtStr;
+	}
+
+
+	/**
+	 * 验证REST用的服务
+	 * @return
+	 */
+	@GET
+	@Path("/test")
+	@Produces("application/json;charset=utf-8")
+	public String testAndroid(){
+		ResponseObject repObj = new ResponseObject();
+		repObj.setResult("SUCEESS");
+		repObj.setBody("测试通过");
+		repObj.setCode("000");
+		//srepObj.setResponse("我成功了");
+		JSONObject obj = JSONObject.fromObject(repObj);
+		return obj.toString();
+		
+	}
+	
+/*	@POST
+	@Path("/{path}")
+	//@Produces("application/json;charset=utf-8")
+	@Produces("application/x-www-form-urlencoded;charset=ISO-8859-1")
+    @Consumes("application/x-www-form-urlencoded;")  
+	public String mainServ(@PathParam("path")String path, @FormParam("params") String params, @Context UriInfo info) throws Exception {
+		//
+		System.out.println("[DEBUG]，请求的Path是：" + path);
+		System.out.println("[DEBUG]，获取的数据是：" + params);
+		//转换成JSON对象
+		RequestObject reqObj = new RequestObject();
+		reqObj.setParams(params);
+		ResponseObject repObj = new ResponseObject();
+		Handler handler = this.getHandlerByPath(path, false);
+		handler.beforeHandle(reqObj);
+		repObj = handler.handle(reqObj);
+		handler.afterHandle(reqObj, repObj);
+		return repObj.getResponse();
+	}
+
+	@POST
+	@Path("/andrmob")
+	//@Produces("application/json;charset=utf-8")
+	@Produces("application/x-www-form-urlencoded;charset=ISO-8859-1")
+    @Consumes("application/x-www-form-urlencoded;")  
+	public String andrServ(@FormParam("params") String params, @Context UriInfo info) throws Exception {
+		//
+		System.out.println("[DEBUG]，andrmob请求的Path是：" + info.getPath());
+		System.out.println("[DEBUG]，获取的数据是：" + params);
+		//转换成JSON对象
+		RequestObject reqObj = new RequestObject();
+		ResponseObject repObj = new ResponseObject();
+		String jsonPara = URLDecoder.decode(params, "UTF-8");
+		JSONObject jsonObj = new JSONObject().fromObject(jsonPara);
+		String path = jsonObj.getString("actionName");
+		Handler handler = this.getHandlerByPath(path, false);
+		repObj = handler.handle(reqObj);
+		System.out.println("响应的JSON是：" + repObj.getResponse());
+		return repObj.getResponse();
+	}*/	
+	
+
+	//从Path和Code中获取出方法名称
+	private Map getHandlerResult(Map paramMap) throws DataAccessException {
+		Map rtMap = Collections.EMPTY_MAP;
+		boolean isError = false;
+
+		String path = MapUtils.getString(paramMap, "path");
+		String code = MapUtils.getString(paramMap, "code");
+		Map interfMap = new HashMap();
+		interfMap.putAll(paramMap);
+		Map m =Collections.EMPTY_MAP;
+		
+		if(CONFIG_SERV.equalsIgnoreCase(path)) {
+				System.out.println("调用配置开发");
+				try {
+					m  = this.getServiceDAO().getIntefaceInfoByName(code);
+				} catch (Exception e) {
+					isError = true;
+				}
+		} else if(APP_SERV.equalsIgnoreCase(path)) {
+				System.out.println("调用二次开发");
+				try {
+					m = this.getServiceDAO().getIntefaceInfoByMappingCode(code);
+				} catch (Exception e) {
+					isError = true;
+				}
+		} else if(DIRECT_SERV.equals(path)) {
+				System.out.println("调用透传");
+				try {
+					m = this.getInterfInfoByMappingCode(code);
+				} catch (Exception e) {
+					isError = true;
+				}
+		} else {
+				System.out.println("调用原来的逻辑....");
+		}
+		//
+		if(null != m && 0 != m.size()) {
+			interfMap.putAll(m);
+		}
+		
+		System.out.println("组装后的最终数据： " + interfMap);
+
+		boolean flag = connectMonitorHandle(paramMap,interfMap);
+
+		HandlerFactory fact = new HandlerFactory();
+		Handler handler = null;
+		if(isError || flag == false) {
+			handler = fact.createErrorHandler();
+		} else {
+			handler = fact.createHandler(paramMap);
+		}
+		//
+		try{
+			handler.handle(interfMap);
+		} catch (Exception e) {
+			try {
+				handler = fact.createErrorHandler();
+				handler.handle(interfMap);
+			}catch(Exception ex) {
+				System.out.println("抛出异常: " + ex);
+			}
+		}
+		
+		return handler.getResultMap();
+	}
+	
+	
+	//针对连接监控做特殊处理
+	private boolean connectMonitorHandle(Map paramMap,Map interfMap) throws DataAccessException {
+		
+		String jsonPara = MapUtils.getString(paramMap, "params", "{}");
+
+		Map map = new HashMap();
+		map.put("restServicePath", MapUtils.getString(paramMap, "path"));
+		map.put("restServiceCode", MapUtils.getString(paramMap, "code"));
+		
+		Map rsMap = Collections.EMPTY_MAP;
+		
+		//获取REST服务信息
+		rsMap = this.getRestService(map);
+		
+		//System.out.println("REST Service is: " + rsMap);
+		
+		Long restServiceId = null;
+		String restServiceName = "";
+		
+		//若没有记录，则表示服务不存在，返回错误编码
+		if(rsMap != null && MapUtils.getString(rsMap, "restServiceName")!=null && !MapUtils.getString(rsMap, "restServiceName").equals("")) {
+			restServiceId = MapUtils.getLongValue(rsMap, "restServiceId", -1L);
+			restServiceName = MapUtils.getString(rsMap, "restServiceName");
+
+		}
+		//转JSON
+		JSONObject json = JSONObject.fromObject(jsonPara);
+		System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz connectMonitorHandle传入参数: json=" + json);
+		if(null != json) {
+			Long StaffId = -1L;
+			Iterator jj = json.keys();
+			while(jj.hasNext()){
+				String key = (String) jj.next();
+				if( "staffid".equalsIgnoreCase(key) ){					
+		            StaffId = new Long(json.optString(key));
+                    break;
+				}
+			}
+			
+			if (StaffId == -1L){
+				String username = json.optString("username");
+				Map staffmap = new HashMap();
+				staffmap.put("username", username);
+				Map user = getMobileSessionRecordDAO().selStaffId(staffmap);
+	            StaffId = MapUtils.getLong(user,"staffId");
+			}
+			
+			try {
+
+	            if (StaffId != null && StaffId != -1L) {
+
+	            	Map _map = new HashMap();
+	            	_map.put("staffId", StaffId);
+	            	Map map1 = getMobileSessionRecordDAO().selStaffInfo(_map);
+	            	
+	            	String connectLimit ="1";   //默认为无限制
+	            	String userConnPriv ="1";  //默认为普通权限
+	            	long userFlowLimit = 100;  //默认为100M流量
+	            	long userConnLimit = 100;  //默认为允许100个连接数
+	            	//连接限制
+	            	if (MapUtils.getString(map1,"connectLimit") != null){
+	            	   connectLimit = MapUtils.getString(map1,"connectLimit");
+	            	}
+	            	//用户权限
+	            	if (MapUtils.getString(map1,"userConnPriv") != null){
+	            	   userConnPriv = MapUtils.getString(map1,"userConnPriv");
+	            	}
+	            	//用户流量阀值
+	            	if (MapUtils.getLong(map1,"userFlowLimit") != null){
+	            	   userFlowLimit = MapUtils.getLong(map1,"userFlowLimit").longValue();
+	            	}
+	            	
+	            	Map userMap = getMobileSessionRecordDAO().selUserConnLimit(_map);
+	            	
+	            	//用户连接数阀值
+	            	if (MapUtils.getLong(userMap,"userConnLimit") != null){
+	            	   userConnLimit = MapUtils.getLong(userMap,"userConnLimit").longValue();
+	            	}
+
+	            	Map userMap1 = getMobileSessionRecordDAO().selOnline(_map);
+
+	            	//在线用户数
+	            	long online = MapUtils.getLong(userMap1,"icount").longValue();
+	            	
+	            	//计算用户总流量
+	            	Date d = new Date();
+	    			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM");
+
+	            	Map _flowMap = new HashMap();
+	            	_flowMap.put("staffId", StaffId);
+	            	_flowMap.put("beginMonth",sdf.format(d));
+	                        	
+	            	Map resutMap = getMobileSessionRecordDAO().qryTotalFlowForMobile(_flowMap);
+
+	            	long inFlow = 0;
+	            	long outFlow = 0;
+	            	if (MapUtils.getLong(resutMap,"totalInMessageSize") != null){
+	            	  inFlow = MapUtils.getLong(resutMap,"totalInMessageSize").longValue();
+	            	}
+	            	if (MapUtils.getLong(resutMap,"totalOutMessageSize") != null){
+	            	  outFlow = MapUtils.getLong(resutMap,"totalOutMessageSize").longValue();
+	            	}
+	            	long totalFlow = inFlow + outFlow;
+
+	            	System.out.println("-----staffId="+StaffId+"--totalFlow="+totalFlow+"--userFlowLimit="+userFlowLimit+"--userConnPriv="+userConnPriv +"---online="+online+"--userConnLimit="+userConnLimit);
+	            	//普通权限的用户在在线连接数或者已用流量超过阀值后就不能接入。高级权限的用户无连接数限制和流量阀值限制。
+
+	            	if (connectLimit != null && connectLimit.equals("0")){
+	            		//用户被限制接入
+	            		String msg;
+	        			try {
+	        				msg = ZipUtil.compress("{result:2008, body:{}}");
+	        			} catch (IOException e) {
+	        				// TODO Auto-generated catch block
+	        				e.printStackTrace();
+	        				msg = "";
+	        			}
+	        			interfMap.put("response", msg);  
+
+	            		return false;
+	            	}else if (connectLimit != null && connectLimit.equals("1") && userConnPriv.equals("1") && (totalFlow > (userFlowLimit*1024*1024)) ){
+	            		//普通权限用户超出本月使用流量不允许访问
+	            		String msg;
+	        			try {
+	        				msg = ZipUtil.compress("{result:2012, body:{}}");
+	        			} catch (IOException e) {
+	        				// TODO Auto-generated catch block
+	        				e.printStackTrace();
+	        				msg = "";
+	        			}
+	        			interfMap.put("response", msg);  
+
+	            		return false;
+	            	}else if (connectLimit != null && connectLimit.equals("1") && userConnPriv.equals("1") && online > userConnLimit ){
+	            		//普通权限用户超出用户连接数不允许访问
+	            		String msg;
+	        			try {
+	        				msg = ZipUtil.compress("{result:2013, body:{}}");
+	        			} catch (IOException e) {
+	        				// TODO Auto-generated catch block
+	        				e.printStackTrace();
+	        				msg = "";
+	        			}
+	        			interfMap.put("response", msg);  
+
+	            		return false;
+	            	}else {
+	            		//如果能在MOBILE_SESSION_RECORD找到数据，则更新最新访问时间，如果找不到就新增记录
+	            		Map map2 = getMobileSessionRecordDAO().selById(_map);
+	            		
+	            		if (map2 != null && MapUtils.getLong(map2,"staffId").longValue()>0){
+		            		Map insertMap = new HashMap();
+		            		insertMap.put("lastVisitTime", new Date());
+		            		insertMap.put("staffId", StaffId);
+		            		insertMap.put("connectState", "1");
+		            		insertMap.put("serviceId", restServiceId);
+		            		insertMap.put("serviceName", restServiceName);
+
+		            		getMobileSessionRecordDAO().updateLastVisitTime(insertMap);
+		            		getMobileSessionRecordDAO().updateConnectState(insertMap);
+	            		}else {
+	            			Map insertMap = new HashMap();
+		            		insertMap.put("username", MapUtils.getString(map1,"username"));
+		            		insertMap.put("staffId", StaffId);
+		            		insertMap.put("staffName", MapUtils.getString(map1,"staffName"));
+		            		insertMap.put("createTime", new Date());            		
+		            		insertMap.put("lastVisitTime", new Date());
+		            		insertMap.put("serviceId", restServiceId);
+		            		insertMap.put("serviceName", restServiceName);
+		            		insertMap.put("state", "1");
+		            		insertMap.put("connectState", "1");
+		            		getMobileSessionRecordDAO().insert(insertMap);
+		            		getMobileSessionRecordDAO().updateConnectState(insertMap);
+	            		}           		
+	            	}           	
+	            }
+			}catch (Exception e){
+				
+				e.printStackTrace();
+			}
+		}
+		//System.out.println("connectMonitorHandle传出参数: " + interfMap);
+		
+		return true;
+	}
+	
+	private  ServiceDAO getServiceDAO() {
+		String daoName = ServiceDAOImpl.class.getName();
+		 return (ServiceDAO) BaseDAOFactory.getImplDAO(daoName);
+	}	
+	
+	private MobileInterfaceManagerDAO getMobileInterfaceManagerDAO() {
+		String daoName = MobileInterfaceManagerDAOImpl.class.getName();
+		return (MobileInterfaceManagerDAO) BaseDAOFactory.getImplDAO(daoName);
+	}
+	
+	private Map getInterfInfoByMappingCode(String code) throws DataAccessException {
+		Map map = new HashMap();
+		map.put("mappingCode", code);
+		Map rtMap = this.getMobileInterfaceManagerDAO().selInterfaceInfo(map);
+		return rtMap;
+	}
+		
+	private MobileSessionRecordDAO getMobileSessionRecordDAO() {
+		String daoName = MobileSessionRecordDAOImpl.class.getName();
+		return (MobileSessionRecordDAO) BaseDAOFactory.getImplDAO(daoName);
+	}
+	
+	private RestServiceDAO getRestServiceDAO() {
+		String daoName = RestServiceDAOImpl.class.getName();
+		 return (RestServiceDAO) BaseDAOFactory.getImplDAO(daoName);
+	}
+	
+	private Map getRestService(Map paramMap) {
+		Map dataMap = Collections.EMPTY_MAP;
+		try {
+			List list = this.getRestServiceDAO().selAll(paramMap);
+			if(null != list && 0 != list.size()) {
+				dataMap	= (Map) list.get(0);
+			}
+		} catch(Exception e) {
+			System.out.println("[ERROR] 获取REST服务异常");
+			e.printStackTrace();
+		} 
+		return dataMap;
+	}
+	
+		
+/* public static void main(String args[]) throws Exception {
+		MobileService s = new MobileService();
+		String json = "{\"device\":{\"screen\":\"480*800\",\"model\":\"generic\",\"version\":\"1.0.0\"},\"isPhoneAutoLogin\":false,\"username\":\"zhangkai\",\"serialImis\":\"310260000000000\",\"password\":\"1\"}";
+		s.legacyserv("logonmob", json);
+	}*/
+}

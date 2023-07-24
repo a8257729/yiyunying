@@ -1,0 +1,39 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="appmanage" extends="common-component-define"
+		namespace="/appmanage">
+
+		<action name="OptAppAction"
+			class="com.ztesoft.mobile.v2.action.app.OptAppAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="OptAppFunctionAction"
+			class="com.ztesoft.mobile.v2.action.app.OptAppFunctionAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="SelAppMenuAction"
+			class="com.ztesoft.mobile.v2.action.app.SelAppMenuAction">
+			
+		</action>
+		
+		<action name="SelMobileFrameAppAction"
+			class="com.ztesoft.mobile.v2.action.app.SelMobileFrameAppAction">
+		</action>
+		
+		<action name="MobileFrameAppAction"
+			class="com.ztesoft.mobile.v2.action.app.MobileFrameAppAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+			
+	  <action name="OptAppFunHisAction"
+			class="com.ztesoft.mobile.v2.action.app.OptAppFunHisAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+			
+	</package>
+</xwork>

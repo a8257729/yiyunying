@@ -1,0 +1,35 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="outerSystem" extends="common-component-define"
+		namespace="/outerSystem"> 
+
+		<!-- for insert outerSystem-->
+		<action name="InsertOuterSysemAction"
+			class="com.ztesoft.mobile.outsystem.action.InsertOuterSysemAction">
+			
+			<interceptor-ref name="transactionController" />
+		</action>
+
+		<!-- for delete outerSystem-->
+		<action name="DelOuterSystemAction"
+			class="com.ztesoft.mobile.outsystem.action.DelOuterSystemAction">
+			
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="QueryOuterSystemToShortAction"
+			class="com.ztesoft.mobile.outsystem.action.QueryOuterSystemToShortAction">
+			
+		</action>
+		
+		<action name="UpdateConnectLimitAction"
+			class="com.ztesoft.mobile.systemMonitor.action.UpdateConnectLimitAction">
+			
+			<interceptor-ref name="transactionController" />
+		</action>
+	
+	</package>
+</xwork>

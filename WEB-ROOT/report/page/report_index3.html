@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>工单预警监控</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css"
+			href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/echarts-all.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/common5.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js"></script>
+		<script src="../js/template.min.js"></script>
+		<script src="../js/data-bind.js"></script>
+		<script src="../js/global.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		<a class="mui-icon mui-icon-left-nav mui-pull-left" onClick="androidback()"></a>
+		<a class="mui-pull-right mui-icon iconfont icon-rili"
+			id="showUserPicker" style="display:none"></a>
+		<a class="mui-pull-right mui-icon iconfont" style="font-size:20px"  onClick="refresh()">刷新</a>
+		<h1 id="title" class="mui-title">
+			工单预警监控
+		</h1>
+		</header>
+		<div class="mui-content">
+			<div id="content"></div>
+			<script id="tpl" type="text/html">
+			<table id="tabel" freezeRowNum="1" freezeColumnNum="0" class="am-table am-table-bordered am-table-centered am-table-striped">
+				<thead>
+					<tr>
+						<th id="time" rowspan="1" colspan="10" style="text-align:left;display:none">时间</th>
+					</tr>
+					<tr>
+            			<th >业务号码</th>
+						<th >订单类型</th>
+						<th >预警类型</th>
+						<th >剩余时间</th>
+						<th >当前环节</th>
+						<th >装机员</th>
+						<th >装机员电话</th>
+						<th >所属组织</th>
+						<th >客户名</th>
+						<th >客户电话</th>
+						<th >客户地址</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{each dataArr as item i}}
+					<tr class="mui-tr" areaName={{item.area_name}} >
+						<th style="font-weight:bold" >{{item.ACC_NBR}}</th>
+						<td style="font-weight:bold" >{{item.SERVICE_NAME}}</td>
+						<td style="font-weight:bold" >{{item.ALARM_TYPE}}</td>						
+						<td style="font-weight:bold" >{{item.ALARM_TIME}}</td>
+						<td style="font-weight:bold" >{{item.TACHE_NAME}}</td>
+						<td style="font-weight:bold" >{{item.EXCUTOR}}</td>
+						<td style="font-weight:bold" >{{item.EXCUTOR_NBR}}</td>
+						<td style="font-weight:bold" >{{item.EXCUTOR_ORG}}</td>
+						<td style="font-weight:bold" >{{item.USER_NAME}}</td>
+						<td style="font-weight:bold" >{{item.CONTACT_NBR}}</td>
+						<td style="font-weight:bold" >{{item.ADDR_NAME}}</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			</script>
+		</div>
+		<script>
+		
+		function refresh(){
+		alert("已刷新");
+		query_report_data6(getDataCallBack,staffId);
+			}
+		
+		function androidback(){
+				//调用android本地方法  
+        		Android.backFromAndroid();  
+			}
+			var nowDate = new Date();
+			var beginDateStr = nowDate.getFullYear()+(nowDate.getMonth()+1 < 10 ? '0'+(nowDate.getMonth()+1) : nowDate.getMonth()+1);
+		    var endDateStr = createQueryEndDateStr(nowDate);
+		    var staffId = hsTools.getParam("staffId");
+		    var type = hsTools.getParam("type");
+		    var timeType = "date";
+		    var id = hsTools.getParam("id");
+
+		    //mui.plusReady(function() {
+		    if(type == "month"){
+		    	$('#title').text($('#title').text()+'(月报)');
+		    	timeType = "month";
+		    	if(nowDate.getMonth()==0 || (nowDate.getMonth()==1 && nowDate.getDate()<4)){//1月份的时候查去年的12月   2月4号以前，查去年12月
+		    		beginDateStr = (nowDate.getFullYear()-1)+"12";
+		    	}else if(nowDate.getDate()<4){//3月份的时候查1月份的
+		    		beginDateStr = nowDate.getFullYear()+(nowDate.getMonth()-1 < 10 ? '0'+(nowDate.getMonth()-1) : nowDate.getMonth()-1);
+		    	}else{
+		    		beginDateStr = nowDate.getFullYear()+(nowDate.getMonth() < 10 ? '0'+(nowDate.getMonth()) : nowDate.getMonth());
+		    	}
+
+		    }else if(type == "day"){
+		    	$('#title').text($('#title').text()+'(日报)');
+		    	timeType = "date";
+		    	if((nowDate.getDate()-1)==0){//1日
+		    		if(nowDate.getMonth()==0){//为某年的1月1日
+		    			beginDateStr = (nowDate.getFullYear()-1)+"1231";
+		    		}else{
+		    			
+						//d.getMonth()+1代表下个月，月份索引从0开始，即当前月为6月时，getMonth()返回值为5，创建日期时同理
+						//此处构造的日期为下个月的第0天，天数索引从1开始，第0天即代表上个月的最后一天
+						var curMonthDays = new Date(nowDate.getFullYear(), (nowDate.getMonth()), 0).getDate();
+		    			beginDateStr = nowDate.getFullYear()+(nowDate.getMonth() < 10 ? '0'+(nowDate.getMonth()) : nowDate.getMonth())+curMonthDays;
+		    		}
+		    	    
+		    	}else{
+		    			beginDateStr = nowDate.getFullYear()+(nowDate.getMonth()+1 < 10 ? '0'+(nowDate.getMonth()+1) : nowDate.getMonth()+1) + (nowDate.getDate()< 10 ? '0'+(nowDate.getDate()-1) : nowDate.getDate()-1);
+		    	}
+   
+		    }
+		    
+		    //时间选择器
+			var picker = new mui.DtPicker({
+					"type": timeType
+			});
+			
+			var showUserPickerButton = document.getElementById('showUserPicker');
+			showUserPickerButton.addEventListener('tap', function(event) {
+				picker.show(function(items) {
+					var date = new Date(items.value);
+					endDateStr = createQueryEndDateStr(date);
+					beginDateStr = items.value.replace(/-/g,"")
+                    query_report_data2(getDataCallBack,beginDateStr,staffId);
+				});
+
+			}, false);
+     
+			query_report_data6(getDataCallBack,staffId);
+			
+			function getDataCallBack(jsondataStr) {
+					if(jsondataStr.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+			
+					var jsondata = JSON.parse(jsondataStr);
+					var data = {
+						dataArr: jsondata
+					};
+					console.log(JSON.stringify(data));
+					if(jsondata.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+
+					var html = template('tpl', data);
+					document.getElementById('content').innerHTML = html;
+					$('#time').text("时间："+beginDateStr);
+					//增加列表项点击事件
+					$('.mui-tr').on('tap', function() {
+						var areaName = this.getAttribute('areaName');
+						var str = encodeURI(areaName);
+						//url = 'report_company.html?type='+type+'&staffId='+staffId+'&areaName='+str+'&beginDateStr='+beginDateStr;
+					
+						mui.openWindow({
+							url: url,
+							
+							styles: {
+								popGesture: 'close'
+							},
+							show: {
+								aniShow: ''
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+                                beginDateStr: beginDateStr,
+                                str: str
+							}
+						});
+					});
+					
+					freezeTableInit();
+				}
+				
+			
+		</script>
+	</body>
+
+</html>

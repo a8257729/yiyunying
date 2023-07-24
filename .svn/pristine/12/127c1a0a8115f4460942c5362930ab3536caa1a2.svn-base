@@ -1,0 +1,15 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="interf" extends="common-component-define"
+		namespace="/interf">
+
+		<action name="OptBusiSysAction"
+			class="com.ztesoft.mobile.v2.action.interf.OptBusiSysAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+
+	</package>
+</xwork>

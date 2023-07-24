@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>装拆移定单处理及时率统计</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    
+    <!-- 
+    <script type="text/javascript" src="/MOBILE/api/assets/zepto/zepto.min.js"></script>
+     -->
+     
+     <link rel="stylesheet" href="/MOBILE/api/assets/jquery/mobile/jquery.mobile-1.3.1.css">
+     
+    <script type="text/javascript" src="/MOBILE/api/assets/jquery/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/MOBILE/api/highcharts/js/highcharts.js"></script>
+	<script type="text/javascript" src="/MOBILE/api/highcharts/js/modules/canvas-tools.js"></script>
+	<script type="text/javascript" src="/MOBILE/api/highcharts/js/modules/rgbcolor.js"></script>
+	<script type="text/javascript" src="/MOBILE/api/assets/jquery/mobile/jquery.mobile-1.3.1.min.js"></script>
+	<script type="text/javascript" src="/MOBILE/api/js/json2.js"></script>
+	<script type="text/javascript">
+			
+		$(function () {
+			var jsonData = {"type":"orderTimelyRateList"};
+			
+			var vOptions = {
+				"vTitle":"当月装拆移定单处理及时率统计",
+				"vSubtitle":""
+			};
+			function doStat(json) {
+				doStat1(json);
+			}
+			
+			function doStat1(json){
+				var areaNameList = json["AREA_NAME"];
+				var dataList1 = json["SUM"];
+				var dataList2 = json["TIME"];
+				var dataList3 = json["RATE"];
+				
+				/*alert (areaNameList);
+				alert (dataList1);
+				alert (dataList2);
+				alert (dataList3);
+				alert(maxNum);*/
+		
+	        $('#container').highcharts({
+	            chart: {
+	                zoomType: 'xy'
+	            },
+	            title: {
+	                text: vOptions["vTitle"]
+	            },
+	            subtitle: {
+	                text: vOptions["vSubtitle"]
+	            },
+	            xAxis: [{
+	                categories: areaNameList
+	            }],
+	            yAxis: [{ // Primary yAxis
+	            	min:0,
+	                labels: {
+	                    format: '{value} 单',
+	                    step:1,
+	                    style: {
+	                        color: '#89A54E'
+	                    }
+	                },
+	                title: {
+	                    text: '单量',
+	                    style: {
+	                        color: '#89A54E'
+	                    }
+	                }
+	            }, { // Secondary yAxis
+	            	min:0,	
+	            	max: 100,            
+	                title: {
+	                    text: '及时率',
+	                    style: {
+	                        color: '#4572A7'
+	                    }
+	                },
+	                labels: {
+	                	step:1,
+	                    format: '{value} %',
+	                    style: {
+	                        color: '#4572A7'
+	                    }
+	                },
+	                opposite: true
+	            }],
+	            tooltip: {
+	                shared: true
+	            },
+	            legend: {
+	                layout: 'vertical',
+	                align: 'left',
+	                x: 120,
+	                verticalAlign: 'top',
+	                y: 100,
+	                floating: true,
+	                backgroundColor: '#FFFFFF'
+	            },
+	            series: [{
+	                color: '#4572A7',
+	                type: 'column',
+	                yAxis: 0,
+	                name: '总工单数',
+	                data: dataList1,
+	                tooltip: {
+	                    valueSuffix: ' 单'
+	                }
+	    
+	            }, {
+        	        color: '#FFCC00',
+	                type: 'column',
+	                yAxis: 0,
+	                name: '及时工单数',
+	                data: dataList2,
+	                tooltip: {
+	                    valueSuffix: ' 单'
+	                }
+	    
+	            }, {
+	                name: '及时率',
+	                color: '#89A54E',
+	                type: 'spline',
+	                yAxis: 1,
+	                data: dataList3,
+	                tooltip: {
+	                    valueSuffix: ' %'
+	                }
+	            }]
+	        });
+	    }
+	    /*$.ajax({
+			  url: '/MOBILE/api/busi/stat/hubei/stat',
+			  dataType: 'json',
+			  success: function(data) {
+			  	
+			  	doStat(data);
+			  },
+			  error: function() {
+			  	alert("加载数据失败");
+			  }
+			});*/
+		$.ajax({
+  			url: '/MOBILE/api/busi/stat/hubei/stat',
+ 			contentType: 'application/json',
+ 			type:'POST',
+ 			data:JSON.stringify(jsonData), 			
+  			dataType: 'json',
+  			success: function(data) {
+				doStat(data);
+  			},
+  			error: function() {
+				alert(加载数据失败);
+  			}
+		});
+			
+		
+		});
+	</script>
+
+  </head>
+  
+  <body>
+		<!--
+		<div data-role="header">
+			<h1></h1>
+		</div>
+
+		<div data-role="fieldcontain">
+			<label for="name">
+				Text Input:
+			</label>
+			<input type="text" name="name" id="name" value="" />
+		</div
+		
+		<div data-role="content">
+			<input type="submit" value="Submit Button" />
+		</div>
+
+		-->
+		
+		<div data-role="header">
+		  <h1>装拆移定单处理及时率统计</h1>
+		  <!-- 
+		  <a href="javascript:void" data-icon="check" onclick="Handler.showQryConditions();">查询条件</a>
+		  <a href="hubei_stat1.html" data-icon="refresh" data-theme="b" onclick="Handler.doQuery();">查询</a>
+		   -->
+		</div>
+				
+		<div id="container" style="min-width: 400px; height: 400px; margin: 0 auto">
+		</div>
+	</body>
+</html>

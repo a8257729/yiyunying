@@ -1,0 +1,537 @@
+package com.ztesoft.mobile.v2.service.resource;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import net.sf.json.JSONObject;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.dom4j.Node;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ztesoft.mobile.common.dao.BaseDAOFactory;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import com.ztesoft.mobile.common.helper.Base64It;
+import com.ztesoft.mobile.common.helper.MD5Utils;
+import com.ztesoft.mobile.message.dao.MobileMessageDAO;
+import com.ztesoft.mobile.message.dao.MobileMessageDAOImpl;
+import com.ztesoft.mobile.systemMonitor.dao.MobileSessionRecordDAO;
+import com.ztesoft.mobile.systemMonitor.dao.MobileSessionRecordDAOImpl;
+import com.ztesoft.mobile.v2.Constants;
+import com.ztesoft.mobile.v2.core.BaseService;
+import com.ztesoft.mobile.v2.core.Result;
+import com.ztesoft.mobile.v2.dao.app.MobileAppDAO;
+import com.ztesoft.mobile.v2.dao.app.MobileAppDAOImpl;
+import com.ztesoft.mobile.v2.dao.app.MobileFrameAppDAO;
+import com.ztesoft.mobile.v2.dao.app.MobileFrameAppDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileCommonDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileCommonDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileDownloadLogDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileDownloadLogDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileExceptionDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileExceptionDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileFeedbackDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileFeedbackDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileNoticeDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileNoticeDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileParamDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileParamDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobilePhotoRecordDAO;
+import com.ztesoft.mobile.v2.dao.common.MobilePhotoRecordDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileStaffShortcutDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileStaffShortcutDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileUploadLogDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileUploadLogDAOImpl;
+import com.ztesoft.mobile.v2.dao.interf.MobileRestServLogDAO;
+import com.ztesoft.mobile.v2.dao.interf.MobileRestServLogDAOImpl;
+import com.ztesoft.mobile.v2.dao.interf.MobileStaffInfoDAO;
+import com.ztesoft.mobile.v2.dao.interf.MobileStaffInfoDAOImpl;
+import com.ztesoft.mobile.v2.dao.interf.MobileStaffMappingDAO;
+import com.ztesoft.mobile.v2.dao.interf.MobileStaffMappingDAOImpl;
+import com.ztesoft.mobile.v2.dao.menu.MobileMenuConfigDAO;
+import com.ztesoft.mobile.v2.dao.menu.MobileMenuConfigDAOImpl;
+import com.ztesoft.mobile.v2.dao.menu.MobileMenuDAO;
+import com.ztesoft.mobile.v2.dao.menu.MobileMenuDAOImpl;
+import com.ztesoft.mobile.v2.dao.resource.ResourceDAO;
+import com.ztesoft.mobile.v2.dao.resource.ResourceDAOImpl;
+import com.ztesoft.mobile.v2.entity.app.MobileApp;
+import com.ztesoft.mobile.v2.entity.app.MobileFrameApp;
+import com.ztesoft.mobile.v2.entity.common.JobInfo;
+import com.ztesoft.mobile.v2.entity.common.MobileExceptionLog;
+import com.ztesoft.mobile.v2.entity.common.MobileFeedback;
+import com.ztesoft.mobile.v2.entity.common.MobileNotice;
+import com.ztesoft.mobile.v2.entity.common.MobilePhotoRecord;
+import com.ztesoft.mobile.v2.entity.common.MobileStaffShortcut;
+import com.ztesoft.mobile.v2.entity.common.StaffControls;
+import com.ztesoft.mobile.v2.entity.common.StaffInfo;
+import com.ztesoft.mobile.v2.entity.common.VersionInfo;
+import com.ztesoft.mobile.v2.entity.interf.MobileRestServLog;
+import com.ztesoft.mobile.v2.entity.interf.MobileRestService;
+import com.ztesoft.mobile.v2.entity.interf.MobileStaffMapping;
+import com.ztesoft.mobile.v2.entity.menu.MobileMenu;
+import com.ztesoft.mobile.v2.entity.menu.MobileMenuCatalog;
+import com.ztesoft.mobile.v2.entity.menu.MobileMenuConfig;
+import com.ztesoft.mobile.v2.entity.workform.xinjiang.bz.WorkOrderBz;
+import com.ztesoft.mobile.v2.entity.workform.xinjiang.kt.WorkOrderKt;
+import com.ztesoft.mobile.v2.util.CryptUtils;
+
+/**
+ *资源预判模块服务
+ *
+ */
+@Service("resourceService")
+public class ResourceServiceImpl extends BaseService implements ResourceService {
+	
+	private static final Logger logger = Logger.getLogger(ResourceServiceImpl.class);
+
+	 private ResourceDAO getResourceDAO() {
+	        String daoName = ResourceDAOImpl.class.getName();
+	        return (ResourceDAO) BaseDAOFactory.getImplDAO(daoName);
+	    }
+
+	public Result getResourceInfoByQrcode(String qrCode) {
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		resultMap = getResourceDAO().getResourceInfoByQrcode(qrCode);
+		if (resultMap == null || resultMap.size() == 0) {
+			resultData.put("data_info", resultMap);
+			result = Result.buildFailure();
+			result.setResultData(resultData);
+			return result;
+		}
+		resultData.put("data_info", resultMap);
+		result = Result.buildSuccess();
+		result.setResultData(resultData);
+		return result;
+	}
+
+	public Result queryUserInfo(String portId,String qrCode) {
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		resultMap = getResourceDAO().queryUserInfo(portId,qrCode);
+		if (resultMap == null || resultMap.size() == 0) {
+			resultData.put("data_info", resultMap);
+			result = Result.buildFailure();
+			result.setResultData(resultData);
+			return result;
+		}
+		resultData.put("data_info", resultMap);
+		result = Result.buildSuccess();
+		result.setResultData(resultData);
+		return result;
+	}	
+	
+	
+	
+	public Result commonQueryObjectBySql(String sqlStr,Map paramMap,String wherePatternStr){
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		resultMap = getResourceDAO().commonQueryObjectBySql(sqlStr,paramMap,wherePatternStr);
+		if (resultMap == null || resultMap.size() == 0) {
+			resultData.put("data_info", resultMap);
+			result = Result.buildFailure();
+			result.setResultData(resultData);
+			return result;
+		}
+		resultData.put("data_info", resultMap);
+		result = Result.buildSuccess();
+		result.setResultData(resultData);
+		return result;
+	}
+
+	public Result commonQueryListBySql(String sql, Map<String, Object> paramMap, String wherePatternStr) {
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		resultMap = getResourceDAO().commonQueryListBySql(sql,paramMap,wherePatternStr);
+		if (resultMap == null || resultMap.size() == 0) {
+			resultData.put("data_info", resultMap);
+			result = Result.buildFailure();
+			result.setResultData(resultData);
+			return result;
+		}
+		resultData.put("data_info", resultMap);
+		result = Result.buildSuccess();
+		result.setResultData(resultData);
+		return result;
+	}
+	
+	public Result commonQueryObjectByProcedure(String procedureName, List paramList, int inParamLength,String[] outParam) {
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		resultMap = getResourceDAO().commonQueryObjectByProcedure(procedureName,paramList,inParamLength,outParam);
+		if (resultMap == null || resultMap.size() == 0) {
+			resultData.put("data_info", resultMap);
+			result = Result.buildFailure();
+			result.setResultData(resultData);
+			return result;
+		}
+		resultData.put("data_info", resultMap);
+		result = Result.buildSuccess();
+		result.setResultData(resultData);
+		return result;
+	}
+
+
+	public String getResourceInfoBySpectroscope(String orgId, String direName, String equipmentName, Integer pageSize, Integer pageIndex,String staffId,String condition) {
+		String result = null;
+		try {
+			result = getResourceDAO().getResouceInfoList(orgId, direName, equipmentName, pageSize, pageIndex,staffId,condition);
+//			result = parseSaPrivateWorkOrderResponse(respXml);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+
+		return result;
+	}
+
+	public String getResourceOrderBySpectroscope(String direName, String condition, String timer1, String timer2, Integer pageIndex, Integer pageSize, String staffId) {
+		String result = null;
+		try {
+			result = getResourceDAO().getResouceOrderList(direName,condition,timer1,timer2,pageIndex,pageSize,staffId);
+//			result = parseSaPrivateWorkOrderResponse(respXml);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+
+		return result;
+	}
+
+	public String getObdOrderById(String id) {
+		String result = null;
+		try {
+			result = getResourceDAO().getResouceObdOrderList(id);
+//			result = parseSaPrivateWorkOrderResponse(respXml);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+
+		return result;
+	}
+
+	public void updateResCleanOrderState(String id) {
+		String result = null;
+		try {
+			getResourceDAO().updateResOrderState(id);
+//			result = parseSaPrivateWorkOrderResponse(respXml);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+		}
+	}
+
+	public String getProjectobddevice(String orgId, String equipmentName, Integer pageSize, Integer pageIndex, String staffId) {
+		String result = null;
+		try {
+			result = getResourceDAO().getgcInfoList(orgId , equipmentName, pageSize, pageIndex,staffId);
+//			result = parseSaPrivateWorkOrderResponse(respXml);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+
+		return result;
+	}
+
+	public Result getResourceInfoBySpectroscopeInfo(String eqpId) {
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		try {
+			resultMap = getResourceDAO().getResouceInfo(eqpId);
+			resultData.put("data_info", resultMap);
+			result = Result.buildSuccess();
+			result.setResultData(resultData);
+			return result;
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError();
+		}
+		return result;
+	}
+
+
+	public String getResourceInfoBySpectroscopePort(String eqpId) {
+		String result = null;
+		try {
+			result = getResourceDAO().getResoucePortInfoList(eqpId);
+//			result = parseSaPrivateWorkOrderResponse(respXml);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+
+	public String getResourceInfoByCoverAddress(String eqpId) {
+		String result = null;
+		try {
+			result = getResourceDAO().getResouceCoverAddressInfoList(eqpId);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+
+	public String getResourceInfoByAllCoverAddress(String address,Integer pageSize,Integer pageIndex) {
+		String result = null;
+		try {
+			result = getResourceDAO().getResouceAllCoverAddressInfoList(address,pageSize,pageIndex);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+
+	public String getOltInfoByEqpName(String eqpName) {
+		String result = null;
+		try {
+			result = getResourceDAO().getOltInfoList(eqpName);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+
+
+	public String getOltAuditingInfoByStaffId(String staffId,String checkState,String selInfo,String timer1,String timer2,String state,int page,int pageSize) {
+		String result = null;
+		try {
+			result = getResourceDAO().getOltAuditingInfoListById(staffId,checkState,selInfo,timer1,timer2,state,page,pageSize);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+
+	public String bindAddressCoordinates(String x, String y, String eqpId,String staffId) {
+		String result = null;
+		try {
+			result = getResourceDAO().bindObdCoordinate(x,y,eqpId);
+			JSONObject jsonObject = JSONObject.fromObject(result);
+			if(jsonObject.getString("msg").equals("成功")){
+				//坐标日志写入
+				try {
+					getResourceDAO().writeCoordinateLogToDb("2530",eqpId,"","","","","分光器定位",staffId);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+	public void writeReplaceOltInfo(String portId,String ponId,String eqpId,String staffId) {
+		try {
+				try {
+					getResourceDAO().writeCoordinateLogToDb("2530",eqpId,"","",portId,ponId,"OLT替换",staffId);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+		}
+	}
+
+	public void writeOltUnbindLog(Map<String, Object> map, String msg) {
+		try {
+			getResourceDAO().writeOltUnbindLogToDb(map,msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public void updateOltUnbindInfo(String id,String staffId) {
+		try {
+			getResourceDAO().updateOltUnbindAuditing(id,staffId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void updateOltUnbindStateById(String id) {
+		try {
+			getResourceDAO().updateOltUnbindAuditingState(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String getUserInfoByLoid(String loid) {
+		String result = null;
+		try {
+			result = getResourceDAO().getUserInfo(loid);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+
+	public Result getResourceInfoBySn(String digCode) {
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		try {
+			resultMap = getResourceDAO().getResouceInfoByCode(digCode);
+			resultData.put("data_info", resultMap);
+			result = Result.buildSuccess();
+			result.setResultData(resultData);
+			return result;
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError();
+		}
+		return result;
+	}
+
+	public String getBuildingNum(String staffId) {
+		String result = null;
+		try {
+			result = getResourceDAO().getBuildingAccount(staffId);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+
+	public String getBuildingAddressList(String staffId) {
+		String result = null;
+		try {
+			result = getResourceDAO().getAreaList(staffId);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+
+	public String insertAuditingInfo(String brasIp,String oltIp,String staffId,String unbindtime){
+		String result = null;
+		try {
+			int flag = getResourceDAO().insertUnbindAuditing(brasIp,oltIp,staffId,unbindtime);
+			JSONObject js  = new JSONObject();
+			if(flag==0){
+				js.put("res","repeat");
+				result = js.toString();
+			}else if(flag==1){
+				js.put("res","success");
+				result = js.toString();
+			}else if(flag==2){
+				result = Result.buildInvokeInterError().toString();
+			}
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+	public String updateOltAuditingState(String staffId,String choose,String ids,String opinion){
+		String result = null;
+		try {
+			int flag = getResourceDAO().updateUnbindAuditing(staffId,choose,ids,opinion);
+			JSONObject js  = new JSONObject();
+			if(flag==1){
+				js.put("res","success");
+				result = js.toString();
+			}else if(flag==2){
+				result = Result.buildInvokeInterError().toString();
+			}
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+
+	public String getWorkOrderZQSVIP(String workOrderID) {
+		String result = null;
+		try {
+			result = getResourceDAO().selWorkOrderZQSVIP(workOrderID);
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//接口调用失败
+			result = Result.buildInvokeInterError().toString();
+		}
+		return result;
+	}
+
+}

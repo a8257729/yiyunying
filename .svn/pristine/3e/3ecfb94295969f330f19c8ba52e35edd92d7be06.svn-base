@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data> 
+  <QueryMethod>saFeedBackInfoForEBiz</QueryMethod>
+  <Return> 
+    <Result>000</Result>  
+    <ErrorDesc>反馈内容列表</ErrorDesc> 
+  </Return>  
+  <ReturnList> 
+    <List> 
+      <TrackStaffName>ck</TrackStaffName>  
+      <TrackContent>反馈内容0001</TrackContent> 
+      <TrackDate>2014-01-14 15:35:55</TrackDate> 
+    </List>  
+    <List> 
+      <TrackStaffName>xdj</TrackStaffName>  
+      <TrackContent>反馈内容0002</TrackContent> 
+      <TrackDate>2014-01-14 15:35:55</TrackDate> 
+    </List> 
+    <List> 
+      <TrackStaffName>nong</TrackStaffName>  
+      <TrackContent>反馈内容0003</TrackContent> 
+      <TrackDate>2014-01-14 15:35:55</TrackDate> 
+    </List> 
+  </ReturnList> 
+</Data>

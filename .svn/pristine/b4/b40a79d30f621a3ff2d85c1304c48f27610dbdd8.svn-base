@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+	<QueryMethod>staff_org_list</QueryMethod>
+	<Return>
+		<ContentList>
+			<Content>
+				    <id>1</id>
+	          		<name>上海</name>
+					<mhasParent>false</mhasParent>
+					<mhasChild>true</mhasChild>
+					<parent>0</parent>
+					<level>1</level>
+					<expanded>false</expanded>
+					<partyType>ORG</partyType>
+			</Content>			
+		</ContentList>	
+		<Result>000</Result>
+		<ErrorDesc>查询成功</ErrorDesc>
+	</Return>
+</Data>

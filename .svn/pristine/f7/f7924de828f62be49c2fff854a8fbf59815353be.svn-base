@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+	<QueryMethod>saPortInfoForEBiz</QueryMethod>
+	<Return>
+		<Content>
+			<Public>
+			      <CustPortID>1403754</CustPortID>
+				  <CustDeseq>3753</CustDeseq>
+				  <CustOrderCode>84999988</CustOrderCode>
+				  <CustOrderId>9998</CustOrderId>
+				  <CustProdType>IPTV</CustProdType>
+				  <CustOprState>在途</CustOprState>
+		          <CustName>林玉满</CustName>
+		          <CustDireName>广东省中山市岐头新村龙凤街</CustDireName>
+		          <CustaddrName>广东省中山市岐头新村龙凤街8号B幢首层1卡</CustaddrName>
+		          <SpcComName>岐头新村</SpcComName>
+		          <CustEqpName>NPSDS-12201</CustEqpName>
+		          <CustPortName>12201</CustPortName>
+		          <CustMoalais>11111</CustMoalais>
+		          <CustRackName>AF</CustRackName>
+		          <CustHtermNo>S4</CustHtermNo>
+			</Public>
+		</Content>
+		<Result>000</Result>
+		<ErrorDesc>查询成功</ErrorDesc>
+	</Return>
+</Data>

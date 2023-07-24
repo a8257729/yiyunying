@@ -1,0 +1,204 @@
+package com.ztesoft.mobile.v2.controller.workform.xinjiang;
+
+import com.ztesoft.mobile.v2.core.BaseController;
+import com.ztesoft.mobile.v2.core.RequestEntity;
+import com.ztesoft.mobile.v2.core.Result;
+import com.ztesoft.mobile.v2.service.workform.xinjiang.WorkOrderPublicService;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+/***
+ * 公用工单管控功能
+ * 
+ ** */
+ 
+@Controller("xjWorkFormPublicController")
+public class WorkFormPublicController extends BaseController {
+
+	private static final Logger logger = Logger
+			.getLogger(WorkFormPublicController.class);
+
+	private WorkOrderPublicService workOrderService;
+
+	public WorkOrderPublicService getWorkOrderService() {
+		return workOrderService;
+	}
+
+	@Autowired(required = false)
+	public void setWorkOrderService(WorkOrderPublicService workOrderService) {
+		this.workOrderService = workOrderService;
+	}
+	
+           
+    /**
+	 * 工单反馈
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = { "/client/xj/workorder/feedback" })
+	public @ResponseBody
+	Result reportWorkOrder(@RequestBody RequestEntity requestEntity,
+			ModelMap model, HttpServletRequest request,
+			HttpServletResponse response) {
+		if (logger.isDebugEnabled()) {
+			logger.debug(" Call reportOrderForPnet method ");
+		}
+
+		JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+		Result result = this.getWorkOrderService().reportWorkOrder(json);
+		return result;
+	}
+	
+	
+	
+	 /**
+     * web端公共-查询人员组织树
+     */
+    
+    @RequestMapping(value = {"/client/xj/web/tree/org/query"})
+    public @ResponseBody Result webQryOrgTree(@RequestBody Map<String,Object> data) {
+        if(logger.isDebugEnabled()) {
+        	logger.debug(" Call qryOrgTree method ");
+        }
+        JSONObject json = new JSONObject();
+        json.put("OrgId", data.get("OrgId")==null ? "":(String)data.get("OrgId"));
+        //web 端写死true
+        json.put("IsFirst", (String)data.get("IsFirst"));
+        Result result = getWorkOrderService().qryOrgTree(json);
+        return result;
+    }
+	
+	
+		
+	    /**
+	     * 公共-查询人员组织树
+	     */
+	    
+	    @RequestMapping(value = {"/client/xj/tree/org/query"})
+	    public @ResponseBody Result qryOrgTree(@RequestBody RequestEntity requestEntity, ModelMap model, HttpServletRequest request, HttpServletResponse response) {
+	        if(logger.isDebugEnabled()) {
+	        	logger.debug(" Call qryOrgTree method ");
+	        }
+	        JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+//	        Long jobId = json.optLong(JobInfo.JOB_ID_NODE);
+//	        Long areaId = json.optLong(JobInfo.AREA_ID_NODE);
+	        Result result = getWorkOrderService().qryOrgTree(json);
+	        return result;
+	    }
+	    /**
+	     * 公共-查询(所有)人员组织树
+	     */
+	    
+	    @RequestMapping(value = {"/client/xj/tree/org/query/all"})
+	    public @ResponseBody Result qryAllOrgTree(@RequestBody RequestEntity requestEntity, ModelMap model, HttpServletRequest request, HttpServletResponse response) {
+	        if(logger.isDebugEnabled()) {
+	        	logger.debug(" Call qryAllOrgTree method ");
+	        }
+	        JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+	        Result result = getWorkOrderService().qryAllOrgTree(json);
+	        return result;
+	    }	    
+	    /**
+	     * 公共-查询授权人员组织树（转派配置表）
+	     */
+	    
+	    @RequestMapping(value = {"/client/xj/tree/auth_org/query"})
+	    public @ResponseBody Result qryAuthOrgTree(@RequestBody RequestEntity requestEntity, ModelMap model, HttpServletRequest request, HttpServletResponse response) {
+	        if(logger.isDebugEnabled()) {
+	        	logger.debug(" Call qryAuthOrgTree method ");
+	        }
+	        JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+//	        Long jobId = json.optLong(JobInfo.JOB_ID_NODE);
+//	        Long areaId = json.optLong(JobInfo.AREA_ID_NODE);
+	        Result result = getWorkOrderService().qryAuthOrgTree(json);
+	        return result;
+	    }
+	    
+	  	    
+	    /**
+		 * 根据日期和处理人，加载时段
+		 * 
+		 * @param request
+		 * @param response
+		 * @return
+		 */
+		@RequestMapping(value = { "/client/xj/workorder/timeSeq/query" })
+		public @ResponseBody
+		Result timeSeqQuery(@RequestBody RequestEntity requestEntity,
+				ModelMap model, HttpServletRequest request,
+				HttpServletResponse response) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(" Call timeSeqQuery method ");
+			}
+
+			JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+			Result result = this.getWorkOrderService().timeSeqQuery(json);
+			return result;
+		}
+		
+		/**web端
+		 * 根据日期和处理人，加载时段
+		 * 
+		 * @param request
+		 * @param response
+		 * @return
+		 */
+		@RequestMapping(value = { "/client/xj/workorder/web/timeSeq/query" })
+		public @ResponseBody
+		Result webToTimeSeqQuery(@RequestBody Map<String,Object> data) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(" Call timeSeqQuery method ");
+			}
+
+			JSONObject json = new JSONObject();
+			json.put("BokDate", (String)data.get("BokDate"));
+			json.put("StaffId", (String)data.get("StaffId"));
+			Result result = this.getWorkOrderService().timeSeqQuery(json);
+			return result;
+		}
+		
+		 /**
+	     * 公共-查询障碍原因树
+	     */
+	    
+	    @RequestMapping(value = {"/client/xj/tree/fault/reason/query"})
+	    public @ResponseBody Result qryFaultReasonTree(@RequestBody RequestEntity requestEntity, ModelMap model, HttpServletRequest request, HttpServletResponse response) {
+	        if(logger.isDebugEnabled()) {
+	        	logger.debug(" Call qryFaultReasonTree method ");
+	        }
+	        JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+//	        Long jobId = json.optLong(JobInfo.JOB_ID_NODE);
+//	        Long areaId = json.optLong(JobInfo.AREA_ID_NODE);
+	        Result result = getWorkOrderService().qryFaultReasonTree(json);
+	        return result;
+	    }
+	    
+	    /**
+	     * 公共-web查询障碍原因树
+	     */
+	    
+	    @RequestMapping(value = {"/client/xj/web/tree/fault/reason/query"})
+	    public @ResponseBody Result qryWebFaultReasonTree(@RequestBody Map<String,Object> data) 
+	    {
+	        	logger.debug(" Call qryFaultReasonTree method ");
+	      
+	        JSONObject json = new JSONObject();
+	        json.put("JobId",(String)data.get("JobId"));
+//	        Long jobId = json.optLong(JobInfo.JOB_ID_NODE);
+//	        Long areaId = json.optLong(JobInfo.AREA_ID_NODE);
+	        Result result = getWorkOrderService().qryFaultReasonTree(json);
+	        return result;
+	    }
+}
+

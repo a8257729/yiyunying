@@ -1,0 +1,7 @@
+#save jndi.config.
+java.naming.security.principal
+#Fri Sep 05 13:56:17 CST 2003
+java.naming.provider.url=iiop://localhost:2809/
+java.naming.factory.initial=com.ibm.websphere.naming.WsnInitialContextFactory
+java.naming.factory.url.pkgs=
+java.naming.security.credentials=

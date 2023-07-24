@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>创建童锁</title>
+		<meta name="viewport" content=" width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<script src="js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<style type="text/css">
+		#edite{
+			border: 1px solid transparent;
+			width:100%;
+			height:300px;
+		}
+		#edite table{
+			width:80%;
+			margin:auto 10%;
+			height:300px;
+		}
+		#user,#pwd,#repwd{
+			height:30px;
+		}
+		#bt_reset{
+			width:60px;
+			height:35px;
+			margin-left:10%;
+			background-color:#00BFFF;
+			color: white;
+		}
+		#submit{
+			width:60px;
+			height:35px;
+			margin-left:10%;
+			background-color:#32CD32;
+			color: white;
+		}
+	</style>
+	<body>
+		<div id="edite">
+			<table border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<th>童锁账号:</th>
+					<td>
+						<input type="text" name="user" id="user" />
+					</td>
+				</tr>
+				<tr>
+					<th>童锁密码:</th>
+					<td>
+						<input type="text" name="pwd" id="pwd" />
+					</td>
+				</tr>
+				<tr>
+					<th>确认密码:</th>
+					<td>
+						<input type="text" name="pwd" id="repwd" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<input type="button" name="submit" id="submit" value="创建"  onclick="createChildLock()"/>
+						<input type="reset" name="bt_reset" id="bt_reset" value="清空" onclick="resetInput()"/>	
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+	<script type="text/javascript">
+	
+		window.onload = function (){
+			debugger;
+			$("#user").val(getParam("user"));
+			$("#pwd").val(getParam("pwd"));
+		}
+		
+		function getParam(name) {
+        		 var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+         		 var r = window.location.search.substr(1).match(reg);
+        		 if (r != null)
+             	return decodeURI(r[2]);   //对参数进行decodeURI解码
+        		return null;
+     		}
+	
+		function createChildLock(){
+			debugger;
+			var requestURL = "/MOBILE/ChdPassServlet?";
+			var command = "create";
+			var logicdevno = $("#user").val(); //账号
+			var chd_pass = $("#pwd").val();//密码
+			var chd_repass = $("#repwd").val();//确认密码
+			if(logicdevno==""){
+				alert("账号不能为空");
+				return;
+			}
+			if(chd_pass==""){
+				alert("密码不能为空");
+				return;
+			}
+			if(chd_pass!=chd_repass){
+				alert("两次密码输入不一致");
+				return;
+			}
+			$.ajax({
+				type: "post",
+				url: requestURL + "logicdevno=" + logicdevno + "&chd_pass=" + chd_pass+ "&command=" + command,
+				/* data:JSON.stringify(param), */
+				contentType: "json",
+				success: function(data) {
+					debugger;
+					var JsonStringObj = JSON.parse(data);
+					var result = JsonStringObj.returnInfo;
+					if('0000'==result.code){
+						alert(result.message+"账号:"+logicdevno+";密码:"+chd_pass);
+						window.location.href="childLock.html";
+					}else{
+						alert(result.message+"账号:"+logicdevno+";密码:"+chd_pass);
+					}
+				},
+				error: function() {
+					alert("请求失败!");
+				}
+			});
+		}
+		
+		
+		function resetInput(){
+			var logicdevno = $("#user").val(""); //账号
+			var chd_pass = $("#pwd").val("");//密码
+			var chd_repass = $("#repwd").val("");//确认密码
+		}
+	</script>
+</html>

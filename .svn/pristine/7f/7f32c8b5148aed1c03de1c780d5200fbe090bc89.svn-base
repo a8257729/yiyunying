@@ -1,0 +1,210 @@
+package com.ztesoft.mobile.v2.dao.common;
+
+import com.zterc.uos.exception.RequiredException;
+import com.zterc.uos.exception.SystemException;
+import com.ztesoft.mobile.common.dao.BaseDAO;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import com.ztesoft.mobile.v2.entity.common.StaffControls;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
+public interface MobileCommonDAO extends BaseDAO {
+
+    /**
+     * 根据用户名获取用户密码
+     * @param username
+     * @return
+     * @throws com.ztesoft.mobile.common.exception.DataAccessException
+     */
+	public String getPasswordByUsername(String username) throws DataAccessException;
+
+    public String getPasswordByStaffId(Long staffId) throws DataAccessException;
+
+    public void updatePasswordByStaffId(Long staffId, String newPasswd) throws DataAccessException;
+
+    public String getPasswordByMobile(String mobile) throws DataAccessException;
+
+    public Map<String, Object> getStaffByUsername(String username) throws DataAccessException;
+
+    public Map<String, Object> getStaffByMobile(String mobile) throws DataAccessException;
+
+    /**
+     * 获取职位列表且包含默认职位
+     * @param staffId
+     * @param basic
+     * @return
+     * @throws DataAccessException
+     */
+	public List<Map> getJobList(Long staffId, int basic)throws DataAccessException;
+
+    //public String getMenuCatalog(String staffId)throws DataAccessException;
+
+    /**
+     * 获取默认职位信息
+     * @param staffId
+     * @return
+     * @throws DataAccessException
+     */
+    public Map getDefaultJob(Long staffId) throws DataAccessException;
+
+    /**
+     * 获取非默认职位列表
+     * @param staffId
+     * @return
+     * @throws DataAccessException
+     */
+    public List<Map> getNormalJobList(Long staffId) throws DataAccessException;
+    
+    public List<StaffControls> getStaffControlsList() throws DataAccessException;
+    
+    public StaffControls getStaffControls(Long staffId) throws DataAccessException;
+  
+    public List<Map> selOrgTree(Map paramMap)throws DataAccessException;
+    
+    public List<Map> selAllOrgTree(Map paramMap)throws DataAccessException;
+    
+    public List<Map> selAuthOrgTree(Map paramMap)throws DataAccessException;
+    
+    public void insertUosStaffYxwx(Map paramMap) throws DataAccessException;
+    
+    public void updateUosStaffYxwx(Map paramMap) throws DataAccessException;
+    
+    public Map<String, Object>  getUosStaffYxwx(Map paramMap) throws DataAccessException;
+    
+    public Map<String, Object> getStaffByOpenId(String openId,String type) throws DataAccessException;
+    
+    public List<Map> qryFaultReasonTree(Map paramMap)throws DataAccessException;
+
+    public List<Map> qryHandTree(Map paramMap)throws DataAccessException;
+
+    public Map<String,Object> getMakeDataByWkOrderId(String wkOrderId) throws DataAccessException;
+
+    public Map qryStaffIdArea(String staffId)throws Exception;
+
+    public String qryOrderId(String workOrderId)throws Exception;
+
+    public  void saveHandType(Map map)throws RequiredException, SystemException, SQLException;
+
+    public Map<String,String> qryFaultOrderExt(String workOrderId)throws Exception;
+
+
+
+    /**
+     * 查询工单制作进度
+     * @param wkOrderId
+     * @param type 操作类型
+     * @return
+     * @throws DataAccessException
+     */
+    public Map<String,Object> getMakeProgressByWkOrderId(String wkOrderId, String string) throws DataAccessException;
+    
+    public Map<String,Object> addMakeDataInfo(Map paramMap) throws DataAccessException;
+    
+    public Map<String,Object> commitTerminalInfo(Map paramMap) throws DataAccessException;
+    
+    public List<Map> qryOltByName(String oltName,String wkOrderId)throws DataAccessException;
+    
+    public List<Map> qryOltPonPortById(String oltId)throws DataAccessException;
+    
+    public Map<String,Object> getTerminalByWkOrderId(String wkOrderId) throws DataAccessException;
+    
+    /**
+     * 报表查询
+     * */
+    public String getReportInfo(String retrieveDate,String staffId,String reportType) throws DataAccessException;
+    /**
+     * 报表查询test
+     * */
+    public String getReportTestInfo(String retrieveDate,String staffId) throws DataAccessException;
+    /**
+     * 报表查询company
+     * */
+    public String getReportCompanyInfo(String retrieveDate,String areaName) throws DataAccessException;
+    
+    /**
+     * 报表查询companyStaff
+     * */
+    public String getReportCompanyStaffInfo(String retrieveDate,String areaName,String company) throws DataAccessException;
+    /**
+     * 报表查询StaffDay
+     * */
+    public String getReportStaffDayInfo(String retrieveDate,String staffId) throws DataAccessException;
+    /**
+     * 报表查询orderAlarm
+     * */
+    public String getOrderAlarmInfo(String staffId) throws DataAccessException;
+    /**
+     * 报表查询orderDetail
+     * */
+    public String getOrderDetailInfo(String accNbr,String areaNbr) throws DataAccessException;
+    /**
+     * 报表查询companyLogin
+     * */
+    public String getReportCompanyLoginInfo(String retrieveDate,String staffId) throws DataAccessException;
+    
+    /**
+     * 报表查询companyDwLogin
+     * */
+    public String getReportCompanyDwLoginInfo(String retrieveDate,String staffId) throws DataAccessException;
+    
+    /**
+     * 报表查询companyDetail
+     * */
+    public String getReportCompanyDetailLoginInfo(String retrieveDate,String areaName) throws DataAccessException;
+    
+    /**
+     * 报表查询StaffLogin
+     * */
+    public String getReportStaffLoginInfo(String retrieveDate,String staffId) throws DataAccessException;
+    
+    /**
+     * 报表查询ManagerLogin
+     * */
+    public String getReportManagerLoginInfo(String retrieveDate,String staffId) throws DataAccessException;
+
+	public Map<String, Object> getProduceOrderIdByOrderId(String orderId);
+
+	public Map<String, Object> getRegionInfoByOrderId(String orderId);
+
+	public Map<String, Object> getStaffInfoByStaffId(String staffId);
+	
+	/**
+	 * 插入接口日志信息
+	 * @param orderCode
+	 * @param operName
+	 * @param returnDesc
+	 * @throws DataAccessException
+	 */
+	public void insertIntfLog(String orderCode,String operName,String returnDesc) throws DataAccessException;
+
+	/**
+	 * 校验是否可以改单，单子是否已经修改过
+	 * @param orderId
+	 * @return
+	 */
+	public boolean validateModifyOrder(String orderId);
+
+	/**
+	 * 扫码装机，根据二维码查询资源信息
+	 * @param qrCode
+	 * @param wkOrderId 
+	 * @return
+	 */
+	public Map<String, Object> getInstallDataByQrCode(String qrCode, String wkOrderId);
+
+	/**
+	 * 扫码装机数据制作 
+	 * @param makeData
+	 * @return
+	 */
+	public Map addMakeDataSMInfo(Map makeData) throws DataAccessException;
+
+	public boolean validateSmInstallOrder(String orderId);
+
+	public Map<String, Object> pxCodeBind(String portId, String pxCode, String staffId);
+
+	public boolean validatePxCode(String pxCode);
+}
+  

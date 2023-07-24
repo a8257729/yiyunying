@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content=" width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>问题详情</title>
+		<link rel="stylesheet" type="text/css" href="/MOBILE/report/broadband/css/questionDetail.css"/>
+	</head>
+	<script src="/MOBILE/report/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script language="javascript" src="/MOBILE/report/workfloworder/js/common.js"type="text/javascript"></script>
+	<body>
+		<div id="box">
+			<div id="box_top">问题详情</div>
+			<img id="back" src="/MOBILE/report/broadband/img/block.png"  onclick="javascript:window.history.back(-1);" style="width:16%;height:35px;position: absolute;top:1px;"/>
+			<div id="box_middle">
+				<span id="question"></span>												
+			</div>
+			<div id="box_middle2"></div>
+			<div id="box_bottom">
+				<span id="" style="color:blue;">以上信息是否解决了您的问题？</span>		
+			</div>
+			<div id="box_end">
+				<ul>
+					<li><img src="/MOBILE/report/broadband/img/yes.png"/ id="zan_img"  onclick="assess(this)"></li>
+					<li><img src="/MOBILE/report/broadband/img/no.png"/ id="buzan_img" onclick="assess(this)"></li>
+				</ul>
+				<ul style="float: left;">
+					<li id="zan"></li>
+					<li id="buzan"></li>				
+				</ul>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var smallTitle = "";
+		$(function(){
+			debugger;
+			var url = decodeURI(window.location.href);
+			var argsIndex = url .split("?smallTitle=");
+			smallTitle= argsIndex[1];
+			console.log(smallTitle);
+			queryAnswer(smallTitle);
+		})
+		
+		function queryAnswer(smallTitle){
+			debugger;
+			var params = {
+				"smallTitle":smallTitle
+			}
+			$.ajax({
+				url:"/MOBILE/api/broadband/question_bank/query/answer",
+				type:"post",
+				data:JSON.stringify(params),
+				contentType:"application/json",
+				dataType:"json",
+				success:function(data){
+					debugger;
+					console.log("参数查询成功！");
+					var sonQuestionAnswer =  data.resultData.sonQuestionAnswer
+					if(sonQuestionAnswer.length<1){
+						$("#question").append("<b>没有查询到相关信息</b><br>");
+						$("#zan").text("0");
+						$("#buzan").text("0");
+					}
+					
+					//for(var i=0;i<sonQuestionAnswer.length;i++){
+						
+						$("#question").append("<b>"+sonQuestionAnswer[0].QUESTION_TITLE+"</b><br>");
+						$("#box_middle2").append("<p>"+sonQuestionAnswer[0].QUESTION_CONTENT+"</p>");
+						$("#zan").text(sonQuestionAnswer[0].HELPFUL_CNT);
+						$("#buzan").text(sonQuestionAnswer[0].UNHELPFUL_CNT);
+					//}
+				
+				},
+				error:function(e){
+						console.log("参数查询失败");
+					    $("#question").append("<b>查询失败，请联系管理员</b><br>");
+						$("#zan").text("0");
+						$("#buzan").text("0");
+				}
+			})
+		}
+		
+		var flag = true;
+		function assess(as){
+			debugger;
+		if(flag){
+			flag = false;
+			console.log("评论成功");
+			$(as).onclick=null;
+			var id = $(as).attr("id");
+			var params = {};
+			if(id=="zan_img"){
+				var helpCount = $("#zan").text();
+				helpCount = parseInt(helpCount)+1;
+				$("#zan").text(helpCount);
+				params.smallTitle=smallTitle;
+				params.id="1";
+				
+			}
+			if(id=="buzan_img"){
+				var unHelpCount = $("#buzan").text();
+				unHelpCount = parseInt(unHelpCount)+1;
+				$("#buzan").text(unHelpCount);
+				params.smallTitle=smallTitle;
+				params.id="0";
+			}
+			
+			$.ajax({
+				url:"/MOBILE/api/broadband/question_bank/update/access",
+				type:"post",
+				data:JSON.stringify(params),
+				contentType:"application/json",
+				dataType:"json",
+				success:function(data){
+					debugger;
+					console.log(data.setResultMsg);
+				},
+				error:function(e){
+					console.log("更新评论失败");
+				}
+			});
+			 
+			
+		}
+			
+			
+		}
+		
+	</script>
+</html>

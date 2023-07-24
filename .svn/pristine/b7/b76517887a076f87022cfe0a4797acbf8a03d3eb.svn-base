@@ -1,0 +1,170 @@
+package com.ztesoft.mobile.v2.service.workform.xinjiang.bz;
+
+import net.sf.json.JSONObject;
+
+import com.ztesoft.mobile.v2.core.Result;
+
+/**
+ * 工单处理模块
+ * 
+ * @author linping
+ * 
+ */
+public interface MyWorkOrderBzService {
+
+	public static final String WS_NAMESPACE = "";
+
+	public static final String WS_METHOD_OPERATION_NAME = "pfServicesForEBiz";
+
+	public static final String ORDER_TYPE_NODE = "orderType";
+	public static final String WORKORDER_ID_NODE = "workOrderId";
+	public static final String WORKORDER_CODE_NODE = "workOrderCode";
+	public static final String HANDLE_STAFF_ID_NODE = "handleStaffId";
+	public static final String FINISH_TIME_NODE = "finishTime";
+	public static final String EQUIP_NO_NODE = "equipNo";
+	public static final String HANDLE_PROCESS_NODE = "handleProcess";
+	public static final String IS_VISIT_NODE = "isVisit";
+	public static final String AUTO_RETURN_VISIT_NODE = "autoReturnVisit";
+	public static final String STAFF_ID_NODE = "staffId";
+	public static final String USER_NAME_NODE = "userName";
+	public static final String RECOVER_TIME_NODE = "recoverTime";
+    public static final String ARRIVE_TIME_NODE = "arriveTime";//到达现场时间
+	public static final String RECOVER_REASON_ID_NODE = "recoverReasonId";
+	public static final String RECOVER_REASON_NAME_NODE = "recoverReasonName";
+	public static final String MAINTAIN_STAFF_ID_NODE = "maintainStaffId";
+	public static final String MAINTAIN_STAFF_NAME_NODE = "maintainStaffName";
+	public static final String MAINTAIN_STAFF_TEL_NODE = "maintainStaffTel";
+	public static final String RECOVER_CONFIRM_STAFF_NODE = "recoverConfirmStaff";
+	public static final String CONFIRM_TEL_NODE = "confirmTel";
+	public static final String DESC_NODE = "desc";
+	public static final String REMARK_NODE = "remark";
+	public static final String RELIEF_REMARK_NODE = "reliefRemark";
+	public static final String RES_CHANGE_DESC_NODE = "resChangeDes";//资源变更说明
+	public static final String PIC_USER_ID_NODE = "picUserId";
+	public static final String PHOTO_RECORD_ID = "photoRecordId";
+	public static final String CANCEL_REASON_ID_NODE = "cancelReasonId";
+	public static final String TIME_OUT_REASON_ID_NODE = "timeOutReasonId";
+
+	public static final String CANCEL_REASON_TYPE_NODE = "cancelReasonType";
+	public static final String CANCEL_REASON_NODE = "cancelReason";
+
+	public static final String TRACK_HELP_PROPORTION_NODE = "trackHelpProportion";
+	public static final String TRACK_HELP_ORG_ID_NODE = "trackHelpOrgId";
+	public static final String TRACK_HELP_ID_NODE = "trackHelpId";
+	public static final String TRACK_HELP_NAME_NODE = "trackHelpName";
+	
+	/**
+	 * 保障PNET工单回单
+	 */
+	public static final String STAFFID_NODE = "deal_staff";
+	public static final String STAFFNAME_NODE = "deal_staff_name";
+	public static final String RECOVER_DATE_NODE = "recover_date";
+	public static final String FAULT_GRADE_NODE = "fault_grade";
+	public static final String FAULT_GRADETEXT_NODE = "fault_gradeText";
+	public static final String NET_GRADE_NODE = "net_grade";
+	public static final String NET_GRADETEXT_NODE = "net_gradeText";
+	public static final String FAULT_KIND_NODE = "fault_kind";
+	public static final String FAULT_KINDTEXT_NODE = "fault_kindText";
+	public static final String RESPONSIBLE_PARTY_NODE = "responsible_party";
+	public static final String RESPONSIBLE_PARTYTEXT_NODE = "responsible_partyText";
+	public static final String REASON_NODE = "reason";
+	public static final String REASONTEXT_NODE = "reasonText";
+	public static final String SUB_REASON_NODE = "sub_reason";
+	public static final String SUB_REASONTEXT_NODE = "sub_reasonText";
+	public static final String NET_EQUIP_GRADE_NODE = "net_equip_grade";
+	public static final String NET_EQUIP_GRADETEXT_NODE = "net_equip_gradeText";
+	public static final String FAULT_DESC_NODE = "fault_desc";
+	public static final String HASLEFTISSUE_NODE = "hasLeftIssue";
+	public static final String LEFTISSUE_NODE = "leftIssue";
+	public static final String HASADJRES_NODE = "hasAdjRes";
+	public static final String ADJRES_NODE = "adjRes";
+	public static final String EFFECT_SCOPE_NODE = "effect_scope";
+	public static final String DEV_FACTORY_NODE = "dev_factory";
+	public static final String DEV_FACTORYTEXT_NODE = "dev_factoryText";
+	public static final String DEV_NAME_NODE = "dev_name";
+	
+	/**
+	 * 保障工单监控
+	 */
+	public static final String WORKORDERID = "WorkOrderID";
+	public static final String USENAME = "UseName";
+	public static final String ORDERID = "OrderID";	
+	
+	public static final String ORDERCLASS = "OrderClass";
+
+
+	/** 故障接单 */
+	public Result acceptFaultOrder(JSONObject json);
+
+	/*
+	 * 初始化回单页面相关内容 修复原因列表 维护人员列表 超时原因列表 维护人电话 修复确认人 修复确认人联系电话 修复时间 取数据库当前时间
+	 */
+	public Result workOrderViewData(JSONObject json);
+
+	// 回单
+	public Result replyFaultOrder(JSONObject json);
+	
+
+	public Result loadReplyFaultOrderData(JSONObject json);
+
+	// 退单原因类别
+	public Result cancelOrderReason(JSONObject json);
+
+	// 退单
+	public Result cancelOrder(JSONObject json);
+
+	
+	/**
+	 * 保障待办私有工单查询
+	 * 
+	 * @param staffInfo
+	 * @param workOrder
+	 * @return
+	 */
+	public Result selSaPrivateWorkOrderByPage(String username, Long jobId,
+			Integer pageSize, Integer pageIndex);
+
+	/**
+	 * 主动检测单查询
+	 * @param username
+	 * @param jobId
+	 * @param pageSize
+	 * @param pageIndex
+	 * @return
+	 */
+	public Result selZDPrivateWorkOrderByPage(String username, Long jobId,
+											  Integer pageSize, Integer pageIndex);
+	/**
+	 * 保障待办共享工单查询
+	 * 
+	 * @param staffInfo
+	 * @param workOrder
+	 * @return
+	 */
+	public Result selSaPublicWorkOrderByPage(String username, Long jobId,
+			Integer pageSize, Integer pageIndex);
+
+	/**
+	 * 保障待办工单公有单详情
+	 * 
+	 * @param workOrderId
+	 * @return
+	 */
+	public Result selSaPublicWorkOrderDetail(Long workOrderId);
+
+	/**
+	 * 保障代办工单详情
+	 * 
+	 * @param workOrderId
+	 * @return
+	 */
+	public Result selSaPrivateWorkOrderDetail(Long workOrderId);
+	
+	/** 障碍工单监控查询 */
+	public Result workOrderContorlQuery(JSONObject json);
+
+	/** 障碍工单监控详情 */
+	public Result workOrderContorlDtlie(JSONObject json);
+	
+	
+}

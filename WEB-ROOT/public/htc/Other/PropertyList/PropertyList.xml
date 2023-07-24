@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by LiuQQ (ZTE) -->
+<Properties>
+	<Property displayName="证件类型" id="1001" multipleChoice="false" type="ComboBox" validateString="" nullAble="false" defaultValue="P01" enabled="true" groupDesc="1">
+		<Item text="身份证" value="P01"/>
+		<Item text="教师证" value="P02"/>
+		<Item text="工作证" value="P03"/>
+	</Property>
+	<Property displayName="证件号码" id="1004" multipleChoice="" type="TextBox" validateString="" groupDesc="2"/>
+	<Property displayName="适合人群" id="1007" multipleChoice="true" type="ComboBox" validateString="" groupDesc="1">		
+		<Item text="16岁～28岁" value="A02"/>
+		<Item text="28岁～40岁" value="A03"/>
+		<Item text="40岁以上" value="A04"/>
+	 </Property>	
+	<Property displayName="日期" id="1005" multipleChoice="" type="DateTimePicker" validateString="" groupDesc="其他"/>			
+</Properties>

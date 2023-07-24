@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+    <description>Spring MVC配置文件</description>
+
+    <!-- 注解实现Spring的依赖注入 -->
+    <context:annotation-config/>
+
+    <!-- 注解驱动 -->
+    <mvc:annotation-driven/>
+
+    <mvc:default-servlet-handler/>
+
+    <!-- 静态资源映射 -->
+    <mvc:resources mapping="assets/**" 		location="/WEB-INF/static/assets/" />
+    <mvc:resources mapping="js/**" 			location="/WEB-INF/static/js/" />
+    <mvc:resources mapping="images/**" 		location="/WEB-INF/static/images/" />
+    <mvc:resources mapping="css/**" 		location="/WEB-INF/static/css/" />
+    <mvc:resources mapping="highcharts/**" 	location="/WEB-INF/static/highcharts/" />
+    <mvc:resources mapping="busi/**" 		location="/WEB-INF/static/busi/" />
+
+    <context:component-scan base-package="com.ztesoft.mobile.v2.controller" use-default-filters="false">
+        <!-- controller包下所有的以Controller为后缀的类都扫描 -->
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+    </context:component-scan>
+
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="mediaTypes">
+            <map>
+                <entry key="atom" value="application/atom+xml"/>
+                <entry key="html" value="text/html"/>
+                <entry key="jsp" value="text/html"/>
+                <entry key="json" value="application/json"/>
+                <entry key="xml" value="application/xml"/>
+            </map>
+        </property>
+        <property name="viewResolvers">
+            <list>
+                <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+                    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+                    <property name="prefix" value="/WEB-INF/jsp/" />
+                    <property name="suffix" value=".jsp" />
+                    <property name="contentType" value="text/html;charset=UTF-8"/>
+                </bean>
+            </list>
+        </property>
+        <property name="defaultViews">
+            <list>
+                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 配置异常信息视图解析器 -->
+    <bean id="handlerExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="statusCodes">
+            <props>
+                <prop key="error/500">500</prop>
+                <prop key="error/404">404</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 文件上传时用的，采用Commons Fileupload组件 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <!-- 设置上传文件大小的参数 :200MB-->
+        <property name="maxUploadSize" value="209715200"/>
+    </bean>
+
+    <!-- 资源文件绑定器 -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames" value="locale/message"/>
+        <property name="useCodeAsDefaultMessage" value="true"/>
+    </bean>
+    
+    <bean id="annotationMapper" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">  
+        <!-- 然后通过order属性 来指定顺序 handler 的加载器-->  
+        <property name="order" value="1"/>  
+    </bean > 
+
+    <!--基于Session的国际化配置  -->
+    <mvc:interceptors>
+		<!-- REST服务相关的拦截器
+		<mvc:interceptor>
+			<mvc:mapping path="/client/**" />
+			 <bean id="restServiceInterceptor" 
+			     class="com.ztesoft.mobile.v2.web.interceptor.RestServiceInterceptor" />
+		</mvc:interceptor> -->
+		<mvc:interceptor>
+			<mvc:mapping path="/client/**" />
+			<bean id="localeChangeInterceptor" 
+			    class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	 <!--enabled=true 时RestServLogInterceptor开始工作，下面3个拦截器都有该属性，需要打开下面aop:config的注释才能使用  -->
+    <bean id="servLogInterceptor" class="com.ztesoft.mobile.v2.aop.RestServLogInterceptor">      
+    	<property name="enabled" value="false" />
+    </bean> 
+    <bean id="servInterceptor" class="com.ztesoft.mobile.v2.aop.RestServiceInterceptor"></bean> 
+    <bean id="exceptionAdvisor" class="com.ztesoft.mobile.v2.aop.ControllerExceptionAdvisor"></bean>
+    <bean id="staffCtrlInterceptor" class="com.ztesoft.mobile.v2.aop.StaffControlsInterceptor"></bean>
+    
+ 	<!--  <aop:config> -->
+		<!--切入点--> 
+		<!--<aop:pointcut id="controllerPoints" expression="execution(public * com.ztesoft.mobile.v2.controller..*Controller.*(..)) "/>  -->
+		<!--在该切入点使用自定义拦截器--> 
+		<!--<aop:advisor pointcut-ref="controllerPoints" advice-ref="staffCtrlInterceptor" order="1"/>-->
+		<!--<aop:advisor pointcut-ref="controllerPoints" advice-ref="servInterceptor" order="2"/>-->
+		<!--<aop:advisor pointcut-ref="controllerPoints" advice-ref="exceptionAdvisor" order="3"/>-->
+		<!--<aop:advisor pointcut-ref="controllerPoints" advice-ref="servLogInterceptor" order="4" />-->
+   	<!--</aop:config>-->
+
+</beans>

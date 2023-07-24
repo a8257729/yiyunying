@@ -1,0 +1,151 @@
+package com.ztesoft.mobile.v2.controller.lightcat;
+
+import com.google.gson.Gson;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+@RequestMapping("/light/cat")
+@Controller
+public class LightCatSnController {
+
+    private Logger logger = LoggerFactory.getLogger(LightCatSnController.class);
+
+    private String baseUrl = "http://192.168.101.29:9031/saat_comb/combService/call";
+
+    private Gson gson = new Gson();
+
+    @RequestMapping(value = "/sn",method = RequestMethod.POST,produces = "application/x-www-form-urlencoded;charset=UTF-8")
+    @ResponseBody
+    public String sn(@RequestParam("resId")String resId, HttpServletRequest req, HttpServletResponse rsp) throws Exception{
+        Map<String, Object> jsonMap = new HashMap<String, Object>();
+        Map bodyParam = new HashMap<String,String>();
+        Map dataParam = new HashMap<String,String>();
+        dataParam.put("resId",resId);
+        bodyParam.put("data", dataParam);
+        jsonMap.put("body", bodyParam);
+        Map sysParam = new HashMap<String,String>();
+        sysParam.put("serviceName", "HNDataGovernService.qryOntMacByOlt");
+        jsonMap.put("sys", sysParam);
+        String aaa = aaa(gson.toJson(jsonMap));
+        if(!StringUtils.isNotBlank(aaa)){
+            aaa="null";
+        }
+        return aaa;
+    }
+
+    @RequestMapping(value = "/pon/update",method = RequestMethod.POST,produces = "application/x-www-form-urlencoded;charset=UTF-8")
+    @ResponseBody
+    public String ponUpdate(@RequestParam("obdId")String obdId, @RequestParam("portId")String portId, HttpServletRequest req, HttpServletResponse rsp) throws Exception{
+
+        Map<String, Object> jsonMap = new HashMap<String, Object>();
+        Map bodyParam = new HashMap<String,String>();
+        Map dataParam = new HashMap<String,String>();
+        dataParam.put("posId",obdId);
+        dataParam.put("portId",portId);
+        dataParam.put("posRestypeId",2530);
+        dataParam.put("portRestypeId",2531);
+        bodyParam.put("data", dataParam);
+        jsonMap.put("body", bodyParam);
+        Map sysParam = new HashMap<String,String>();
+        sysParam.put("serviceName", "HNAllocationResService.updatePosPonPort");
+        jsonMap.put("sys", sysParam);
+        String aaa = aaa(gson.toJson(jsonMap));
+        if(!StringUtils.isNotBlank(aaa)){
+            aaa="null";
+        }
+        return aaa;
+    }
+
+
+    public  String aaa(String param) throws MalformedURLException {
+        URL url = new URL("http://192.168.101.29:9031/saat_comb/combService/call");
+        OutputStream os = null;
+        OutputStreamWriter osw = null;
+        InputStream is = null;
+        InputStreamReader isr = null;
+        BufferedReader reader = null;
+        StringBuffer resultBuffer = new StringBuffer();
+        String state = "";
+        try {
+            HttpURLConnection httpURLConnection = (HttpURLConnection) (url.openConnection());
+            // 设置建立连接的超时时间（单位：毫秒）
+            httpURLConnection.setConnectTimeout(10000);
+            // 设置传递数据的超时时间（单位：毫秒）
+            httpURLConnection.setReadTimeout(90000);
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Accept-Charset", "UTF-8");
+            httpURLConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+            httpURLConnection.setRequestProperty("Accept", "application/json, text/javascript, */*");
+            httpURLConnection.setRequestProperty("Cache-Control", "no-cache");
+            httpURLConnection.setRequestProperty("Content-Length", param.getBytes("UTF-8").length + "");
+            String line = null;
+
+            os = httpURLConnection.getOutputStream();
+            osw = new OutputStreamWriter(os, "UTF-8");
+            osw.write(param);
+            osw.flush();
+            state = httpURLConnection.getResponseCode()+"";
+            logger.info("响应代码:" + state);
+            logger.info("请求参数:" + param);
+            is = httpURLConnection.getInputStream();
+            isr = new InputStreamReader(is, "UTF-8");
+            reader = new BufferedReader(isr);
+            while ((line = reader.readLine()) != null) {
+                resultBuffer.append(line);
+            }
+
+        } catch (MalformedURLException e) {
+            logger.info(param + " MalformedURLException :" + e.getMessage());
+        } catch (IOException e) {
+            logger.info(param + " IOException :" + e.getMessage());
+        } finally {
+            if (osw != null) {
+                try {
+                    osw.close();
+                } catch (IOException e) {
+                }
+            }
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                }
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                }
+            }
+            if (isr != null) {
+                try {
+                    isr.close();
+                } catch (IOException e) {
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+       return resultBuffer.toString();
+    }
+}

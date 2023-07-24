@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data> 
+  <QueryMethod>returnReasonListForEBiz</QueryMethod>
+  <Return> 
+    <Result>000</Result>  
+    <ErrorDesc>退单原因</ErrorDesc> 
+  </Return>  
+  <ReasonList> 
+    <Reason> 
+      <ReasonCode>0001</ReasonCode>  
+      <ReasonName>退单原因/CRM送网络激活的必须参数缺少1</ReasonName>  
+      <TargetTache>退单目标环节名称</TargetTache> 
+    </Reason>  
+    <Reason> 
+      <ReasonCode>0002</ReasonCode>  
+      <ReasonName>退单原因/改账号(前端)2</ReasonName>  
+      <TargetTache>退单原因/改速率和资费</TargetTache> 
+    </Reason>  
+    <Reason> 
+      <ReasonCode>0003</ReasonCode>  
+      <ReasonName>单原因/改速率和资费3</ReasonName>  
+      <TargetTache>退单目标环节名称</TargetTache> 
+    </Reason>  
+    <Reason> 
+      <ReasonCode>0004</ReasonCode>  
+      <ReasonName>退单原因/其他类型4</ReasonName>  
+      <TargetTache>退单目标环节名称</TargetTache> 
+    </Reason> 
+  </ReasonList> 
+</Data>

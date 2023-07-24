@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content=" width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="format-detection" content="telephone=no">
+<title>联通用户信息</title>
+<link type="text/css" href="css/weui.min.css" rel="stylesheet" />
+<link type="text/css" href="css/jquery-weui.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="css/mui.min.css">
+<link type="text/css" rel="stylesheet" href="css/bootstrap.css">
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet" href="css/button.css">
+<link type="text/css" rel="stylesheet" href="css/css.css">
+<link type="text/css" href="css/haoping.css" rel="stylesheet" />
+<script type="text/javascript" src="js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script language="javascript" src="js/common.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/jquery-weui.min.js"></script>
+<script type="text/javascript" src="js/config.js?cacheVersion=20190919"></script>
+
+
+</head>
+<style type="text/css">
+* {
+	padding: 0px;
+	margin: 0px;
+}
+
+body {
+	background-color: #fff ! important;
+}
+
+.mui-input-row input {
+	width: 65% !important;
+}
+
+.mui-input-row a {
+	width: 60% !important;
+}
+
+.mui-input-row {
+	overflow: visible;
+}
+
+.detail {
+	font-size: 12px;
+	font-weight: bold;
+	color: #A9A9A9;
+	margin-left: 5px;
+}
+
+.mui-input-clear {
+	font-size: 12px;
+	font-weight: bold;
+	color: #696969;
+}
+
+.mui-input-row span {
+	padding-left: 11px;
+}
+
+input[type=color], input[type=date], input[type=datetime-local], input[type=datetime],
+	input[type=email], input[type=month], input[type=number], input[type=password],
+	input[type=search], input[type=tel], input[type=text], input[type=time],
+	input[type=url], input[type=week], select, textarea,a {
+	padding: 0px 0px;
+	height:25px;
+}
+
+input {
+	overflow: visible;
+}
+
+.mui-table {
+	margin: 5px 0px;
+}
+
+.mui-card {
+	margin: 5px;
+}
+
+.mui-table-view-cell {
+	font-weight: bold;
+	color: #A9A9A9;
+	font-size: 14px;
+}
+
+#save,#toDiagnose {
+	border: 1px solid transparent;
+	width: 80%;
+	background-color: cornflowerblue;
+	border-radius: 10px;
+	color: white;
+	font-size: 15px;
+}
+
+/* #submit {
+	border: 1px solid transparent;
+	width: 100%;
+	height: 60px;
+	float: left;
+	line-height: 60px;
+	text-align: center;
+	margin-top: 3px;
+} */
+
+#detailArea2 {
+	font-size: 15px;
+	font-weight: bold;
+	color: black;
+	border-bottom: 1px solid #F4F4F4;
+	margin-left: 8%;
+}
+
+#detailAreaT2 {
+	margin-top: 20px;
+	font-size: 15px;
+	font-weight: bold;
+	color: black;
+	border-bottom: 1px solid #F4F4F4;
+	margin-left: 8%;
+}
+
+#detailAreaT3 {
+	margin-top: 15px;
+	font-size: 15px;
+	font-weight: bold;
+	color: black;
+	border-bottom: 1px solid #F4F4F4;
+	margin-left: 8%;
+}
+
+#detailTit {
+	height: 60px;
+	line-height: 60px;
+	font-size: 15px;
+	font-weight: bold;
+	color: blue;
+	border-bottom: 1px solid #F4F4F4;
+	margin-left: 8%;
+}
+
+#detailArea1 {
+	font-size: 15px;
+	font-weight: bold;
+	color: black;
+	border-bottom: 1px solid #F4F4F4;
+	margin-left: 8%;
+}
+
+#detailArea3 {
+	font-size: 15px;
+	font-weight: bold;
+	color: black;
+	border-bottom: 1px solid #F4F4F4;
+	margin-left: 8%;
+}
+
+.mui-table-view-cell.mui-collapse .mui-table-view .mui-table-view-cell {
+	padding-left: 0px;
+}
+
+a:link {
+	text-decoration: none;
+}
+
+}
+a:visited {
+	text-decoration: none;
+}
+
+}
+a:hover {
+	text-decoration: none;
+}
+
+
+.mui-input-group .mui-input-row {
+    height: 25px;
+}
+.weui-toast{
+   width:10.6em;
+}
+.weui-toast_content{
+ color:white;
+}
+	.weui-dialog {
+		height: 18%;
+	}
+</style>
+
+<body>
+	<!--<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<a id="title" class="mui-title">联通用户信息</a>
+		</header>-->
+
+	<div class="mui-content">
+		<form id="" class="mui-input-group detail"
+			style="height: 100% !important;">
+			<div class="mui-input-row">
+				<span>服务专员：</span> <input type="text" id="staffName" name=""
+					readonly class="mui-input-clear" value="" />
+			</div>
+			<div class="mui-input-row" style="padding-top: 2px;">
+				<span>服务电话：</span> <a id="staff_tel"
+					style="height: 25px; line-height: 21px; color: cornflowerblue;"
+					href=""></a><img alt="" onclick="dialTel();" src="images/fault_order_telephone.png" style="margin-right:20px;float:right;">
+			</div>
+			<div class="mui-input-row">
+				<span>客户姓名：</span> <input type="text" id="custName" name="custname"
+					 class="mui-input-clear" value="" />
+			</div>
+			<div class="mui-input-row">
+				<span>宽带账号：</span> <input type="text" id="account" name="account"
+					readonly class="mui-input-clear" value="" />
+			</div>
+			<div class="mui-input-row">
+				<span>手机号码：</span> <input type="text" id="phoneNumber"
+					name="phonenumber"  class="mui-input-clear" value="" />
+			</div>
+			<div class="mui-input-row">
+				<span>开户时间：</span> <input type="text" id="createDate"
+					name="createdate" readonly class="mui-input-clear" value="" />
+			</div>
+			<div class="mui-input-row">
+				<span>装机地址：</span> <input
+					style="width: 65%; overflow: auto; white-space: normal; word-wrap: break-word; word-break: break-all"
+					type="text" id="address" name="address" class="mui-input-clear"
+					value="" />
+			</div>
+
+			<div class="mui-card" id="process" style="display: none;">
+				<ul class="mui-table-view" id="ul">
+					<li class="mui-table-view-cell mui-collapse mui-active" id="all2">
+						<a class="mui-navigate-right" href="#" style="display: inline;">工单进度</a><a
+						style="display: inline; float: right; color: cornflowerblue;height:28px;"
+						class="mui-navigate-right" href="javascript:void(0);" onclick="refresh();">刷新</a> <!-- <a class="mui-icon mui-pull-right mui-icon-refresh" onClick="refresh()"></a> -->
+						<ul id="u2"
+							class="mui-collapse-content mui-table-view mui-table-view-striped mui-table-view-condensed">
+							<li class="mui-table-view-cell" id="" orderId="">
+
+								<div id="img_bag" class="ztb_nav">
+									<div id="img" class="ztb_content">
+										<div style="position: relative;">
+											<div class="online"></div>
+											<div class="ztb_main_01">
+												<ul class="ztb_content_01">
+													<li id="pc" class="ztb_over"><a href="#"
+														class="ztb_con_text">处理 <span
+															class="ztb_time" id="pc_staff_name"></span> <span
+															class="ztb_time" id="pc_time"></span></a></li>
+													<li id="yy" class=""><a href="#" class="ztb_con_text"
+														>预约 <span class="ztb_time"><span
+																id="yy_sm_time"></span></span> <span class="ztb_time"
+															id="yy_time"></span>
+													</a></li>
+													<li id="end" class=""><a href="#" class="ztb_con_text"
+														>确认 <span class="ztb_time"
+															id="end_info"></span> <span class="ztb_time"
+															id="end_time"></span></a></li>
+												</ul>
+											</div>
+										</div>
+									</div>
+								</div>
+
+
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+
+		</form>
+	</div>
+	<div id="workOrderProcess"></div>
+	
+	<div id="pingjia" style="display:none;">
+	<h5 id="pingjiaTitle" style="color:blue;font-size:15px;margin-left:8px;margin-bottom:0px;">请对本次服务评价</h5>
+	<div class="block">
+				<ul>
+					<li data-default-index="0" onclick="toHaoping();" style="padding-top:0px;">
+						<input style="margin-left: 1em;" type="radio" name="haoping" aria-label="haoping" />1
+						<input style="margin-left: 1em;" type="radio" name="haoping" aria-label="haoping" />2
+						<input style="margin-left: 1em;" type="radio" name="haoping" aria-label="haoping" />3
+						<input style="margin-left: 1em;" type="radio" name="haoping" aria-label="haoping" />4
+						<input style="margin-left: 1em;" type="radio" name="haoping" aria-label="haoping" />5
+						<br />
+						<input style="margin-left: 1em;" type="radio" name="haoping" aria-label="haoping" />6
+						<input style="margin-left: 1em;" type="radio" name="haoping" aria-label="haoping" />7
+						<input style="margin-left: 1em;" type="radio" name="haoping" aria-label="haoping" />8
+						<input style="margin-left: 1em;" type="radio" name="haoping" aria-label="haoping" />9
+						<input style="margin-left: 1em;" type="radio" name="haoping" aria-label="haoping" />10
+						<em class="level"></em>
+					</li>
+				</ul>
+     </div>
+     </div>
+
+	<!-- <div id="submit">
+		<button id="save" style="padding: 0px 0px;" onclick="forwardToPage()">一键报修</button>
+	</div> -->
+	
+	<div style="text-align: center;" id="submit">
+	
+	    <button onclick="forwardToDiagnosePage();" id="toDiagnose"
+					class="mui-btn mui-btn-primary"
+					style="width: 22%;margin-top:10px; background-color: cornflowerblue">一键诊断</button>
+		<button onclick="fualtDiagnose()" id="fualtDiagnsose"
+				class="mui-btn mui-btn-primary"
+				style="width: 22%;margin-top:10px; background-color: cornflowerblue">排障指引</button>
+		<button onclick="forwardToPageConfirm();" id="save"
+					class="mui-btn mui-btn-primary"
+					style="width: 22%;margin-top:10px; background-color: cornflowerblue">一键报修</button>
+					
+	</div>
+
+	<div class="modal fade" id="loadingModal" data-backdrop="static">
+		<div
+			style="width: 200px; height: 20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%; margin-left: -100px; margin-top: -10px">
+			<div class="progress progress-striped active"
+				style="margin-bottom: 0;">
+				<div class="progress-bar" style="width: 100%;"></div>
+			</div>
+			<h5>正在加载...</h5>
+		</div>
+	</div>
+
+</body>
+
+<script type="text/javascript">
+	var resAddrMap = {};//区号与区域id映射
+	resAddrMap["0730"] = "14458";
+	resAddrMap["0731"] = "13000";
+	resAddrMap["0732"] = "14459";
+	resAddrMap["0733"] = "13100";
+	resAddrMap["0734"] = "14460";
+	resAddrMap["0735"] = "14461";
+	resAddrMap["0736"] = "14462";
+	resAddrMap["0737"] = "14463";
+	resAddrMap["0738"] = "14464";
+	resAddrMap["0739"] = "14465";
+	resAddrMap["0743"] = "14466";
+	resAddrMap["0744"] = "14467";
+	resAddrMap["0745"] = "14468";
+	resAddrMap["0746"] = "14469";
+	//alert(resAddrMap['0730']);
+	var param = null;//地址栏参数
+	var qrcode = "";
+	var areaField = "";
+	var orderId = "";//订单id
+	var account;//宽带账号
+	//app后台地址
+	//var serverUrl = "http://192.168.106.104:7001";
+	//var serverUrl = "http://220.248.160.253:9022";
+	//一键诊断地址
+	//var diagnoseUrl = "http://192.168.106.104:8080/bdes-mobile-web/pages/fault/examine_yihuyima.html"
+	//var diagnoseUrl = "http://www.hnkdzj.com:8095/bdes-mobile-web/pages/fault/examine_yihuyima.html";
+	var hasPingjia = false;//是否评价过
+	//$.toast.prototype.defaults.duration = 1000;//toast消失时间，默认2s,改成1s
+    var orderState = "";
+	var pageUrl="";
+	pageUrl = window.location.href;
+	
+	init();
+
+	function fualtDiagnose(){
+		window.location.href="https://mp.weixin.qq.com/s/t8Ba1fya4yl8pPeWhiEyYA";
+	}
+
+	function init() {
+		debugger;
+		//显示遮罩
+		$("#loadingModal").modal('show');
+		areaField = "";
+		//param = Utils.getParams(window.location.href);
+		var requestParam = GetURLRequestParam();
+		qrcode = requestParam.d;
+		var param = {
+			qrcode : qrcode
+		};
+
+		$.ajax({
+			url : config.serverUrl + "/MOBILE/api/client/wechat/userinfo/query",
+			type : "GET",//必须是get请求
+			dataType : "jsonp",//请求的数据类型
+			jsonp : "callBack",//请求类型是回调
+			jsonpCallback : "callbackFunction",//数据请求成功时回调的方法
+			data : param,
+			success : function(result) {
+				debugger;
+				//关闭遮罩
+				$("#loadingModal").modal('hide');
+				var resultCode = result.resultCode;
+				if (resultCode == '1000' && result) {
+					console.log(JSON.stringify(result));
+					var userData = result.resultData.userInfo[0];
+					var workOrder = result.resultData.workOrderInfo[0];
+					if (userData) {
+						writeUserHouseInfo(userData);
+					}
+
+					if (workOrder) {
+						writeWorkOrderInfoNew(workOrder);
+					}
+
+				} else {
+
+				}
+
+			},
+
+			error : function(result) {
+				//关闭遮罩
+				$("#loadingModal").modal('hide');
+				console.log("testJsonp返回结果：" + JSON.stringify(result));
+				console.log("testJsonp失败");
+			}
+
+		});
+
+	}
+	function callbackFunction() {
+
+	}
+
+	function timestamp2Date(timestamp) {
+		var date = new Date(timestamp - 28800000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+		var Y = date.getFullYear() + '-';
+		var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date
+				.getMonth() + 1)
+				+ '-';
+		var D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate())
+				+ ' ';
+		var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours())
+				+ ':';
+		var m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date
+				.getMinutes())
+				+ ':';
+		var s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date
+				.getSeconds());
+		return Y + M + D + h + m + s;
+	}
+
+	function writeWorkOrderInfoNew(data) {
+		debugger;
+		var commonInfo = data.common;
+		var orderProcess = data.datas;
+		var mobile_tel = "";
+		var staff_name = "";
+		var besDate = "";
+		if (commonInfo) {
+			areaField = commonInfo[0].AREAFIELD;
+			mobile_tel = commonInfo[0].MOBILE_TEL;
+			staff_name = commonInfo[0].STAFF_NAME;
+			besDate = commonInfo[0].BESDATE;
+			orderState = commonInfo[0].ORDER_STATE;
+			orderId = commonInfo[0].ORDER_ID;
+		}
+		console.log("orderState:" + orderState);
+
+		//制作数据查询显示
+		if (!orderProcess) {
+			return;
+		}
+		
+		var _html = "";
+		if (staff_name == '') {
+			_html = '"装维人员："' + staffName   + ' '+mobileTel +" ";
+			if(orderState!='10F'){
+				_html+='<img src="images/position.png" width="30px" onclick="toPositionMap();"/> ';
+			}
+			
+			var staffName = $("#staffName").val();
+			var mobileTel = $("#staff_tel").html();
+		
+			$("#pc_staff_name").html(_html);
+		} else {
+			_html = "装维人员：" + staff_name + ' ' + mobile_tel+' ';
+			if(orderState!='10F'){
+				_html+='<img src="images/position.png" width="30px" onclick="toPositionMap();"/> ';
+			}
+			$("#pc_staff_name").html(_html);
+		}
+		$("#pc_time").html(orderProcess[0].CREATE_DATE);
+
+		if ("" != besDate) {
+			$("#yy").addClass("ztb_over");
+			$("#yy_sm_time").html("预约上门时间为: " + ' ' + besDate);
+			//$("#yy_time").html(orderProcess[0].CREATE_DATE);
+		}
+
+		if (orderProcess.length > 1) {
+			$("#end").addClass("ztb_over");
+			$("#end_info").html('本次工单处理完成,欢迎对本次服务态度评价');
+			$("#end_time").html(orderProcess[1].CREATE_DATE);
+		}
+
+		if (orderState == '10N') {
+			//如果已经创建了故障单且故障单没有完成，在处理中，则按钮改成催修
+			$("#save").html('催修');
+		}
+		if (orderState == '10F') {
+			//如果已经创建了且故障单已经完成，则展示评价区域
+			//查询是否已经评价过，如果评价过，展示评价结果分数
+			queryPingjiaResult();
+			$("#pingjia").show();
+		}
+
+		$("#process").show();
+
+	}
+
+	function writeWorkOrderInfo(data) {
+		debugger;
+		var commonInfo = data.common;
+		var orderProcess = data.datas;
+		var mobile_tel = "";
+		var staff_name = "";
+		var besDate = "";
+		if (commonInfo) {
+			areaField = commonInfo[0].AREAFIELD;
+			mobile_tel = commonInfo[0].MOBILE_TEL;
+			staff_name = commonInfo[0].STAFF_NAME;
+			besDate = commonInfo[0].BESDATE;
+			console.log("areaId:" + areaField);
+		}
+
+		$("#workOrderProcess").empty();
+		//制作数据查询显示
+		if (!orderProcess) {
+			return;
+		}
+
+		var dealNode = $('<div id="detailTit" background-color="blue"><span>工单进度</span><input id="refresh" type="button"  style="margin-top:13px;float:right;margin-right:15px; background-color:cornflowerblue;color:white" value="刷新"/></div>');
+		//  var dealNode = $('<input type="button"  value="工单进度" class="btn btn-primary"/>');
+		$("#workOrderProcess").append(dealNode);
+
+		var dealNodeTitle = $('<div id="detailArea1" ><span id="dealTitle">处理</span></div>');
+		var dealNodeContent1 = $('<div id="detailArea1" ><span id="dealContent">装维人员: '
+				+ staff_name + ' ' + mobile_tel + '</span>'+'<img src="images/position.png" width="30px" onclick="toPositionMap();"/>' +'</div>');
+		var dealNodeContent2 = $('<div id="detailArea1" ><span id="dealTime">'
+				+ orderProcess[0].CREATE_DATE + '</span></div>')
+		$("#workOrderProcess").append(dealNodeTitle);
+		$("#workOrderProcess").append(dealNodeContent1);
+		$("#workOrderProcess").append(dealNodeContent2);
+		
+		if ("" != besDate) {
+			$('#dealTitle').css('color', '#A9A9A9');
+			$('#dealContent').css('color', '#A9A9A9');
+			$('#dealTime').css('color', '#A9A9A9');
+			var reserveNodeTitle = $('<div id="detailAreaT2"><span id="resTitle">预约</span></div>');
+			var reserveContent1 = $('<div id="detailArea2"><span id="resContent">预约上门时间为: '
+					+ besDate + '</span></div>');
+			var reserveContent2 = $('<div id="detailArea2"><span id="resTime">'
+					+ orderProcess[0].CREATE_DATE + '</span></div>')
+			$("#workOrderProcess").append(reserveNodeTitle);
+			$("#workOrderProcess").append(reserveContent1);
+			$("#workOrderProcess").append(reserveContent2);
+		}
+
+		if (orderProcess.length > 1) {
+			$('#resTitle').css('color', '#A9A9A9');
+			$('#resContent').css('color', '#A9A9A9');
+			$('#resTime').css('color', '#A9A9A9');
+			var finishNodeTitle = $('<div id="detailAreaT3"><span>确认</span></div>');
+			var finishContent1 = $('<div id="detailArea3"><span>本次工单处理完成,欢迎对本次服务态度评价</span></div>');
+			var finishContent2 = $('<div id="detailArea3"><span>'
+					+ orderProcess[1].CREATE_DATE + '</span></div>')
+			$("#workOrderProcess").append(finishNodeTitle);
+			$("#workOrderProcess").append(finishContent1);
+			$("#workOrderProcess").append(finishContent2);
+
+		}
+
+	}
+
+	function writeUserHouseInfo(data) {
+		debugger;
+		$("#staffName").val(data.staff_name);
+		$("#staff_tel").html(data.staff_phone);
+		$('#staff_tel').attr('href', 'tel:' + data.staff_phone);
+		$("#custName").val(data.cust_name);
+		$("#account").val(data.service_num);
+		$("#phoneNumber").val(data.cust_phone);
+		account = data.service_num;
+		var time;
+		if (data.order_time && data.order_time != null) {
+			time = timestamp2Date(data.order_time.time);
+		} else {
+			time = '';
+		}
+		$("#createDate").val(time);
+		$("#address").val(data.install_addr);
+
+	}
+	function forwardToPageConfirm(){
+		$.confirm({
+			title:"提示！",
+			text:"否选择自主排障?",
+			onOK : function(){
+				forwardToDiagnosePage();
+			},
+			onCancel:function(){
+				forwardToPage();
+			}
+		})
+	}
+
+	function forwardToPage() {
+		debugger;
+
+		var staffName = $("#staffName").val();
+		var staff_tel = $("#staff_tel").val();
+		var custName = $("#custName").val();
+		var account = $("#account").val();
+		var phoneNumber = $("#phoneNumber").val();
+		var createDate = $("#createDate").val();
+		var address = $("#address").val();
+		var url = "oneKeyToFault.html" + "?qrcode=" + qrcode + '&'
+				+ "staffName=" + staffName + '&' + "staff_tel=" + staff_tel
+				+ '&' + "custName=" + custName + '&' + "account=" + account
+				+ '&' + "phoneNumber=" + phoneNumber + '&' + "createdate="
+				+ createDate + '&' + "address=" + address + '&' + "areaField="
+				+ areaField;
+		;
+		window.location.href = encodeURI(url);
+	}
+
+	function forwardToDiagnosePage() {
+		var staffName = $("#staffName").val();
+		var staff_tel = $("#staff_tel").val();
+		var custName = $("#custName").val();
+		var account = $("#account").val();
+		var phoneNumber = $("#phoneNumber").val();
+		var createDate = $("#createDate").val();
+		var address = $("#address").val();
+		var url = config.diagnoseUrl + "?qrcode=" + qrcode + "&areaId=" + resAddrMap[areaField]
+				+ "&accountType=1" + '&' + "staffName=" + staffName + '&'
+				+ "staff_tel=" + staff_tel + '&' + "custName=" + custName + '&'
+				+ "account=" + account + '&' + "phoneNumber=" + phoneNumber
+				+ '&' + "createdate=" + createDate + '&' + "address=" + address
+				+ '&' + "areaField=" + areaField + "&orderState=" + orderState;
+		window.location.href = encodeURI(url);
+	}
+
+	function refresh() {
+		window.location.replace(config.yhUrl + "?d=" + qrcode + "&t=" + Math.random());
+		//init();
+	}
+
+	function toHaoping() {
+		if (hasPingjia) {
+			$.toast('您已经评价过了！', 'forbidden');
+			return;
+		}
+		var url = "haoping.html?account=" + account + "&orderId=" + orderId;
+		window.location.href = encodeURI(url);
+	}
+	
+	function toPositionMap(){
+		var url = "staffPosition.html?account=" + account + "&orderId=" + orderId;
+		window.location.href = encodeURI(url);
+	}
+	
+	function queryPingjiaResult() {l
+		var param = {
+			orderId : orderId,
+			account : account
+		};
+		var params = {
+			param : JSON.stringify(param),
+			method : 'queryWechatEvaluation'
+		}
+
+		//$("#loadingModal").modal('show');
+		console.log("params:" + JSON.stringify(params, null, '\t'));
+		$
+				.ajax({
+					url : config.serverUrl
+							+ "/MOBILE/api/client/common/commonQueryObjectBySqlForWechat",
+					type : "GET",//必须是get请求
+					dataType : "jsonp",//请求的数据类型
+					jsonp : "callback",//请求类型是回调
+					jsonpCallback : "callbackFunction",//数据请求成功时回调的方法
+					data : params,
+					success : function(result) {
+						$("#loadingModal").modal('hide');
+						if (result && result.resultCode == '1000') {
+							console.log(JSON.stringify(result));
+							if (result.resultData != null
+									&& result.resultData.data_info != null) {
+								var score = result.resultData.data_info.score;
+								if (score > 0) {
+									showPingjiaResult(score);
+									hasPingjia = true;
+									$("#pingjiaTitle").html("您对本次服务评价为");
+								}
+							}
+						} else {
+						}
+
+					},
+					error : function(result) {
+						$("#loadingModal").modal('hide');
+					}
+
+				});
+	}
+
+	function showPingjiaResult(score) {
+		debugger;
+		for (var i = 0; i < score; i++) {
+			$(".block ul li").children().eq(i).attr('src', 'images/x2.png');
+		}
+	}
+
+	function dialTel() {
+		var tel = $('#staff_tel').attr('href');
+		location.href = tel;
+	}
+</script>
+
+</html>

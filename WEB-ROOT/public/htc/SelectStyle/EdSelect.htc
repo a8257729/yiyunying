@@ -1,0 +1,70 @@
+<PUBLIC:COMPONENT tagname="EdSelect" >
+<public:defaults viewLinkContent/>	
+<PUBLIC:ATTACH EVENT="onkeypress" ONEVENT="return catchPress();"  />
+<PUBLIC:ATTACH EVENT="onkeydown" ONEVENT="return catchKeydown();" />
+
+<script language="JavaScript">
+<!--
+function catchKeydown()
+{
+    switch(event.keyCode)
+    {
+        case 13:
+                //Enter;
+                this.options[this.length] = new Option("","",false,true);
+                event.returnValue = false;
+                break;
+        case 27:
+                //Esc;
+                //alert("text:" + this.options[this.selectedIndex].text + ", value:" + this.options[this.selectedIndex].value + ";");
+                event.returnValue = false;
+                break;
+        case 46:
+                //Delete;
+                if(confirm("删除当前选项!?"))
+                {
+                        this.options[this.selectedIndex] = null;
+                        if(this.length>0)
+                        {
+                                this.options[0].selected = true;
+                        }
+                }
+                event.returnValue = false;
+                break;
+        case 8:
+                //Back Space;
+                var s = this.options[this.selectedIndex].text;
+                this.options[this.selectedIndex].text = s.substr(0,s.length-1);
+                event.returnValue = false;
+                break;
+				case 190:
+							this.options[this.selectedIndex].text +='.';
+							this.options[this.selectedIndex].value = this.options[this.selectedIndex].text;
+							event.returnValue = false;
+              break;
+        case 219:
+							this.options[this.selectedIndex].text +="[";
+							this.options[this.selectedIndex].value = this.options[this.selectedIndex].text;
+							event.returnValue = false;
+              break;
+				case 221:
+					    this.options[this.selectedIndex].text +="]";
+					    this.options[this.selectedIndex].value = this.options[this.selectedIndex].text;
+							event.returnValue = false;
+              break;
+    }
+        
+}
+function catchPress()
+{     
+        this.options[this.selectedIndex].text = this.options[this.selectedIndex].text + String.fromCharCode(event.keyCode);
+        this.options[this.selectedIndex].value = this.options[this.selectedIndex].text;
+        event.returnValue = false;
+}
+
+
+//-->
+</script>
+
+</PUBLIC:COMPONENT>
+

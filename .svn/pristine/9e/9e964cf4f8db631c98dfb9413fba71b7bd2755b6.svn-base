@@ -1,0 +1,334 @@
+package com.ztesoft.mobile.v2.service.app;
+
+import com.ztesoft.mobile.v2.controller.sn.SnPublicService;
+import com.ztesoft.mobile.v2.controller.sn.impl.SnPublicServiceImpl;
+import com.ztesoft.mobile.v2.controller.speed.SpeedController;
+import com.ztesoft.mobile.v2.core.Result;
+import com.ztesoft.mobile.v2.dao.app.MobileDataInstallDAO;
+import com.ztesoft.mobile.v2.dao.app.MobileDataInstallDAOImpl;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class MobileDataInstallServiceImpl implements MobileDataInstallService {
+    private static final Logger logger = Logger.getLogger(MobileDataInstallServiceImpl.class);
+    private MobileDataInstallDAO mbDAO = new MobileDataInstallDAOImpl();
+    public String queryDataInstallByOrg(String org_id)
+    {
+        String result = "";
+        try
+        {
+            Map<String, String> map =   mbDAO.queryDataInstallByOrg(org_id);
+            result =  map.get("flag");
+        }catch (Exception e)
+        {
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+        }
+
+
+        return result;
+    }
+
+    public  Map<String, String> queryBSSProject(String work_order_id)
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        try
+        {
+             map =   mbDAO.queryBSSProject(work_order_id);
+
+        }catch (Exception e)
+        {
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+    public  Map<String, String> queryPowerModel(String base_order_id,String hgu_sn,String staffId,String staffName)
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        try
+        {
+            map =   mbDAO.queryPowerModel(base_order_id,hgu_sn,staffId,staffName);
+
+        }catch (Exception e)
+        {
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+    public Map<String, String> queryPowerModel1(String order_id, String hgu_sn, String staffId, String staffName) {
+        Map<String, String> map = new HashMap<String, String>();
+        try
+        {
+            map =   mbDAO.queryPowerModel1(order_id,hgu_sn,staffId,staffName);
+
+        }catch (Exception e)
+        {
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+        }
+
+        return map;
+    }
+
+    public  Map<String, String> querymakeProcessData(String work_order_id)
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        try
+        {
+            map =   mbDAO.querymakeProcessData(work_order_id);
+
+        }catch (Exception e)
+        {
+            logger.info("querymakeProcessData :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+    public  Map<String, String> queryPixianCode(String work_order_id)
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        try
+        {
+            map =   mbDAO.queryPixianCode(work_order_id);
+
+        }catch (Exception e)
+        {
+            logger.info("querymakeProcessData :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+    public Result queryOBDInfo(String qrCode, String wkOrderId)
+    {
+        Map<Object, Object> resultData = new HashMap<Object, Object>();
+        Map<Object, Object>   resultMap =new HashMap<Object, Object>();
+        Result result = null;
+        try
+        {
+            resultMap =   mbDAO.queryOBDInfo(qrCode,wkOrderId);
+
+        }catch (Exception e)
+        {
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+        }
+
+
+        resultData.put("data_info", resultMap);
+        result = Result.buildSuccess();
+        result.setResultData(resultData);
+
+
+        return result;
+    }
+
+    public Result processDataInstall( Map<String, Object> paramMap)
+    {
+        Map<Object, Object> resultMap = new HashMap<Object, Object>();
+        Map<Object, Object> resultData = new HashMap<Object, Object>();
+        Result result = null;
+        try
+        {
+            resultMap =   mbDAO.processDataInstall(paramMap);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+            result = Result.buildFailure();
+            return result;
+        }
+
+        resultData.put("data_info", resultMap);
+        result = Result.buildSuccess();
+        result.setResultData(resultData);
+
+
+        return result;
+    }
+
+    public Result processDataInstall1(Map<String, Object> paramMap) {
+        Map<Object, Object> resultMap = new HashMap<Object, Object>();
+        Map<Object, Object> resultData = new HashMap<Object, Object>();
+        Result result = null;
+        try
+        {
+            resultMap =   mbDAO.processDataInstall1(paramMap);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+            result = Result.buildFailure();
+            return result;
+        }
+
+        resultData.put("data_info", resultMap);
+        result = Result.buildSuccess();
+        result.setResultData(resultData);
+
+
+        return result;
+    }
+
+    public Result addClickYHCount(String qrcode,String type) {
+        Map<Object, Object> resultMap = new HashMap<Object, Object>();
+        Map<Object, Object> resultData = new HashMap<Object, Object>();
+        Result result = null;
+        try
+        {
+              mbDAO.insertYHCount(qrcode,type);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+            result = Result.buildFailure();
+            return result;
+        }
+
+
+        result = Result.buildSuccess();
+        result.setResultData(resultData);
+
+
+        return result;
+    }
+
+    public Map<String,String> queryOrderTypeById(String orderId) {
+        Map<String, String> resultMap =  new HashMap<String,String>();
+        try
+        {
+            resultMap =  mbDAO.queryOrderTypeById(orderId);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+        return resultMap;
+
+    }
+
+    public String queryStaffTel(String staffId) {
+        String orderType = "";
+        try
+        {
+            orderType =  mbDAO.queryStaffTel(staffId);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+        return orderType;
+
+    }
+
+    public  Map<String, Object> queryZWTSpeedInfo(String work_order_id)
+    {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try
+        {
+            map =   mbDAO.queryZWTSpeedInfo(work_order_id);
+
+        }catch (Exception e)
+        {
+            logger.info("queryZWTSpeedInfo :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+    public List<Map> querySpotSpeedInfo(String orderId)
+    {
+        List<Map>  list = new ArrayList<Map>();
+        try
+        {
+            list =   mbDAO.querySpotSpeedInfo(orderId);
+
+        }catch (Exception e)
+        {
+            logger.info("queryZWTSpeedInfo :"+e.getMessage());
+        }
+
+
+        return list;
+    }
+
+    public  Map<String, Object> queryLightState(String orderId)
+    {
+        Map<String, Object> map = new HashMap<String, Object>();
+        try
+        {
+            map =   mbDAO.queryLightState(orderId);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            logger.info("queryZWTSpeedInfo :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+    public  Map<String, String> submitPonChangeMachine(Map<String, Object> paramMap)
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        SnPublicService snPublicService = new SnPublicServiceImpl();
+
+        try
+        {
+            Map resultMap = snPublicService.selBySystem1();
+            paramMap.put("wk_order_id",(String)resultMap.get("flag"));
+            map =   mbDAO.submitPonChangeMachine(paramMap);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            logger.info("submitPonChangeMachine :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+    public  Map<String, String> queryPonChangeMachineData(String wk_order_id)
+    {
+        Map<String, String> map = new HashMap<String, String>();
+
+
+        try
+        {
+
+            map =   mbDAO.queryPonChangeMachineData(wk_order_id);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            logger.info("queryZWTSpeedInfo :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+
+
+
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>易运营下载</title>
+    <style type="text/css">
+        #inf_img{max-width: 100%; height: 300px;margin-top: 0px;float:right;margin-right: 50px;}
+        .weixin-tip{position: fixed; left:0; top:0; background: rgba(0,0,0,0.8); opacity:0.5;  height: 310px; width: 100%; z-index: 100;}
+        .weixin-tip p{margin-top: 0;}
+    </style>
+
+</head>
+<body>
+   <div class="weixin-tip" id="weixin-tip" style="display: none">
+    <p>
+        <img src="live_weixin.png" alt="微信打开" id="inf_img"/>
+    </p>
+   </div>
+  <div align="center" style="vertical-align: middle;margin-top: 40%;">
+      <img src="app_icon.png" width="300px" height="300px">
+      <div style="margin-top: 20px;"><span style="font-size: 48px;color: darkorange">易运营</span></div>
+      <div id="suggest" style="margin-top: 40px;display: none"><span style="font-size: 45px;">请点击右上角按钮, 选择在浏览器打开</span></div>
+      <div style="margin-top: 20px;display: none;" id="download">
+          <a id="a" style="color: #1B9AF7;font-size: 45px" href="">点击下载安装</a>
+      </div>
+  </div>
+
+<script>
+    //var apkUrl = 'http://220.248.160.253:9022/MOBILE/app/hnlt_gk.apk';
+    document.getElementById("a").href = 'http://220.248.160.253:9022/MOBILE/app/hnlt_gk.apk';
+    //document.getElementById("a").href = "http://192.168.106.104:7001/MOBILE/app/hnlt_gk.apk";
+    var img = new Image();
+    img.src = 'app_icon.png';
+    img.onload = function(){
+        goDownload();
+    }
+
+
+    // 新的方法
+    function toDownload(){
+        var u = navigator.userAgent;
+        var ua = u.toLowerCase();
+        if (/iphone|ipad|ipod/.test(ua)) {  // iOS 系统 ->  跳AppStore下载地址
+            //alert("iOS");
+
+        } else if ( /android/.test(ua)) { // 安卓系统 -> 跳安卓端下载地址
+            window.location.href = apkUrl;
+            //alert("android");
+        } else if (IsPC()){ // PC端
+            window.location.href = apkUrl;
+        }
+    }
+
+
+    //  修改前的代码
+
+    function goDownload() {
+        var u = navigator.userAgent, app = navigator.appVersion;
+        var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1;
+        var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+
+        // 是微信内部webView
+        if (is_weixn()) {
+            //alert("请点击右上角按钮, 选择在浏览器打开");
+            document.getElementById("weixin-tip").style.display="";
+            // document.getElementById("suggest").style.display="";//显示
+            return;
+        }
+
+        //qq内置浏览器
+        if(is_qqInstalled()){
+            //alert("请点击右上角按钮, 选择在浏览器打开");
+            document.getElementById("weixin-tip").style.display="";
+            // document.getElementById("suggest").style.display="";//显示
+            return;
+        }
+
+        // 是安卓浏览器
+        if (isAndroid) {
+            // alert("请点击右上角按钮, 点击在浏览器打开");
+            // window.location.href = apkUrl; // 跳安卓端下载地址
+            document.getElementById("download").style.display="";//显示
+            return;
+        }
+        // 是iOS浏览器
+        if (isIOS) {
+           // window.location.href = 'https://itunes.apple.com/cn/app/xxxxxxx/id1124348115?mt=8'; // 跳AppStore下载地址
+        }
+
+
+        // 是PC端
+        if (IsPC()) {
+            //window.location.href = apkUrl;  // 公司主页
+            document.getElementById("download").style.display="";//显示
+            return;
+        }
+    }
+    // 是微信浏览器
+    function is_weixn(){
+        var ua = navigator.userAgent.toLowerCase();
+        if(ua.match(/MicroMessenger/i)=="micromessenger") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //是否是qq内置浏览器
+    function is_qqInstalled() {
+        var ua = navigator.userAgent.toLowerCase();
+        if(ua.indexOf("qq/") > -1){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    function IsPC() {
+        var userAgentInfo = navigator.userAgent;
+        var Agents = ["Android", "iPhone",
+            "SymbianOS", "Windows Phone",
+            "iPad", "iPod"];
+        var flag = true;
+        for (var v = 0; v < Agents.length; v++) {
+            if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                flag = false;
+                break;
+            }
+        }
+        return flag;
+    }
+
+</script>
+</body>
+</html>

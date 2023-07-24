@@ -1,0 +1,307 @@
+package com.ztesoft.eoms.web;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.log4j.Logger;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+
+import com.ztesoft.eoms.common.dao.BaseDAOFactory;
+import com.ztesoft.eoms.util.JsonUtil;
+import com.ztesoft.eoms.web.dao.attachment.AttachmentDAO;
+import com.ztesoft.eoms.web.dao.attachment.AttachmentDAOImpl;
+import com.ztesoft.eoms.workordermanager.dao.eomsorderdoc.EomsOrderDocDAO;
+import com.ztesoft.eoms.workordermanager.dao.eomsorderdoc.EomsOrderDocDAOFactory;
+import com.ztesoft.eoms.workordermanager.dto.EomsOrderDocDto;
+
+
+/**
+ * <p>Title: 统一的附件上传、下载servlet</p>
+ * <p>Description:
+ * 支持两种数据存储方式:1。上传到服务器硬盘 2。上传数据库表
+ * 参数：操作模式(mode)
+ * </p>
+ * <p>把返回结果修改成返回json对像 xsh 2010.10.08</p>
+ * <p>Copyright: Copyright (c) 2007</p>
+ * <p>Company: ZTEsoft</p>
+ * @author: yan.hua4
+ * @version 1.1
+ */
+public class AttachmentServlet extends HttpServlet {
+	   private static Logger logger = Logger.getLogger(AttachmentServlet.class);
+
+	    //数据存储方式
+	    private static final String TYPE_HARD_DISK = "disk"; //上传到服务器硬盘
+	    private static final String TYPE_DATABASE = "db"; //上传数据库表
+	    //操作模式
+	    private static final String MODE_PARA_NAME = "mode"; //操作模式参数名称
+	    private static final String MODE_UPLOAD = "upload"; //上传
+	    private static final String MODE_DOWNLOAD = "download"; //下载
+
+	    private String eomsDocPath = null; //附件在服务器目录(TYPE_HARD_DISK使用)
+	    private String currentType = null; //当前数据存储方式
+	    private String currentMode = null; //当前操作模式
+
+	    public void init() throws ServletException {
+	        super.init();
+	        //获取数据存储方式
+	        currentType = AttachmentHelper.getStorageType();
+	        if (TYPE_HARD_DISK.equals(currentType)) {
+	            //获取附件在服务器硬盘的目录
+	            eomsDocPath = AttachmentHelper.getEomsDocPath();
+	        }
+	    }
+
+	    public void destroy() {
+	        super.destroy();
+	    }
+
+	    /**
+	     * 在doGet里处理【下载】
+	     * @param request HttpServletRequest
+	     * @param response HttpServletResponse
+	     * @throws ServletException
+	     * @throws IOException
+	     */
+	    protected void doGet(HttpServletRequest request,
+	                         HttpServletResponse response) throws ServletException,
+	            IOException {
+	        currentMode = request.getParameter(MODE_PARA_NAME);
+	        if (logger.isDebugEnabled()) {
+	            logger.debug("\n----mode=" + currentMode + ";type=" + currentType);
+	        }
+
+	        if (MODE_DOWNLOAD.equals(currentMode)) {
+	            //从服务器硬盘下载
+	            if (TYPE_HARD_DISK.equals(currentType)) {
+	                downloadFromHardDisk(request, response);
+	            }
+	            //从数据库下载
+	            else if (TYPE_DATABASE.equals(currentType)) {
+	                downloadFromDatabase(request, response);
+	            }
+	        }
+	    }
+
+	    /**
+	     * 在doPost里处理【上传】
+	     * @param request HttpServletRequest
+	     * @param response HttpServletResponse
+	     * @throws ServletException
+	     * @throws IOException
+	     */
+	    protected void doPost(HttpServletRequest request,
+	                          HttpServletResponse response) throws ServletException,
+	            IOException {
+	    	request.setCharacterEncoding("UTF-8");
+	    	
+	        MultipartResolver resolver = new CommonsMultipartResolver(
+	                getServletContext());
+	        MultipartHttpServletRequest multipartRequest = resolver.
+	                resolveMultipart(request);
+	        currentMode = multipartRequest.getParameter(MODE_PARA_NAME);
+	        if (logger.isDebugEnabled()) {
+	            logger.debug("\n----mode=" + currentMode + ";type=" + currentType);
+	        }
+	        long maxSize = Long.parseLong(AttachmentHelper.getFileMaxSize())*1024*1024;
+	        long fileSize = request.getContentLength();;
+	        if(fileSize>maxSize){
+	        	PrintWriter out = response.getWriter();
+	            out.println(
+	                    "<html><meta http-equiv='Content-Type' content='text/html; charset=GBK'>" +
+	                    "<script language='javascript'>" +
+	                    "alert('The attachment is too big!');" +
+	                    "window.close();</script></html>");
+	            out.close();
+	       }
+	        
+	        if (MODE_UPLOAD.equals(currentMode)) {
+	            Map fileMap = null;
+	            //上传到服务器硬盘
+	            if (TYPE_HARD_DISK.equals(currentType)) {
+	                fileMap = uploadToHardDisk(multipartRequest);
+	            }
+	            //上传数据库表
+	            else if (TYPE_DATABASE.equals(currentType)) {
+	                fileMap = uploadToDatabase(multipartRequest);
+	            }
+	            Map returnMap = new HashMap();
+	            //上传成功
+	            if (fileMap != null) {
+	            	returnMap.put("success", new Boolean(true));
+	            	returnMap.put("data",fileMap);
+	            //上传失败
+	            }else{
+	            	returnMap.put("success", new Boolean(false));
+	            	returnMap.put("data","[]");
+	            }
+ 
+				response.setContentType("text/html;charset=UTF-8");
+				String jsonStr = JsonUtil.getJsonData(returnMap);
+				jsonStr = jsonStr.substring(1, jsonStr.length()-1);   //去掉[]
+				System.out.println("AttachementServlet =====================jsonStr: "+jsonStr);
+				response.getWriter().write(jsonStr);
+	        }
+	        resolver.cleanupMultipart(multipartRequest);
+	    }
+
+	    private Map uploadToHardDisk(MultipartHttpServletRequest multipartRequest) {
+	        try {
+	            String docKey = multipartRequest.getParameter("docKey");
+	            String uploadInstance = multipartRequest.getParameter(
+	                    "upload_instance");
+	            //保存到硬盘
+	            Map fileMap = processToLocalDisk(multipartRequest.getFile(
+	                    "uploadFile"), docKey);
+	            //记录信息到数据库
+	            String fileId = getFileUploadDAO().insertFileInfo(fileMap);
+	            fileMap.put("fileId", fileId);
+	            fileMap.put("uploadInstance", uploadInstance);
+	            return fileMap;
+	        } catch (Exception ex) {
+	            ex.printStackTrace();
+	            return null;
+	        }
+	    }
+
+	    private void downloadFromHardDisk(HttpServletRequest request,
+	                                      HttpServletResponse response) throws IOException{
+	        try {
+	            Long docId = Long.valueOf(request.getParameter("id"));
+	            Map fileInfo = getFileUploadDAO().selByDocId(docId);
+
+	            if (fileInfo == null) {
+	                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+	                return;
+	            }
+
+	            String filePoint = eomsDocPath + "/" +
+	                               MapUtils.getString(fileInfo, "point");
+	            String fileName = MapUtils.getString(fileInfo, "fileName");
+	            int fileSize = MapUtils.getIntValue(fileInfo, "size");
+
+	            InputStream in = new FileInputStream(filePoint);
+
+	            response.setContentType(MapUtils.getString(fileInfo, "contentType"));
+	            response.setContentLength(fileSize);
+	            response.setHeader("Content-Disposition",
+	                               "attachment; filename=\"" +
+	                               AttachmentHelper.toUtf8String(fileName) + "\"");
+
+	            OutputStream out = response.getOutputStream();
+	            FileCopyUtils.copy(in, out);
+
+	            in.close();
+	            out.flush();
+	            out.close();
+	        } catch (Exception ex) {
+	            ex.printStackTrace();
+	            throw new IOException(ex.getMessage());
+	        }
+	    }
+
+	    private Map uploadToDatabase(MultipartHttpServletRequest multipartRequest) throws IOException{
+	        String docKey = multipartRequest.getParameter("docKey");
+	        String uploadInstance = multipartRequest.getParameter(
+	                "upload_instance");
+
+	        try {
+	            MultipartFile file = multipartRequest.getFile("uploadFile");
+	            if (file == null || file.isEmpty()) {
+	                return null;
+	            } else {
+	                EomsOrderDocDto dto = new EomsOrderDocDto();
+	                dto.setFileName(file.getOriginalFilename());
+	                dto.setDocumentContent(file.getBytes());
+	                getEomsOrderDocDAO().insertEomsOrderDoc(dto);
+	                Map fileMap = new HashMap();
+	                fileMap.put("fileId", dto.getId());
+	                fileMap.put("fileName", dto.getFileName());
+	                fileMap.put("docKey", docKey);
+	                fileMap.put("uploadInstance", uploadInstance);
+	                return fileMap;
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return null;
+	        }
+	    }
+
+	    private void downloadFromDatabase(HttpServletRequest request,
+	                                      HttpServletResponse response) throws IOException {
+	        try {
+	            long fileId = Long.parseLong(request.getParameter("id"));
+	            EomsOrderDocDto dto = getEomsOrderDocDAO().selectEomsOrderDocById(
+	                    fileId);
+
+	            response.setContentType("APPLICATION/OCTET-STREAM");
+	            response.setHeader("Content-Disposition",
+	                               "attachment; filename=\"" +
+	                               AttachmentHelper.toUtf8String(dto.getFileName()) +
+	                               "\"");
+
+	            OutputStream out = response.getOutputStream();
+	            out.write(dto.getDocumentContent());
+	            out.flush();
+	            out.close();
+	        } catch (Exception ex) {
+	            ex.printStackTrace();
+	            throw new IOException(ex.getMessage());
+	        }
+	    }
+
+	    private Map processToLocalDisk(MultipartFile item, String docKey) throws
+	            IOException {
+	        SimpleDateFormat sFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+	        StringBuffer postfix = new StringBuffer(256);
+	        postfix.append('-').append(docKey);
+	        StringBuffer prefix = new StringBuffer(32);
+	        prefix.append(sFormat.format(new Date())).append('-');
+	        System.out.println("-->"+prefix.toString()+postfix.toString());
+	        File temp = File.createTempFile(prefix.toString(), postfix.toString(),
+	                                        new File(eomsDocPath));
+	        item.transferTo(temp);
+
+	        Map fileMap = new HashMap();
+	        fileMap.put("contentType", item.getContentType());
+	        fileMap.put("size", new Long(item.getSize()));
+	        fileMap.put("fileName", item.getOriginalFilename());
+	        fileMap.put("tempFileName", temp.getName());
+	        fileMap.put("docKey", docKey);
+	        fileMap.put("fileKey", docKey); //DAO INSERT里用
+	        return fileMap;
+	        
+	    }
+
+
+	    private AttachmentDAO getFileUploadDAO() {
+	        String daoName = AttachmentDAOImpl.class.getName();
+	        return (AttachmentDAO) BaseDAOFactory.getImplDAO(daoName);
+	    }
+
+	    private EomsOrderDocDAO eomsOrderDocDAO = null;
+	    private EomsOrderDocDAO getEomsOrderDocDAO() {
+	        if (eomsOrderDocDAO == null) {
+	            eomsOrderDocDAO = EomsOrderDocDAOFactory.getDAO();
+	        }
+	        return eomsOrderDocDAO;
+	    }
+}

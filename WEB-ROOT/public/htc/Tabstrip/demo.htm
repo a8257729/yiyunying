@@ -1,0 +1,111 @@
+<html xmlns:ZTESOFT>
+<head>
+<title>Tabstrip例子</title>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<link rel="stylesheet" type="text/css" href="Tabstrip.css">
+<style type="text/css">
+<!--
+body,td,a,input{
+  font-size:9pt;
+  font-family:Tahoma;
+}
+-->
+</style>
+</head>
+<body>
+<b>2005-3-14更新</b>
+<div style="border:1 solid #666666;padding:10px">
+<li>支持指定默认标签索引。</li>
+<li>支持标签的总长度超过设置的宽度，会自动出现滚动箭头。</li>
+<li>支持更换皮肤外观。</li>
+<li>支持标签文字显示不全时，点击时会自动滚动到显示完全。</li>
+<li>所有的样式与控件分离，样式字体自定义，便于整合到工程。</li>
+<li>支持相对定位和绝对定位。</li>
+<li>调整窗口大小时自适应。</li>
+<li>支持标签onclick事件。</li>
+<li>.selectedIndex=x的页面跳转，注意是从0开始的。</li>
+<li>.setDisabledIndex(index)设置某个标签无效，注意是从0开始的。</li>
+</div>
+<br><br>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+ <tr>
+  <td width="100%">
+    <ZTESOFT:tabStrip id="tab2" class="tab_mac">
+      <ZTESOFT:tabs height="200px" width="100%">
+        <ZTESOFT:page Text="<font color='#FF0000'>标签1</font>">
+          <table width="100%" height="100%">
+          <form>
+          <tr>
+            <td>
+              <fieldset style="border:1 solid #919b9c;padding-left:5px;height:100%;width:100%">
+                <legend>标签11</legend>
+              </fieldset>
+            </td>
+          </tr>
+          <tr>
+            <td align="right" height="20" class="tt1">&nbsp;标签11
+            </td>
+          </tr>
+          </form>
+          </table>
+        </ZTESOFT:page>
+
+        <ZTESOFT:page Text="标签2" overflow="auto">
+          <table width="100" height="500" border="4" bordercolor="#FFCCCC">
+          <form>
+          <tr>
+            <td>
+              <fieldset style="border:1 solid #919b9c;padding-left:5px;height:100%;width:100%">
+                <legend>标签21</legend>
+              </fieldset>
+            </td>
+          </tr>
+          <tr>
+            <td align="right" height="20">&nbsp;
+            </td>
+          </tr>
+          </form>
+          </table>
+        </ZTESOFT:page>
+
+        <ZTESOFT:page Text="标签3" onclick="getAlert()">
+         <span onclick="alert('spanClick')">标签3</span>
+        </ZTESOFT:page>
+        <ZTESOFT:page Text="标签4">
+          标签4
+        </ZTESOFT:page>
+        <ZTESOFT:page Text="标签5标签标签标签标签标签标签标签标">
+          标签5
+        </ZTESOFT:page>
+        <ZTESOFT:page Text="标签6">
+          标签6
+        </ZTESOFT:page>
+      </ZTESOFT:tabs>
+    </ZTESOFT:tabStrip>
+   </td>
+ </tr>
+</table>
+<br>
+<input type="button" name="btn2" value="跳转到第3页"  onclick="document.all.tab2.selectedIndex=3">
+<input type="button" name="btn2" value="获得当前选择页(0开始)"  onclick="alert(document.all.tab2.selectedIndex)">
+<input type="button" name="btn2" value="设置第3页失效"  onclick="document.all.tab2.setDisabledIndex(2,true);document.all.tab2.setIndexText(2,'<font color=#cccccc>替换标签</font>') ">
+<input type="button" name="btn2" value="设置第3页激活"  onclick="document.all.tab2.setDisabledIndex(2,false);document.all.tab2.setIndexText(2,'替换标签') ">
+<input type="button" name="btn2" value="设置第4页隐藏"  onclick="document.all.tab2.setDisplayIndex(3,false)">
+<input type="button" name="btn2" value="设置第4页显示"  onclick="document.all.tab2.setDisplayIndex(3,true)">
+<input type="button" name="btn2" value="设置第4页的文本"  onclick="document.all.tab2.setIndexText(3,'<font color=#FF0000>新标签生成1</font>')">
+
+<br>
+<div style="height:300px;width:200px;background-color:#F4F4F4"></div>
+</body>
+</html>
+
+<script language="javascript">
+<!--
+
+function getAlert(){
+  alert('外部标签3');
+}
+
+//-->
+</script>

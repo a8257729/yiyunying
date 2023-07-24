@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>进度报表demo</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery.json-2.2.min.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js" ></script>
+		<script src="../js/echarts-all.js"></script>
+		<script src="../js/template.min.js" ></script>
+		<style>
+			
+		</style>
+	</head>
+
+	<body onload="fillData();">
+		<header class="mui-bar mui-bar-nav">
+			<h1 id="title" class="mui-title">进度报表(动态数据)</h1>
+			
+		</header>
+		<div class="mui-content">
+
+			<div class="chart" id="lineChart"></div>
+			<div id="content"></div>
+			<script id="tpl" type="text/html">
+			<table id="tabel"  freezeColumnNum="1" class="am-table am-table-bordered am-table-centered am-table-striped">
+				<thead>
+					
+					<tr>
+						<th>日期</th>
+						<th >受理量</th>
+						<th >已装机</th>
+						<th >超时</th>
+						<th >待装</th>
+						<th >已处理</th>
+						<th >预处理</th>
+					</tr>
+					
+				</thead>
+				<tbody>
+					{{each dataArr as item i}}
+					<tr  class="mui-tr">
+						<th>{{item[0]}}</th>
+						<td>{{item[1]}}</td>
+						<td>{{item[2]}}</td>
+						<td>{{item[3]}}</td>
+						<td>{{item[4]}}</td>
+						<td>{{item[5]}}</td>
+						<td>{{item[6]}}</td>
+					</tr>
+					{{/each}}
+										
+				</tbody>
+			</table>
+			</script>
+		</div>
+		<script>
+		
+		/**获取URL的参数*/
+			function getUrlParameter(name) {
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+				var r = window.location.search.substr(1).match(reg);
+				if (r != null) {
+					return decodeURI(r[2]);
+				}
+				return '';
+			};
+	
+							
+			
+			function fillData(){
+	
+				//获取get参数
+				var staffId=getUrlParameter("staffId");
+				var jobId=getUrlParameter("jobId");
+				//打印信息
+				console.log(staffId);
+				//图表
+				var xAxisArray = [];
+			    var seriesArray = [];		    
+				var getOption = function(chartType) {
+					var chartOption = {
+						tooltip: {
+						    //点击的提示
+							trigger: 'item',
+							formatter: "{b}:{c} "
+						},
+						legend: {
+							data: ['受理量','已装机','超时','待装','已处理','预处理']
+						},
+						grid: {
+							x: 35,
+							x2: 10,
+							y: 45,//图表网格的y
+							y2: 25						
+						},
+						toolbox: {
+							show: false,//图标工具栏是否显示
+							feature: {
+								mark: {
+									show: false//辅助线
+								},
+								dataView: {//数据识图
+									show: false,
+									readOnly: false
+								},
+								magicType: {//视图切换类型
+									show: true,
+									type: ['line', 'bar']
+								},
+								restore: {//刷新视图
+									show: true
+								},
+								saveAsImage: {//保存图片
+									show: true
+								}
+							}
+						},
+						calculable: false,
+						//x轴数据填充
+						xAxis: [{
+							type: 'category',
+							data: xAxisArray
+						}],
+						//y轴
+						yAxis: [{
+							type: 'value',
+							splitArea: {
+								show: true
+							}
+						}],
+						//显示数据
+						series: seriesArray
+					};
+					return chartOption;
+				};
+				var byId = function(id) {
+					return document.getElementById(id);
+				};
+			
+				//报表数据jquery的ajax查询
+				var jsondata = {};
+	      		jsondata.params = '{"ReportType":"queryReport_Test1","StaffId":"'+staffId+'"}';
+	        
+	      		var url = "/MOBILE/api/client/report/oper";
+	     		$.ajax({  
+		        type : 'POST',  
+		        contentType : 'application/json',  
+		        url : url,  
+		        processData : false,  
+		        dataType : 'json', 
+		        cache:false, 
+		        data :  $.toJSON(jsondata),  
+		        success : function(data) { 	       
+		         if (data.resultCode==1000){
+		         		var dataArray=[];						
+			            dataArray=data.resultData.ReportData.showDatas;
+			            xAxisArray=data.resultData.ReportData.xAxisArry;
+			            seriesArray=data.resultData.ReportData.seriesArry;
+		            	//填充表格的所有数据
+						var data2 = {				
+							//每行的数据
+							dataArr:dataArray
+							};			
+				
+						var html = template('tpl', data2);
+						document.getElementById('content').innerHTML = html;
+						//线性图
+						var lineChart = echarts.init(byId('lineChart'));
+						lineChart.setOption(getOption('line'));
+											
+		              	//增加列表项点击事件 
+						mui('.mui-tr').on('tap', 'td', function() {
+							var id = 'reportDemoDetail.html';//如果点击行 需要打开详情页面的话
+							mui.openWindow({
+								url: id,
+								id: id,
+								styles: {
+									popGesture: 'close'
+								},
+								show: {
+									aniShow: ''
+								},
+								waiting: {
+									autoShow: false
+								},
+								extras: {
+									
+								}
+							});
+			
+						});	
+						
+						freezeTableInit();//动态加载必须要这句话
+		           }else{
+		           		alert(data.resultMsg);  
+		           }
+		        },  
+		        error : function() {  
+		            alert('查询出错，请重试！');  
+		        }  
+		      });
+	      		
+			}		
+			
+			
+		</script>
+	</body>
+
+</html>

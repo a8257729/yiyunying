@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+	<QueryMethod>querySaWorkOrderDetailForEBiz</QueryMethod>
+	<Return>
+		<Content>
+			<Public>
+			      <WorkOrderID>1403754</WorkOrderID>
+				  <AcceptStaff>杨秀妹3</AcceptStaff>
+				  <AcceptDate>2013-08-15 13:12:42</AcceptDate>
+				  <DateEndTime>2013-08-15 13:12:42</DateEndTime>
+				  <UserName>陈志业</UserName>
+				  <OrderTitle>单向高清_故障_84999988</OrderTitle>
+		          <WorkOrderCode>20130925050451FWBZ_CL1</WorkOrderCode>
+		          <AccNbr>84999988</AccNbr>
+		          <UserAddr>广东省中山市岐头新村龙凤街8号B幢首层1卡</UserAddr>
+		          <UrgeNum>0</UrgeNum>
+		          <FaultDescribe>看不到电视</FaultDescribe>
+		          <WorkorderStateName>待接单</WorkorderStateName>
+		          <DealManName>省公司</DealManName>
+		          <FaultPhenomenaComment>高清_机顶盒不能开机至“首页”</FaultPhenomenaComment>
+		          <UserTel>123</UserTel>
+		          <ContactName>林玉满</ContactName>
+          		  <ContactTel>88381673</ContactTel>
+		          <LimitDate>2013-09-26 17:23:43</LimitDate>
+		          <UserLevelName>钻石级</UserLevelName>
+		          <ServBrandName>高级用户</ServBrandName>
+			</Public>
+			<Resource>
+				<Resinfo />
+				<Oldresinfo />
+			</Resource>
+		</Content>
+		<Result>000</Result>
+		<ErrorDesc>查询成功</ErrorDesc>
+	</Return>
+</Data>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+  <QueryMethod>validateSaOrderForEbiz</QueryMethod>
+  <Return>
+    <Result>000</Result>
+    <ErrorDesc>验证成功</ErrorDesc>
+  </Return>
+</Data>

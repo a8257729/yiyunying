@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+  <QueryMethod>saSwitcherInfoPageForEBiz</QueryMethod>
+  <Return>
+    <ContentList>
+      <Content>
+        <Public>
+          <CustEqpNo>1403754</CustEqpNo>
+          <CustEqpName>交换机名称1</CustEqpName>
+          <CustEqpId>H8</CustEqpId>
+          <CustEqpResTypeId>AF-02</CustEqpResTypeId>
+          <CustEqpResTypeName>11</CustEqpResTypeName>
+        </Public>
+      </Content>
+      <Content>
+        <Public>
+          <CustEqpNo>2403754</CustEqpNo>
+          <CustEqpName>交换机名称2</CustEqpName>
+          <CustEqpId>28</CustEqpId>
+          <CustEqpResTypeId>2AF-02</CustEqpResTypeId>
+          <CustEqpResTypeName>211</CustEqpResTypeName>
+        </Public>
+      </Content>
+      <Content>
+        <Public>
+          <CustEqpNo>3403754</CustEqpNo>
+          <CustEqpName>交换机名称3</CustEqpName>
+          <CustEqpId>3H8</CustEqpId>
+          <CustEqpResTypeId>3AF-02</CustEqpResTypeId>
+          <CustEqpResTypeName>311</CustEqpResTypeName>
+        </Public>
+      </Content>
+    </ContentList>
+    <Result>000</Result>
+    <ErrorDesc>查找成功</ErrorDesc>
+    <PageSize>20</PageSize>
+    <PageNum>1</PageNum>
+    <TotalNum>3</TotalNum>
+  </Return>
+</Data>

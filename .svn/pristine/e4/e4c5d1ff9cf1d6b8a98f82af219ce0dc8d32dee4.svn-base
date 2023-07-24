@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>工单信息</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css"
+			href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/echarts-all.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/common5.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js"></script>
+		<script src="../js/template.min.js"></script>
+		<script src="../js/data-bind.js"></script>
+		<script src="../js/global.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		<a class="mui-icon mui-icon-left-nav mui-pull-left" onClick="androidback()"></a>
+		<a class="mui-pull-right mui-icon iconfont icon-rili"
+			id="showUserPicker" style="display:none"></a>
+		<h1 id="title" class="mui-title">
+			工单信息
+		</h1>
+		</header>
+		<div class="mui-content">
+			<div id="content"></div>
+			<script id="tpl" type="text/html">
+			<table id="tabel" freezeRowNum="1" freezeColumnNum="0" class="am-table am-table-bordered am-table-centered am-table-striped">
+				<thead>
+					<tr>
+						<th id="time" rowspan="1" colspan="10" style="text-align:left;display:none">时间</th>
+					</tr>
+					<tr>
+            			<th >工单标识</th>
+						<th >处理环节</th>
+						<th >工单状态</th>
+						<th >工单类型</th>
+						<th >收单人</th>
+						<th >执行人</th>
+						<th >处理结果</th>
+						<th >起始时间</th>
+						<th >结束时间</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{each dataArr as item i}}
+					<tr class="mui-tr"} >
+						<th style="font-weight:bold" >{{item.id}}</th>
+						<td style="font-weight:bold" >{{item.tache_name}}</td>
+						<td style="font-weight:bold" >{{item.work_order_state_name}}</td>						
+						<td style="font-weight:bold" >{{item.work_order_type_name}}</td>
+						<td style="font-weight:bold" >{{item.aparty_name}}</td>
+						<td style="font-weight:bold" >{{item.bparty_name}}</td>
+						<td style="font-weight:bold" >{{item.work_result}}</td>
+						<td style="font-weight:bold" >{{item.create_date}}</td>
+						<td style="font-weight:bold" >{{item.finish_date}}</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			</script>
+		</div>
+		<script>
+		
+		function androidback(){
+				//调用android本地方法  
+        		Android.backFromAndroid();  
+			}
+			var nowDate = new Date();
+			var beginDateStr = nowDate.getFullYear()+(nowDate.getMonth()+1 < 10 ? '0'+(nowDate.getMonth()+1) : nowDate.getMonth()+1);
+		    var endDateStr = createQueryEndDateStr(nowDate);
+		    var staffId = hsTools.getParam("staffId");
+		    var type = hsTools.getParam("type");
+		    var timeType = "date";
+		    var id = hsTools.getParam("id");
+		    var areaNbr = hsTools.getParam("areaNbr");
+		    var accNbr = hsTools.getParam("accNbr");
+		    
+
+		    //mui.plusReady(function() {
+		    if(type == "month"){
+		    	$('#title').text($('#title').text()+'(月报)');
+		    	timeType = "month";
+		    	if(nowDate.getMonth()==0 || (nowDate.getMonth()==1 && nowDate.getDate()<4)){//1月份的时候查去年的12月   2月4号以前，查去年12月
+		    		beginDateStr = (nowDate.getFullYear()-1)+"12";
+		    	}else if(nowDate.getDate()<4){//3月份的时候查1月份的
+		    		beginDateStr = nowDate.getFullYear()+(nowDate.getMonth()-1 < 10 ? '0'+(nowDate.getMonth()-1) : nowDate.getMonth()-1);
+		    	}else{
+		    		beginDateStr = nowDate.getFullYear()+(nowDate.getMonth() < 10 ? '0'+(nowDate.getMonth()) : nowDate.getMonth());
+		    	}
+
+		    }else if(type == "day"){
+		    	$('#title').text($('#title').text()+'(日报)');
+		    	timeType = "date";
+		    	if((nowDate.getDate()-1)==0){//1日
+		    		if(nowDate.getMonth()==0){//为某年的1月1日
+		    			beginDateStr = (nowDate.getFullYear()-1)+"1231";
+		    		}else{
+		    			
+						//d.getMonth()+1代表下个月，月份索引从0开始，即当前月为6月时，getMonth()返回值为5，创建日期时同理
+						//此处构造的日期为下个月的第0天，天数索引从1开始，第0天即代表上个月的最后一天
+						var curMonthDays = new Date(nowDate.getFullYear(), (nowDate.getMonth()), 0).getDate();
+		    			beginDateStr = nowDate.getFullYear()+(nowDate.getMonth() < 10 ? '0'+(nowDate.getMonth()) : nowDate.getMonth())+curMonthDays;
+		    		}
+		    	    
+		    	}else{
+		    			beginDateStr = nowDate.getFullYear()+(nowDate.getMonth()+1 < 10 ? '0'+(nowDate.getMonth()+1) : nowDate.getMonth()+1) + (nowDate.getDate()< 10 ? '0'+(nowDate.getDate()-1) : nowDate.getDate()-1);
+		    	}
+   
+		    }
+		    
+		    //时间选择器
+			var picker = new mui.DtPicker({
+					"type": timeType
+			});
+			
+			var showUserPickerButton = document.getElementById('showUserPicker');
+			showUserPickerButton.addEventListener('tap', function(event) {
+				picker.show(function(items) {
+					var date = new Date(items.value);
+					endDateStr = createQueryEndDateStr(date);
+					beginDateStr = items.value.replace(/-/g,"")
+                    query_report_data2(getDataCallBack,beginDateStr,staffId);
+				});
+
+			}, false);
+			
+			query_report_data7(getDataCallBack,accNbr,areaNbr);
+			
+			function getDataCallBack(jsondataStr) {
+					if(jsondataStr.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+			
+					var jsondata = JSON.parse(jsondataStr);
+					var data = {
+						dataArr: jsondata
+					};
+					console.log(JSON.stringify(data));
+					if(jsondata.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+
+					var html = template('tpl', data);
+					document.getElementById('content').innerHTML = html;
+					$('#time').text("时间："+beginDateStr);
+					//增加列表项点击事件
+					$('.mui-tr').on('tap', function() {
+						var areaName = this.getAttribute('areaName');
+						var str = encodeURI(areaName);
+						
+						mui.openWindow({
+							url: url,
+							
+							styles: {
+								popGesture: 'close'
+							},
+							show: {
+								aniShow: ''
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+                                beginDateStr: beginDateStr,
+                                str: str
+							}
+						});
+					});
+					
+					freezeTableInit();
+				}
+				
+			
+		</script>
+	</body>
+
+</html>

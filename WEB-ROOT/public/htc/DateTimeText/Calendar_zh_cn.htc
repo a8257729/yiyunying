@@ -1,0 +1,270 @@
+<!-- calendar完全版本 @edit moejoe(lmh_user@hotmail.com) -->
+<public:component tagname="calendar" literalcontent="true">
+<public:property name="useDate" put="setUseDate" />
+<public:property name="useTime" put="setUseTime" />
+<public:property name="value" put="setValue" get="getValue" />
+<public:event name="onCalDblClick" id="_ondblclick" />
+<public:defaults viewLinkContent=true tabStop=false viewInheritStyle=false viewMasterTab=false />
+</public:component>
+<style type="text/css">
+table{font-size:12px;}
+.c_dateHead{background-color:#FFF6CD;color:#0033CC;}
+.m_frameborder{border:2 inset;width: 90px; background-color: #FFFFFF; overflow: hidden; text-align: right; font-family: "Tahoma"; font-size: 11px;}
+.d_framebox{padding:0; border:2 inset; font-weight:bold; cursor:hand; background-color: #FFFFFF;}
+.button_blue{margin: 1px 2px 1px 2px; border-right: #5AA9FF 1px solid;  border-top: #FFFFFF 1px solid;  border-left: #FFFFFF 1px solid;  border-bottom: #5AA9FF 1px solid;  font-size: 12px;  color: #003399; padding-top: 2px;background: #BDE5FF;}
+.SelectDate{background-color:#00008b; color:#FFFFFF;}
+
+.m_fieldset{padding: 2,2,7,2; font-size:12px; text-align: center; width: 198px;}
+.m_legend{font-family: Tahoma; font-size: 11px;padding-bottom: 5px;}
+.m_arrow{width: 16px;height: 8px;font-family: "Webdings";font-size: 7px;line-height: 2px;padding-left: 2px;}
+.m_input{width: 18px;height: 15px; border: 0px solid black;font-size: 11px; text-align: right; ime-mode:disabled;}
+</style>
+<body>
+<fieldset class="m_fieldset" align="center"><legend>日期</legend>
+<table border="0" width="180" height="100%" cellspacing=1 cellpadding=1 align=center valign="bottom">
+  <tr id="controlT">
+    <td>
+      <select id="Month" name="Month" style="HEIGHT: 22px; WIDTH: 75px">
+        <option selected value="1">一月</option>
+        <option value="2">二月</option>
+        <option value="3">三月</option>
+        <option value="4">四月</option>
+        <option value="5">五月</option>
+        <option value="6">六月</option>
+        <option value="7">七月</option>
+        <option value="8">八月</option>
+        <option value="9">九月</option>
+        <option value="10">十月</option>
+        <option value="11">十一月</option>
+        <option value="12">十二月</option>
+      </select>
+    </td>
+    <td>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr>
+        <td rowspan="2" align="right">&nbsp;<input id="Year" type="text" name="Year" size="4" value="" readonly="true"></td>
+        <td>
+          <table width="100%" border="0" cellspacing="2" cellpadding="0">
+            <tr>
+              <td><input type="button" class="m_arrow" value="5" onClick="yearArith(1)"></td>
+            </tr>
+            <tr>
+              <td><input type="button" class="m_arrow" value="6" onClick="yearArith(-1)"></td>
+            </tr>
+          </table>
+        </td>
+        <td>&nbsp;<img src="clean.gif" align="absmiddle" border="0" onclick="bClear=true;calDblClick()"><!--input type="button" value="清除" style="width:30px;height:20px" onclick="bClear=true;calDblClick()"--></td>
+      </tr>
+    </table>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" id="Time">
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top" class="d_framebox" id="DateT">
+      <div id=DateList></div>
+    </td>
+  </tr>
+</table>
+</fieldset>
+<div align="center">
+<input type="button" onclick="calDblClick()" value="&nbsp;确定&nbsp;" class="button_blue">&nbsp;<input type="button" onclick="window.close()" value="&nbsp;关闭&nbsp;" class="button_blue">
+</div>
+</body>
+<script type="text/javascript">
+var selected_day=1;
+var bClear=false;
+var today=null;
+var useDate=true;
+var useTime=true;
+var m=new minute("m");
+function Calendar(){
+if(today==null)today=new Date();
+document.all.Month.selectedIndex=today.getMonth();
+document.all.Year.value=today.getFullYear();
+selected_day=today.getDate();
+if(useDate){
+document.all.Month.onchange=redraw;
+redraw();
+}else{
+document.all.DateT.style.display="none";
+document.all.controlT.style.display="none";
+}
+if(useTime){
+document.all.Time.innerHTML=m.toString();
+document.all.tagHour.value=m.formatTime(today.getHours());
+document.all.tagMinute.value=m.formatTime(today.getMinutes());
+document.all.tagSecond.value=m.formatTime(today.getSeconds());
+}else{
+document.all.Time.style.display="none";
+}
+}
+document.onclick=selectDate;
+function selectDate(){
+var obj=window.event.srcElement;
+if(obj.id.substr(0,4)=='date'&&obj.children.length==0){
+var sel=obj.innerHTML;
+obj.innerHTML='<font class="SelectDate">'+sel+'</font>';
+var oldobj=eval('document.all(\'date'+ selected_day +'\')');
+if(oldobj.children[0]!=null)oldobj.innerHTML=oldobj.children[0].innerHTML;
+selected_day=sel;
+}
+}
+function createDays(){
+var tmpArr=new Array();
+tmpArr.push('<TABLE WIDTH="100%" BORDER="0" height="107" CELLSPACING=0 CELLPADDING=0 ondblclick="calDblClick()"><TR class="c_dateHead" height="18px">'+
+'<TD align="center"><FONT Color="#666666">日</FONT></TD><TD align="center">一</TD><TD align="center">二</TD><TD align="center">三</TD><TD align="center">四</TD><TD align="center">五</TD><TD align="center"><FONT Color="#666666">六</FONT></TD></TR>');
+var mon=document.all.Month.value;
+var year=document.all.Year.value;
+var weekday=(new Date(year+'/'+mon+'/'+'1 8:0:0')).getDay();
+var day=0;
+var maxDay=1+getRealDays(year,mon);
+for(var i=0;i<43;i++){
+if(i%7==0)tmpArr.push('<TR>');
+if(i<weekday){
+tmpArr.push('<TD>&nbsp;</TD>');
+}else{
+day++;
+if(day==maxDay){
+tmpArr.push('</TR><TR><TD height="5"><spacer width="1" height="1" type="block"></TD></TR>');
+break;
+}else{
+if(day==selected_day){
+tmpArr.push('<TD id=date'+day+' align="center"><font class="SelectDate">'+day+'</font></TD>');
+}else{
+tmpArr.push('<TD id=date'+day+' align="center">'+day+'</TD>');
+}
+if(i%7==6)tmpArr.push('</TR>');
+}
+}
+}
+if(day<=selected_day)selected_day=day-1;
+tmpArr.push('</TABLE>');
+return tmpArr.join("");
+}
+function redraw(){
+document.all.DateList.innerHTML=createDays();
+}
+function yearArith(valP){
+event.cancelBubble=true;
+document.all.Year.value=parseInt(document.all.Year.value,10)+valP;
+redraw();
+}
+function getRealDays(year,month){
+var daysInMonth=new Array(31,31,28,31,30,31,30,31,31,30,31,30,31);
+if(2==month)
+return((0==year%4)&&(0!=(year%100)))||(0==year%400)?29:28;
+else
+return daysInMonth[month];
+}
+function minute(name,fName){
+this.name=name;
+this.fName=fName||"m_input";
+this.timer=null;
+this.fObj=null;
+this.toString=function(){
+var objDate=new Date();
+var sMinute_Common="class=\"m_input\" maxlength=\"2\" name=\""+this.fName+"\" onfocus=\""+this.name+".setFocusObj(this)\" onblur=\""+this.name+".setTime(this)\" onkeyup=\""+this.name+".prevent(this)\" onkeypress=\"if (!/[0-9]/.test(String.fromCharCode(event.keyCode)))event.keyCode=0\" onpaste=\"return false\" ondragenter=\"return false\"";
+var sButton_Common="class=\"m_arrow\" onfocus=\"this.blur()\" onmouseup=\""+this.name+".controlTime()\"";
+return"<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">"+
+"<tr><td nowrap>时间(T)"+
+"</td><td align=\"right\" width=\"66%\">"+
+"<div class=\"m_frameborder\">"+
+"<input id=tagHour radix=\"24\" value=\""+this.formatTime(objDate.getHours())+"\" "+sMinute_Common+">:"+
+"<input id=tagMinute radix=\"60\" value=\""+this.formatTime(objDate.getMinutes())+"\" "+sMinute_Common+">:"+
+"<input id=tagSecond radix=\"60\" value=\""+this.formatTime(objDate.getSeconds())+"\" "+sMinute_Common+">"+
+"</div>"+
+"</td>"+
+"<td>"+
+"<table border=\"0\" cellspacing=\"2\" cellpadding=\"0\">"+
+"<tr><td><button id=\""+this.fName+"_up\" "+sButton_Common+">5</button></td></tr>"+
+"<tr><td><button id=\""+this.fName+"_down\" "+sButton_Common+">6</button></td></tr>"+
+"</table>"+
+"</td>"+
+"</tr>"+
+"</table>";
+}
+this.formatTime=function(sTime){
+sTime=("0"+sTime);
+return sTime.substr(sTime.length-2);
+}
+this.controlTime=function(cmd){
+event.cancelBubble=true;
+if(!this.fObj)return false;
+var cmd=event.srcElement.innerText=="5"?true:false;
+var i=parseInt(this.fObj.value,10);
+var radix=parseInt(this.fObj.radix,10)-1;
+if(i==radix&&cmd){
+i=0;
+}else if(i==0&&!cmd){
+i=radix;
+}else{
+cmd?i++:i--;
+}
+this.fObj.value=this.formatTime(i);
+this.fObj.select();
+}
+this.prevent=function(obj){
+this.setFocusObj(obj);
+var value=parseInt(obj.value,10);
+var radix=parseInt(obj.radix,10)-1;
+if(obj.value>radix||obj.value<0){
+obj.value=obj.value.substr(0,1);
+}
+}
+this.setFocusObj=function(obj){
+eval(this.fName+"_up").disabled=eval(this.fName+"_down").disabled=false;
+this.fObj=obj;
+}
+this.setTime=function(obj){
+obj.value=this.formatTime(obj.value);
+}
+this.getTime=function(){
+var arrTime=new Array(2);
+var _timeObj=document.getElementsByName(this.fName);
+for(var i=0;i<_timeObj.length;i++){
+arrTime[i]=_timeObj[i].value;
+}
+return arrTime.join(":");
+}
+this.play=function(){
+this.timer=setInterval(this.name+".playback()",1000);
+}
+this.playback=function(){
+var objDate=new Date();
+var arrDate=[objDate.getHours(),objDate.getMinutes(),objDate.getSeconds()];
+var objMinute=document.getElementsByName(this.fName);
+for(var i=0;i<objMinute.length;i++){
+objMinute[i].value=this.formatTime(arrDate[i]);
+}
+}
+}
+function calDblClick(){
+var evt=document.createEventObject();
+_ondblclick.fire(evt);
+}
+function setValue(valueP){
+var defDateTime=valueP;
+if(defDateTime!=null&&defDateTime!=""){
+if(!useDate&&useTime)defDateTime="1970-01-01 "+defDateTime;
+today=new Date(defDateTime.replace('-','\/'));
+if(isNaN(today))today=new Date();
+}else{
+today=new Date();
+}
+Calendar();
+}
+function getValue(){
+var dateStr=(useDate)?(document.all.Year.value+"-"+m.formatTime(document.all.Month.value)+"-"+m.formatTime(selected_day)):"";
+if(useTime)dateStr+=((useDate)?" ":"")+m.getTime();
+return (bClear)?"":dateStr;
+}
+function setUseDate(valueP){
+useDate=(valueP=="true"||valueP==true)?true:false;
+}
+function setUseTime(valueP){
+useTime=(valueP=="true"||valueP==true)?true:false;
+}
+</script>

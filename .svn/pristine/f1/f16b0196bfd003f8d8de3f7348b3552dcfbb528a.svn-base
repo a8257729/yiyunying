@@ -1,0 +1,33 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="pushmessage" extends="common-component-define"
+		namespace="/pushmessage">
+
+		<action name="OptPushMessageAction"
+			class="com.ztesoft.mobile.pn.action.OptPushMessageAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+
+		<action name="OptPushMessageQueueAction"
+			class="com.ztesoft.mobile.pn.action.OptPushMessageQueueAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+
+		<action name="SelPushMessageAction"
+			class="com.ztesoft.mobile.pn.action.SelPushMessageAction">
+		</action>
+		
+		<action name="OptPushMessageClassAction"
+			class="com.ztesoft.mobile.pn.action.OptPushMessageClassAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="SelPushMessageClassAction"
+			class="com.ztesoft.mobile.pn.action.SelPushMessageClassAction">
+		</action>
+		
+	</package>
+</xwork>

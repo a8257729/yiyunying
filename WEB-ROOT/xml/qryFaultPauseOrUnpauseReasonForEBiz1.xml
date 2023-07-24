@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data> 
+  <QueryMethod>qryFaultPauseOrUnpauseReasonForEBiz</QueryMethod>
+  <Return> 
+    <Result>000</Result>  
+    <ErrorDesc>挂起原因</ErrorDesc> 
+  </Return>  
+  <ReasonList> 
+    <Reason> 
+      <ReasonCode>0001</ReasonCode>  
+      <ReasonName>挂起原因1</ReasonName> 
+    </Reason>  
+    <Reason> 
+      <ReasonCode>0002</ReasonCode>  
+      <ReasonName>挂起原因2</ReasonName>  
+    </Reason>  
+    <Reason> 
+      <ReasonCode>0003</ReasonCode>  
+      <ReasonName>挂起原因3</ReasonName>   
+    </Reason>  
+    <Reason> 
+      <ReasonCode>0004</ReasonCode>  
+      <ReasonName>挂起原因4</ReasonName>  
+    </Reason> 
+  </ReasonList> 
+</Data>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>考核指标情况</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css"
+			href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/echarts-all.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/common5.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js"></script>
+		<script src="../js/template.min.js"></script>
+		<script src="../js/data-bind.js"></script>
+		<script src="../js/global.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		<a class="mui-icon mui-icon-left-nav mui-pull-left" onClick="androidback()" ></a>
+		<a class="mui-pull-right mui-icon iconfont icon-rili"
+			id="showUserPicker"></a>
+		<h1 id="title" class="mui-title">考核指标情况</h1>
+		</header>
+		<div class="mui-content">
+			<div id="content" ></div>
+			<script id="tpl" type="text/html">
+			<table id="tabel" freezeRowNum="1" freezeColumnNum="0" class="am-table am-table-bordered am-table-centered am-table-striped">
+				<thead>
+					<tr>
+						<th id="time" rowspan="1" colspan="4">时间</th>
+					</tr>
+					<tr>
+						<th >指标</th>
+						<th >目标值</th>
+						<th >实际值</th>
+						<th >未达标地区</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{each dataArr as item i}}
+					<tr class="mui-tr" id={{item.id}}>
+						<td>{{item.name}}</td>
+						<td style='color:#89cff0;'>{{item.taget_value+"%"}}</td>
+						{{if (item.taget_value-item.Score) > 0 && item.id != 1010}}
+							<td style='color:red;'>{{item.Score+"%"}}</td>
+						{{else if (item.taget_value-item.Score) < 0 && item.id == 1010}}
+							<td style='color:red;'>{{item.Score+"%"}}</td>
+						{{else}}
+							<td>{{item.Score+"%"}}</td>
+						{{/if}}
+						<td>{{item.N_R}}</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			</script>
+		</div>
+		<script>
+		
+			function androidback(){
+				//调用android本地方法  
+        		Android.backFromAndroid();  
+			}
+			
+			var nowDate = new Date();
+		    var beginDateStr = nowDate.getFullYear()+(nowDate.getMonth()+1 < 10 ? '0'+(nowDate.getMonth()+1) : nowDate.getMonth()+1);
+		    var endDateStr = createQueryEndDateStr(nowDate);
+		    var indexDateStr = hsTools.getParam("indexDateStr");
+		    var areaId = 26;
+		    var staffId = hsTools.getParam("staffId");
+		    var type = hsTools.getParam("type");
+		    var timeType = "date";
+		    $('#time').text(beginDateStr);
+		    //mui.plusReady(function() {
+		    if(type == "month"){
+		    	$('#title').text($('#title').text()+'(月报)');
+		    	timeType = "month";
+		    	if(nowDate.getMonth()==0){//1月份的时候查去年的12月
+		    		beginDateStr = (nowDate.getFullYear()-1)+"12";
+		    	}else{
+		    		beginDateStr = nowDate.getFullYear()+(nowDate.getMonth() < 10 ? '0'+(nowDate.getMonth()) : nowDate.getMonth());
+		    	}
+
+		    }else if(type == "day"){
+		    	$('#title').text($('#title').text()+'(日报)');
+		    	timeType = "date";
+		    	if((nowDate.getDate()-1)==0){//1日
+		    		if(nowDate.getMonth()==0){//为某年的1月1日
+		    			beginDateStr = (nowDate.getFullYear()-1)+"1231";
+		    		}else{
+		    			
+						//d.getMonth()+1代表下个月，月份索引从0开始，即当前月为6月时，getMonth()返回值为5，创建日期时同理
+						//此处构造的日期为下个月的第0天，天数索引从1开始，第0天即代表上个月的最后一天
+						var curMonthDays = new Date(nowDate.getFullYear(), (nowDate.getMonth()), 0).getDate();
+		    			beginDateStr = nowDate.getFullYear()+(nowDate.getMonth()+1 < 10 ? '0'+(nowDate.getMonth()) : nowDate.getMonth())+curMonthDays;
+		    		}
+		    	    
+		    	}else{
+		    			beginDateStr = nowDate.getFullYear()+(nowDate.getMonth()+1 < 10 ? '0'+(nowDate.getMonth()+1) : nowDate.getMonth()+1) + (nowDate.getDate()< 10 ? '0'+(nowDate.getDate()-1) : nowDate.getDate()-1);
+		    	}
+   
+		    }
+		    
+		    if(indexDateStr != null && indexDateStr != ''){
+		       beginDateStr = indexDateStr;
+		    }
+		    //mui.plusReady(function() {
+		    //时间选择器
+			var picker = new mui.DtPicker({
+					"type": timeType
+			});
+			var showUserPickerButton = document.getElementById('showUserPicker');
+			showUserPickerButton.addEventListener('tap', function(event) {
+				picker.show(function(items) {
+					var date = new Date(items.value);
+					endDateStr = createQueryEndDateStr(date);
+					beginDateStr = items.value.replace(/-/g,"");
+                    query_report_data(getDataCallBack, areaId,beginDateStr,endDateStr,staffId,"1000");
+				});
+
+			}, false);
+			
+			query_report_data(getDataCallBack, areaId,beginDateStr,endDateStr,staffId,"1000");
+			
+			function getDataCallBack(jsondataStr) {
+					if(jsondataStr.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+					var jsondata = JSON.parse(jsondataStr.replace(/%/g,""));
+					var data = {
+						dataArr: jsondata
+					};
+					console.log(JSON.stringify(data));
+					if(jsondata.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+					
+					$('#title').text(jsondata[0].AREA_NAME+$('#title').text());
+
+					var html = template('tpl', data);
+					document.getElementById('content').innerHTML = html;
+					$('#time').text("时间："+beginDateStr);
+					indexDateStr = beginDateStr;
+					//增加列表项点击事件
+					$('.mui-tr').on('tap', function() {
+					    var id = this.getAttribute('id'); 
+					    var url ='';
+					    if(1001 == id){//15分钟预约及时率-装机    1
+					    	url = 'report_15yuyue.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }else if(1002 == id){//15分钟预约及时率-修障   1
+					   		url = 'report_bm15yuyue.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					   		
+					    }else if(1003 == id){//8小时装机及时率    1
+					   		url = 'report_8hours.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					   		
+					    }else if(1004 == id){//4小时故障修复及时率   1
+					   		url = 'report_4hours.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					   		
+					    }else if(1005 == id){//履约及时率-装机   1
+					    	url = 'report_installed.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }else if(1006 == id){//履约及时率-修障    1
+					    	url = 'report_bm_installed.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }else if(1007 == id){//宽带用户测速合格率
+					    	//url = 'report_8hours.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+beginDateStr;
+					    	
+					    }else if(1008 == id){//FTTH自动激活成功率    1
+					    	url = 'report_ftth_activation.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }else if(1009 == id){//FTTH下IPTV专网用户开通率    1
+					    	url = 'report_ftth_iptv.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }else if(1010 == id){//重复故障率    1
+					    	url = 'report_bm.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }else if(1011 == id){//装移机APP使用率   1
+					    	url = 'report_use_app.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }else if(1012 == id){//宽带修障app使用率   1
+					    	url = 'report_bm_use_app.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }else if(1013 == id){//服务承诺兑现率-装机  1
+					    	url = 'report_dispatch.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }else if(1014 == id){//服务承诺兑现率-修障  1
+					    	url = 'report_bm_dispatch.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }else if(1015 == id){//装移机测速合格率  1
+					    	url = 'report_cs_installed.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }else if(1016 == id){//修障测速合格率  1
+					    	url = 'report_cs_bm.html?type='+type+'&staffId='+staffId+'&id='+id+'&beginDateStr='+indexDateStr;
+					    	
+					    }
+						mui.openWindow({
+							url: url,
+							id: id,
+							styles: {
+								popGesture: 'close'
+							},
+							show: {
+								aniShow: ''
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+                                areaId: areaId,
+                                beginDateStr: beginDateStr,
+                                endDateStr: endDateStr
+							}
+						});
+
+					});
+
+					freezeTableInit();
+				}
+				//});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,837 @@
+<!--************************************************************
+	版权说明: 
+	文件名: AdvComboBox.htc
+	文件创建日期: 2004-05-11
+	作者: lin.zhaohua
+	功能描述: 类似下拉框的控件，支持单选和多选
+			  由一个TextBox和一个按钮组成，点击按钮，显示ComboBox数据			  
+	帮助文档：PropertyList控件使用说明.doc
+	************************************************************
+	[属性]:
+	multipleChoice: 是否多选，true/false
+	items: 导入选择数据，对象数组
+	defaultValue: 默认值，字符串
+	nullable: 是否可空,true/false
+	editable: 是否可用,true/false
+	value: 控件的值,对象/对象数组
+	userData: 用户的选择数据，数组
+	************************************************************	
+	[方法]：
+	loadArrayDesc：导入数组描述信息	
+	loadXmlDesc：导入XML描述信息	
+	loadXmlItems：装入XML选择数据	
+	************************************************************
+	[事件]：
+	onchanged：数据发生变化后，对外响应的事件		 
+	************************************************************
+	[变更记录]
+	1)
+	修改人： Congling
+	修改日期： 2004/6/4
+	修改记录列表：
+	2)
+	修改人： wenwen
+	修改日期： 2004/7/23
+	修改记录：链接样式表
+	          添加表格"border8"、checkbox样式"checkbox"
+	          tbl_onmouseover的颜色为#AFDAFF
+	          有了按钮图片，btn.style.color的颜色定义是否多余？
+	3)
+	修改人：yang.xueshu
+	日期：2004/8/3
+	修改记录：添加width属性，定义绝对宽度；增加oncontentready用来处理，自动装载XML数据。
+	************************************************************  -->
+<!--
+	扩展属性
+		g_selectedItems对应optionItem
+		cell._value对应cell的值
+-->
+
+<public:component tagName="AdvComboBox">
+	<public:defaults viewLinkContent/>	
+	<PUBLIC:ATTACH event="oncontentready" onevent="initLoad()" />	
+	
+	<public:property name="controlType" get="getControlType"/>	
+	<public:property name="multipleChoice" get="getMultipleChoice" put="setMultipleChoice" />
+	<public:property name="width" put="setWidth" />
+	<public:property name="items" get="getItems" put="setItems" />
+	<public:property name="defaultValue" put="setDefaultValue" />
+	<public:property name="nullable" get="getNullable" put="setNullable" />			
+	<public:property name="editable" get="getEditable" put="setEditable" />	
+	<public:property name="value" get="getValue" put="setValue" />	
+	<public:property name="userData" get="getUserData" put="setUserData" />		
+	
+	<public:method name="loadArrayDesc" /> 	
+	<public:method name="loadXmlDesc" />	
+	<public:method name="loadXmlItems" />
+	<public:event name="onchanged" id="_evtonchanged" />
+</public:component>
+<link  href="/IOMPROJ/public/css/style.css" rel="stylesheet" type="text/css">
+<Style>
+.border8{ BORDER-BOTTOM:#3DA6FF 1px solid; BORDER-LEFT:#3DA6FF 1px solid; BORDER-RIGHT:#3DA6FF  1px solid; BORDER-TOP:#3DA6FF  1px solid;background-color : #FFFFFF;}
+</style>
+<table border="0" cellPadding="0" cellSpacing="0" width="100%" align="center" ID="Table1" class="border8">
+	<tr>
+		<td>
+			<table border="0" cellpadding=0 cellspacing=0 width="100%" ID="Table2">
+				<tr>
+					<td width="100%" valign="bottom"><div id="txt" onclick="btn_click();"></div></td>
+					<td align="center"><a id=btn onclick="btn_click();" onmouseover="this.style.cursor='hand';"><img src="/IOMPROJ/public/htc/Other/AdvComboBox/images/select_down.gif" width="15" height="15"></a></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table width=100% 
+				style="display:none;" id=tbl border=0 cellPadding="0" cellSpacing="0" 
+				onmouseover="tbl_onmouseover();"
+				onmouseout="tbl_onmouseout();"
+				onclick="tbl_onclick();"
+				onblur="tbl_onblur();">
+			</table>
+		</td>
+	</tr>
+	
+	<!--iframe id='Calendar' name='Calendar' src='AdvComboBox.html' style='position:absolute; width:168; height:148; left:0px; top:0px; visibility: hidden; background-color: #CCEECC; border: 2px outset #BBDDBB'>");
+	</iframe-->
+</table>
+
+<script language=javascript>
+var g_bNullable = true;
+var g_bMultipleChoice = false;
+var g_bEditable = true;
+var g_defaultValue="";
+
+var g_selectedItems = null;
+var _xmlDoc=null;
+var g_userData = new Array();
+
+//设置宽度
+function setWidth()
+{
+	if (width!=null&&width!="")
+		Table1.width=width;
+}
+
+//装载XML数据
+function initLoad()
+{	
+	_xmlDoc=new ActiveXObject("msxml2.Domdocument");
+	var s=element.innerHTML;	
+	s =s.replace("<?XML:NAMESPACE PREFIX = AdvComboBox />","").replace(/AdvComboBox:/g,"");
+	if (s.length<1) return;
+	_xmlDoc.loadXML(s);	
+	loadXmlDesc(_xmlDoc.documentElement);
+	var val=(g_defaultValue!=null?g_defaultValue.split(","):null);
+	setValue(val);
+}
+
+function getControlType()
+{
+	return "AdvComboBox";
+}
+
+function getUserData()
+{
+	return g_userData;
+}
+
+function setUserData(data)
+{
+	g_userData = data;
+}
+
+//common
+function GetRow(elm)
+{
+	if(elm==null||elm.tagName=="TR")
+		return elm;
+	else
+	{
+		return GetRow(elm.parentElement);
+	}
+}
+
+function GetTable(elm)
+{
+	if(elm==null||elm.tagName=="TABLE")
+		return elm;
+	else
+	{
+		return GetTable(elm.parentElement);
+	}
+}
+
+function verifyComboBox()
+{
+	if ( g_bNullable == false )
+	{
+		if ( tbl.style.display =="none")
+		{	
+			if ( (g_selectedItems == "")||(g_selectedItems == null) )
+			{				
+				ErrorHandle("警告", 2, 1, "该项不能为空，请选择", null);
+			}
+		}
+	}
+}
+
+function _setRowChecked(index,bChecked)
+{
+	tbl.rows[index].cells[0].children[0].checked = bChecked;
+}
+
+function _getRowChecked(index)
+{
+	return tbl.rows[index].cells[0].children[0].checked;
+}
+
+function _getRowValue(index)
+{
+	//return tbl.rows[index].cells[0]._value;
+	return tbl.rows[index].cells[0]._item.value;
+}
+
+function collectMutlipleValues()
+{
+	var arr = new Array();
+	for(var i=0;i<tbl.rows.length;i++)
+	{
+		var cell = tbl.rows[i].cells[0];
+		if(cell.children[0].checked)
+			arr[arr.length] = optionItemFromCell(cell);
+	}
+	return arr;
+}
+
+//设置多项值到txt上
+function setMultiValues()
+{
+	var values="";
+	for (var i=0;i<tbl.rows.length;i++)
+	{
+		if (tbl.rows[i].cells[0].children[0].checked)
+			values+="["+tbl.rows[i].cells[0].innerText+"]";
+	}
+	//txt.innerText=values;
+	txt.innerText = getDisplayText(values);
+	
+}
+
+function compareOption(opt1,opt2)
+{
+	if(opt1 == null)
+	{
+		if(opt2!=null) return false;
+		else return true;
+	}
+	else
+	{
+		if(opt2==null) return false;
+		return (opt1.value == opt2.value);
+			
+	}
+}
+
+function compareOptionArray(arr1,arr2)
+{
+	if(arr1==null )
+	{
+		if(arr2 ==null||arr2.length==0) 
+			return true;
+		else
+			return false;
+	}
+	else
+	{
+		if(arr1.length==0 && arr2==null)
+			return true;
+		if(arr1.length==arr2.length)
+		{
+			for(var i=0;i<arr1.length;i++)
+				for(var j=0;i<arr2.length;j++)
+			{
+				//if(arr1[i].value!=arr2[i].value)
+				//compareOption
+				//	return false;
+				if(!compareOption(arr1[i],arr2[j]))
+					return false;
+			}
+			return true;
+		}
+		return false;
+	}
+}
+
+//inner event
+function tbl_onblur()
+{
+	var elm = document.elementFromPoint(event.clientX,event.clientY);
+	if(elm==null || !tbl.contains(elm))
+	{
+		tbl.style.display="none";
+		if(g_bMultipleChoice)
+		{
+			//多选的值更改为[value1][value2]...的形式
+			//.innerText=values;
+			//var orgVal = getValue();//array
+			var orgVal = g_selectedItems;
+			var curVal = collectMutlipleValues();
+			g_selectedItems = curVal;
+			if(!compareOptionArray(orgVal,curVal))
+			{
+				var evt = document.createEventObject();
+				evt.orgValue = orgVal;
+				evt.curValue = curVal;
+				_evtonchanged.fire(evt);
+			}
+			setMultiValues();
+		}
+	}	
+	verifyComboBox();
+}
+
+function tbl_onclick()
+{
+	if(!g_bMultipleChoice)
+	{
+		var row= GetRow(event.srcElement);
+		if(row!=null && GetTable(row)==tbl)
+		{
+			var cell = row.cells[0];
+			var orgVal = g_selectedItems;
+			var curVal = optionItemFromCell(cell);
+			if(!compareOption(g_selectedItems,curVal))
+			{
+				//txt.innerText = cell.innerText;
+				txt.innerText = getDisplayText(cell.innerText);
+								
+				g_selectedItems = curVal;
+								
+				var evt = document.createEventObject();
+				evt.orgValue = orgVal;
+				evt.curValue = curVal;
+				_evtonchanged.fire(evt);
+			}
+			tbl.style.display="none";
+		}
+	}
+	else
+	{
+		tbl.focus();
+	}	
+}
+
+function tbl_onmouseout()
+{
+	var row = GetRow(event.srcElement);
+	if(row!=null && tbl == GetTable(row))
+	{	
+		//row.style.backgroundColor="white";
+		row.style.backgroundColor=element.style.backgroundColor;
+	}
+}
+
+function tbl_onmouseover()
+{
+	var row = GetRow(event.srcElement);
+	if(row!=null && tbl == GetTable(row))
+	{
+		//row.style.backgroundColor="blue";
+		row.style.backgroundColor="#AFDAFF";
+		
+	}
+}
+
+function btn_click()
+{
+	if(g_bEditable)
+	{
+		if(tbl.style.display=="")
+			tbl.style.display="none";
+		else
+		{
+			tbl.style.display="";
+			tbl.style.zIndex="0";
+			tbl.focus();
+		}
+	}
+	/*document.write("<iframe id='Calendar' name='Calendar' src='AdvComboBox.html' style='position:absolute; width:168; height:148; left:0px; top:0px; visibility: hidden; background-color: #CCEECC; border: 2px outset #BBDDBB'>");
+	document.write("</iframe>");*/
+	//document.all("Calendar").style.visibility = "visible";
+}
+
+//for output
+function getMultipleChoice()
+{
+	return g_bMultipleChoice;
+}
+
+function setMultipleChoice(val)
+{
+	if (val == null)
+	{
+		return;
+	}
+	var bMulti = "";
+	if (val.toString() == "true")
+	{
+		bMulti = true;
+	}
+	if (val.toString() == "false")
+	{
+		bMulti = false;
+	}
+	if ( (val.toString() == "true")||(val.toString() == "false") )		
+	{	
+		if(g_bMultipleChoice!=bMulti)
+		{
+			g_bMultipleChoice = bMulti;
+			
+			for(var i=0;i<tbl.rows.length;i++)
+			{
+				tbl.rows[i].cells[0].children[0].style.display=(g_bMultipleChoice==true?'':'none');	
+			}
+			setValue(null);
+		}
+	}
+}
+
+function getItems()
+{
+	var arrItems = new Array();
+	for(var i=0;i<tbl.rows.length;i++)
+	{
+		var cell =tbl.rows[i].cells[0];
+		arrItems[arrItems.length] = optionItemFromCell(cell);
+	}
+	return arrItems;
+}
+
+function setItems(items)
+{
+	while(tbl.rows.length!=0)
+		tbl.deleteRow(0);
+	for(var i=0;i<items.length;i++)
+	{
+		var row= tbl.insertRow();
+		var cell = row.insertCell();
+		cell.height="18px";
+		
+		fillCellWithOptionItem(cell,items[i]);
+	}
+}
+
+function getNullable()
+{
+	return g_bNullable;
+}
+
+function setNullable(inValue)
+{
+	if (inValue == null)
+	{
+		return;
+	}	
+	if (inValue.toString() == "true")	
+	{
+		g_bNullable = true;
+	}
+	if (inValue.toString() == "false") 
+	{
+		g_bNullable = false;
+	}
+}
+function getEditable()
+{
+	return g_bEditable;
+}
+
+function setEditable(bEditable)
+{
+	var vEditable = "";
+	if (bEditable == null)
+	{
+		return;
+	}	
+	if (bEditable.toString() == "true")
+	{
+		vEditable = true;
+	}
+	if (bEditable.toString() == "false")
+	{
+		vEditable = false;
+	}			
+	if ( (bEditable.toString() == "true")||(bEditable.toString() == "false") )
+	{
+		if (g_bEditable != vEditable)
+		{	
+			g_bEditable = vEditable ;
+			if(g_bEditable)
+			{
+				btn.style.color="black";
+			}
+			else
+			{
+				btn.style.color="#808080";
+			}
+		}		
+	}	
+}
+
+function setDefaultValue(defaultVal)
+{	
+	if (tbl.rows.length<1)
+	{
+		g_defaultValue=defaultVal;
+		return;
+	}
+	var val=(defaultVal!=null?defaultVal.split(","):null);
+	setValue(val);
+}
+
+//if multiple choice, return array; else return value;
+function getValue()
+{
+	if(g_selectedItems == null) 
+	{
+		return null;
+	}
+	else
+	{
+		return g_selectedItems;
+	}
+}
+
+function setValue(val)
+{
+	if (tbl.rows.length<1&&val!=null)
+		initLoad();
+	
+	if(g_bMultipleChoice==true)
+	{
+		//var val=(val1==null?null:val1.split(","));
+		txt.innerText="(Collection)";
+		var displayText="";
+		if(val==null||val.length==0) 
+		{
+			for(j=0;j<tbl.rows.length;j++)
+			{
+				_setRowChecked(j,false);
+			}		
+			g_selectedItems = null;
+		}
+		else
+		{
+			var i,j;
+			for(j=0;j<tbl.rows.length;j++)
+			{
+				_setRowChecked(j,false);
+			}
+			
+			for(i=0;i<val.length;i++)
+			{
+				for(j=0;j<tbl.rows.length;j++)
+				{
+					if(val[i] == _getRowValue(j))
+					{
+						_setRowChecked(j,true);
+						displayText+="["+tbl.rows[j].cells[0].innerText+"]";
+						break;
+					}
+				}
+				if (j==tbl.rows.length)
+				{
+					throw "value is not in list items";
+				} 
+			}
+			if (displayText!="")
+			{
+				txt.innerText=displayText;
+			}
+			g_selectedItems = collectMutlipleValues();				
+		}
+	}
+	else
+	{
+		if ((val==null)||(val==''))
+		{
+			g_selectedItems= null;
+			txt.innerText = " ";
+		}
+		else
+		{
+			var i,cell;
+			for(i=0;i<tbl.rows.length;i++)
+			{
+				var row = tbl.rows[i];
+				cell = row.cells[0];
+				if(val==cell._item.value)
+				{
+					txt.innerText = cell.innerText;
+					break;
+				}
+			}
+			
+			if(i==tbl.rows.length)
+			{			
+				throw "value is not in list items";
+			}
+			g_selectedItems=optionItemFromCell(cell);
+		}
+	}
+	//数据部分
+	
+}
+
+function loadXmlItems(xmlNode)
+{	
+	var children = xmlNode.selectNodes("Item");
+	var arrItems = new Array();
+	var arrValues = new Array();
+	for(var i=0;i<children.length;i++)
+	{
+		var obj = new Object();
+		obj.text = children[i].getAttribute("text");
+		obj.value = children[i].getAttribute("value");
+		if(children[i].getAttribute("checked") == "true")
+			arrValues[arrValues.length] = obj.value;
+		arrItems[arrItems.length]= obj;
+	}
+	setItems(arrItems);		
+	
+	if(arrValues.length == 0)
+	{
+		setValue(null);
+	}
+	else  if (g_bMultipleChoice==true)
+	{
+		setValue(arrValues);
+	}
+	else
+	{
+		setValue(arrValues[0]);
+	}
+}
+
+/*
+arrProperty
+	bool multipleChoice
+	bool nullable
+	bool editable
+	defaultValue
+	value
+	Array<Item> items
+	object userData;
+	
+Item
+	text
+	value
+*/
+
+function loadArrayDesc(arrProperty)
+{	
+	//设置属性	
+	if ( arrProperty.hasOwnProperty ("multipleChoice") == true )
+	{		
+		setMultipleChoice(arrProperty.multipleChoice);		
+	}		
+	if ( arrProperty.hasOwnProperty ("nullable") == true )
+	{		
+		setNullable(arrProperty.nullable);		
+	}		
+	if ( arrProperty.hasOwnProperty ("editable") == true )
+	{	
+		var bEnable = arrProperty.editable;	
+		setEditable(bEnable);
+	}
+	//通过数组，导入可选数据
+	if ( arrProperty.hasOwnProperty ("items")== true )
+	{		
+		setItems(arrProperty.items);
+	}
+	
+	//数据生成后，设置默认值
+	if ( arrProperty.hasOwnProperty ("defaultValue")== true )
+	{
+		if (g_bMultipleChoice == true)
+		{		
+			var arr = (arrProperty.defaultValue!=null?arrProperty.defaultValue.split(','):null);
+			setValue(arr);	
+		}
+		else
+		{			
+			setValue(arrProperty.defaultValue);
+		}		
+	}	
+	/*
+	if ( arrProperty.hasOwnProperty ("value")== true )
+	{
+		if (g_bMultipleChoice == true)
+		{		
+			var arr = arrProperty.value.split(',');						
+			setValue(arr);	
+		}
+		else
+		{			
+			setValue(arrProperty.value);
+		}		
+	}*/	
+	
+	
+	//g_userData =  arrProperty.userData;
+		
+}
+
+function loadXmlDesc(xmlNode)
+{	
+	//设置属性	
+	setMultipleChoice(xmlNode.getAttribute("multipleChoice"));
+	
+	setNullable(xmlNode.getAttribute("nullable"));		
+	
+	setEditable(xmlNode.getAttribute("editable"));
+
+	//设置完属性，再导入[可选择的数据]
+	loadXmlItems(xmlNode);
+
+	//数据生成后，设置默认值
+	var vDefaultValue = xmlNode.getAttribute("defaultValue");	 
+	if (  vDefaultValue != null )
+	{		
+		if ( g_bMultipleChoice == true )
+		{			
+			var arr = vDefaultValue.split(',');
+			setDefaultValue(arr);						
+		}
+		else
+		{			
+			setDefaultValue(vDefaultValue);			
+		}
+	}	
+	var vValue = xmlNode.getAttribute("value");
+	if ( vValue != null )
+	{	
+		if (g_bMultipleChoice == true)
+		{			
+			var arr = vValue.split(',');			
+			setValue(arr);
+		}
+		else
+		{			
+			setValue(vValue);			
+		}
+	}	
+}
+
+function optionItemFromCell(cell)
+{
+	return cell._item;
+}
+
+function fillCellWithOptionItem(cell,item)
+{
+	cell.innerHTML="<input type=checkbox class='checkbox'>"+item.text;
+	cell.children[0].style.display= (g_bMultipleChoice==true?'':'none')
+	cell._item  = item;
+	//cell._value  = item.value;
+	
+	if (item.affectProperties != null)
+	{
+		/*
+		if (g_userData == null)
+		{
+			g_userData = item.affectProperties;
+		}
+		else
+		{
+			g_userData += ',' + item.affectProperties; 
+		}		
+		*/	    
+		
+		
+		var arr = item.affectProperties.split(',');
+		
+		for (var i=0;i<arr.length;i++)
+		{		
+			g_userData[g_userData.length] = arr[i];
+		}
+		
+	}	
+		
+}
+
+/************************************************************
+ 函数名称：getDisplayText
+ 函数功能：根据界面的长度，判断是否隐藏文本
+ 输入参数：wholeText -- 完整的字符串
+ 输出参数：无 
+ 返 回 值：能正常显示的文本字符串
+ 函数说明：
+ ************************************************************/
+function getDisplayText(wholeText)
+{	
+	try 
+	{
+		//一个全角(汉字)14个象素,一个半角(英文)7个象素		
+		var textWidth = 0;
+		var clientWidth = tbl.rows[0].cells[0].clientWidth;
+				
+		for (var i=0;i<wholeText.length;i++)
+		{
+			var charUnit = wholeText.substring(i,i+1);
+			
+			if (escape(charUnit).length >= 6)  //汉字
+			{
+				textWidth += 14;
+			}
+			else  //非汉字  "a[@ #"
+			{
+				textWidth += 7;
+			}			
+		}			
+		
+		if (textWidth > clientWidth)
+		{		
+			var subsText = "";
+			
+			//最后要加上3个点号，先减去3位
+			clientWidth = clientWidth - (3*7);
+			textWidth = 0;						
+					
+			for (var i=0;i<wholeText.length;i++)
+			{
+				var charUnit = wholeText.substring(i,i+1);				
+				
+				if (escape(charUnit).length >= 6)  //汉字
+				{
+					textWidth += 14;
+				}
+				else  //非汉字  "a[@ #"
+				{
+					textWidth += 7;
+				}
+				
+				if (textWidth > clientWidth )
+				{
+					subsText += "...";
+					return subsText;
+				}				
+				subsText += charUnit;
+			}			
+		}
+		else
+		{		
+			return wholeText;
+		}
+	}
+	catch (e)		
+	{
+		//异常，返回原字符串
+		return wholeText;
+	}
+}
+
+
+</script>

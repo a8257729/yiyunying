@@ -1,0 +1,71 @@
+package com.ztesoft.mobile.v2.service.workform.xinjiang;
+
+import net.sf.json.JSONObject;
+
+import com.ztesoft.mobile.v2.core.Result;
+
+/**
+ * 工单处理模块
+ * 
+ * @author linping
+ * 
+ */
+public interface WorkOrderPublicService {
+
+	public static final String WS_NAMESPACE = "";
+
+	public static final String WS_METHOD_OPERATION_NAME = "pfServicesForEBiz";
+
+	
+	/**
+	 * 工单监控
+	 */
+	public static final String WORKORDERID = "WorkOrderID";
+	public static final String USENAME = "UseName";
+	public static final String ORDERID = "OrderID";
+	
+	/**指派*/
+	public static final String DISPCOMMENTS = "DispComments";
+	public static final String DISPPARTYTYPE = "DispPartyType";
+	public static final String DISPPARTYID = "DispPartyId";
+	public static final String DISPPARTYNAME = "DispPartyName";
+	public static final String DISPORGID = "DispOrgId";
+	public static final String DISPREASONID = "DispReasonId";
+	
+	/**改约*/
+	public static final String CHANGECOMMENTS = "ChangeComments";
+	public static final String CHANGESTAFFID = "ChangeStaffId";
+	public static final String CHANGEDATE = "ChangeDate";
+	public static final String CHANGEREASONID = "ChangeReasonId";
+	
+	
+	public static final String ORDERCLASS = "OrderClass";
+		
+	
+	/** 工单反馈 */
+	public Result reportWorkOrder(JSONObject json);	
+	
+	/** 查询授权人员 */
+	public Result selAuthStaffList(Long orgId, String type);
+	/** 查询授权人员 
+	 * @param type */
+	public Result selAuthStaffList(Long areaId, Long jobId, String type);
+
+	public Result selAuthOrgList(Long areaId, Long orgId, Boolean isRoot,
+			String type);
+	
+	/** 工单监控 -- 查询组织树 */
+	public Result qryOrgTree(JSONObject json);
+	
+	/** 工单监控 -- 查询所有组织树 */
+	public Result qryAllOrgTree(JSONObject json);
+	
+	/** 工单监控 -- 查询授权组织树 */
+	public Result qryAuthOrgTree(JSONObject json);
+	/** 工单监控 -- 查询障碍原因树 */
+	public Result qryFaultReasonTree(JSONObject json);
+	/** 工单监控 -- 查询牵手分类树 */
+	public Result qryHandTree(JSONObject json);
+	/** 根据日期和处理人，加载时段 */
+	public Result timeSeqQuery(JSONObject json);	
+}

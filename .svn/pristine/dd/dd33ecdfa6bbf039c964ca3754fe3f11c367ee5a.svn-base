@@ -1,0 +1,24 @@
+thead.fixedHeader tr{position: relative; top: expression(document.getElementById("div9_").scrollTop)}
+thead.fixedHeader td{font-family: Tahoma, Arial,"宋体";white-space:nowrap;text-align:center;font-size:12px;color:#000000;height: 20px;border-left: 1px solid #FFF;border-right: 1px solid #91BEE3; border-top: 1px solid #FFF;border-bottom: 1px solid #D6E6F0; background-color: #EBF4FB;}
+tbody.hasBorder td{font-family: Tahoma, Arial,"宋体";font-size:12px; height:20px; border-bottom: 1px solid #AAA; border-right: 1px solid #AAA; border-top: 1px solid #EEE; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-left:2;}
+tbody.rowWrap td{font-family: Tahoma, Arial,"宋体";font-size:12px; height:20px; word-wrap:break-word;border-bottom: 1px solid #AAA; border-right: 1px solid #AAA; border-top: 1px solid #EEE; padding-left:2;}
+tbody.noBorder  td{font-family: Tahoma, Arial,"宋体";font-size:12px; height: 22px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+div.popTips{font-family: Tahoma, Arial,"宋体";background-color:#FFFFE7; top:0; display:none; height:20px; font-size:12px; border:1px #000000 solid; padding:2px 4px 2px 4px; position:absolute; z-index:3;}
+div.pagiCont{font-size:12px;height:22px;}
+input.pageInput{font-family: Tahoma, Arial,"宋体";font-size:12px;color:#000000; background-color: #FFFFFF; border:1 solid #888888;}
+input.textInput{border:1 solid #A8A8A8;width:100%; height:100%; font-size:12px; padding-top: 2; padding-left: 1;background-color: #F9F9F9}
+input{height:16px;width:16px}
+thead.noHeader tr{display: none;}
+img{vertical-align : middle}
+div.container {clear: both; border-color:#DDEBF3; cursor:default; overflow: auto;
+scrollbar-face-color:#EBF4FB;
+scrollbar-shadow-color:#FAFAFA;
+scrollbar-highlight-color:#FFFFFF;
+scrollbar-3dlight-color:#BED9EC;
+scrollbar-darkshadow-color:#BED9EC;
+scrollbar-track-color:#FAFAFA;
+scrollbar-arrow-color:#BED9EC;}
+A:link {COLOR: #0033CC; TEXT-DECORATION: none}
+A:visited {COLOR: #0033CC; TEXT-DECORATION: none}
+a:active {color: #0033CC; text-decoration: none}
+A:hover {COLOR: #000000; TEXT-DECORATION: none}

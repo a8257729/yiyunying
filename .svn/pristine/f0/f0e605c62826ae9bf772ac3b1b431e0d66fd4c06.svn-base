@@ -1,0 +1,287 @@
+package com.ztesoft.mobile.v2.dao.resource;
+
+import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.ztesoft.mobile.common.dao.BaseDAOImpl;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import com.ztesoft.mobile.common.helper.StringUtil;
+
+import oracle.jdbc.internal.OracleTypes;
+
+public class ResourceDAOImpl extends BaseDAOImpl implements ResourceDAO {
+
+	private static final Logger logger = Logger.getLogger(ResourceDAOImpl.class);
+
+	public Map<String, Object> getResourceInfoByQrcode(String qrCode) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Connection conn = null;
+		CallableStatement callStmt = null;
+		try {
+			conn = getConnection();
+			logger.info("<<<qrCode>>>:" + qrCode);
+
+			callStmt = conn.prepareCall("{call Sf_Get_eqpdetail_by_code2(?,?,?,?,?,?,?,?,?,?,?,?,?,?) }");
+			callStmt.setString(1, qrCode);
+
+			callStmt.registerOutParameter(2, OracleTypes.VARCHAR);
+			callStmt.registerOutParameter(3, OracleTypes.VARCHAR);
+			callStmt.registerOutParameter(4, OracleTypes.VARCHAR);
+			callStmt.registerOutParameter(5, OracleTypes.VARCHAR);
+			callStmt.registerOutParameter(6, OracleTypes.VARCHAR);
+			callStmt.registerOutParameter(7, OracleTypes.VARCHAR);
+			callStmt.registerOutParameter(8, OracleTypes.VARCHAR);
+			callStmt.registerOutParameter(9, OracleTypes.VARCHAR);
+			callStmt.registerOutParameter(10, OracleTypes.VARCHAR);
+			callStmt.registerOutParameter(11, OracleTypes.NUMBER);
+			callStmt.registerOutParameter(12, OracleTypes.NUMBER);
+			callStmt.registerOutParameter(13, OracleTypes.VARCHAR);
+			callStmt.registerOutParameter(14, OracleTypes.VARCHAR);
+
+			callStmt.execute();
+			String splitterName = callStmt.getString(2);// 分光器名称
+			String eqpId = callStmt.getString(3);
+			String workMode = callStmt.getString(4);// 分光比
+			String protectStyle = callStmt.getString(5);// 分光级别
+			String oltIP = callStmt.getString(6);// oltIp
+			String oltName = callStmt.getString(7);// olt名称
+			String pon = callStmt.getString(8);// pon口
+			String ponId = callStmt.getString(9);// pon口id
+			String posX = "";
+			String posY = "";
+			if (callStmt.getBigDecimal(11) != null) {
+				posX = callStmt.getBigDecimal(11).toString();// 经度
+			}
+			if (callStmt.getBigDecimal(12) != null) {
+				posY = callStmt.getBigDecimal(12).toString();// 维度
+			}
+
+			String outAddress = callStmt.getString(13);// 安放地址
+			String outStandName = callStmt.getString(14);//标准地址
+			
+			resultMap.put("splitterName", splitterName);
+			resultMap.put("oltIP", oltIP);
+			resultMap.put("oltName", oltName);
+			resultMap.put("pon", pon);
+			resultMap.put("eqpId", eqpId);
+			resultMap.put("ponId", ponId);
+			resultMap.put("qrCode", qrCode);
+			resultMap.put("workMode", workMode);
+			resultMap.put("protectStyle", protectStyle);
+			resultMap.put("posX", posX);
+			resultMap.put("posY", posY);
+			resultMap.put("outAddress", outAddress);
+			resultMap.put("outStandName", outStandName);
+
+			// 根据二维码查询分光器端口占用列表
+			StringBuffer sbf = new StringBuffer();
+			sbf.append(" select c.port_id as portId,                                        \n");
+			sbf.append("        c.position as position,                                     \n");
+			sbf.append("        d.loid as serviceNum,                                       \n");
+			sbf.append("        d.cust_name as custName,                                   \n");
+			sbf.append("        SF_GET_ADDRESS_BY_RES_ID(C.PORT_ID) as custAddr,           \n");
+			sbf.append("        SF_GET_DESC_CHINA(c.OPR_STATE_ID) as portState             \n");
+			sbf.append("   from pub_two_dimension_code a                                    \n");
+			sbf.append("   left join rme_eqp b on a.res_id = b.eqp_id                       \n");
+			sbf.append("                      and b.res_type_id = '2530'                    \n");
+			sbf.append("                      and b.delete_state = '0'                      \n");
+			sbf.append("   left join rme_port c on c.delete_state = '0'                     \n");
+			sbf.append("                       and b.eqp_id = c.super_res_id                \n");
+			sbf.append("   left join ZYQC_ftth_user_2019 d on c.port_id = d.assign_port_id  \n");
+			sbf.append("                                                                    \n");
+			sbf.append("  where a.digcode = '" + qrCode + "'                                 \n");
+			sbf.append("    and a.delete_state = '0'  order by position                  \n");
+
+			List ponPortList = null;
+			try {
+				logger.info("查询分光器端口信息: \n" + sbf.toString());
+				ponPortList = dynamicQueryListByMap(sbf.toString(), null, null);
+			} catch (DataAccessException e) {
+				logger.error("查询分光器端口信息失败，qrCode：" + qrCode + "。" + e.getMessage());
+			}
+			resultMap.put("ponPortList", ponPortList);
+		} catch (SQLException e) {
+			resultMap.put("flag_desc", "根据qrCode:" + qrCode + "查询资源信息失败!");
+			logger.error("根据qrCode:" + qrCode + "查询资源信息失败!");
+			logger.error(e.getMessage());
+		} finally {
+			cleanUp(conn, null, callStmt, null);
+		}
+		return resultMap;
+	}
+
+	public Map<String, Object> queryUserInfo(String portId, String qrCode) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Map<String, Object> map = null;
+		logger.info("<<<portId>>>:" + portId);
+		logger.info("<<<qrCode>>>:" + qrCode);
+		StringBuffer sbf = new StringBuffer();
+		if (!StringUtil.isNull(portId)) {
+			sbf.append(" select                                                  \n");
+			sbf.append("     c.port_id as portId,                                \n");
+			sbf.append("     e.cust_name as custName,                            \n");
+			sbf.append("     SF_GET_ADDRESS_BY_RES_ID(C.PORT_ID) as custAddr,    \n");
+			sbf.append("     e.tele_no as teleNo,                                \n");
+			sbf.append("     e.loid as serviceNum,                               \n");
+			sbf.append("     b.eqp_no as eqpNo,                                  \n");
+			sbf.append("     c.position as position,                             \n");
+			sbf.append("     d.digcode as qrCode,                                \n");
+			sbf.append("     SF_GET_DESC_CHINA(c.OPR_STATE_ID) as portState,     \n");
+			sbf.append("     sf_get_onuobd_up_olt_rma(b.eqp_id) as oltIP,        \n");
+			sbf.append("     sf_get_onuobd_up_olt_name(b.eqp_id) as oltName,    \n");
+			sbf.append("     Sf_Get_Port_Id(b.node_id) as pon   \n");
+			sbf.append("      from pub_two_dimension_code a,                     \n");
+			sbf.append("           rme_eqp                b,                     \n");
+			sbf.append("           rme_port               c,                     \n");
+			sbf.append("           pub_two_dimension_code d,                     \n");
+			sbf.append("           ZYQC_ftth_user_2019    e                      \n");
+			sbf.append("     where                                               \n");
+			sbf.append("     c.port_id = '" + portId + "'\n");
+			sbf.append("     and a.delete_state = '0'                            \n");
+			sbf.append("     and a.res_id = b.eqp_id                             \n");
+			sbf.append("     and c.delete_state = '0'                            \n");
+			sbf.append("     and c.port_id = d.res_id                            \n");
+			sbf.append("     and d.res_type_id = '6024'                          \n");
+			sbf.append("     and c.super_res_id = b.eqp_id                       \n");
+			sbf.append("     and b.res_type_id = '2530'                          \n");
+			sbf.append("     and c.port_id = e.assign_port_id                    \n");
+		} else if (!StringUtil.isNull(qrCode)) {
+			sbf.append("  select                                               \n");
+			sbf.append("  c.port_id as portId,                                 \n");
+			sbf.append("  e.cust_name as custName,                             \n");
+			sbf.append("  SF_GET_ADDRESS_BY_RES_ID(C.PORT_ID) as custAddr,     \n");
+			sbf.append("  e.tele_no as teleNo,                                 \n");
+			sbf.append("  e.loid as serviceNum,                                \n");
+			sbf.append("  b.eqp_no as eqpNo,                                   \n");
+			sbf.append("  c.position as position,                              \n");
+			sbf.append("  d.digcode as qrCode,                                 \n");
+			sbf.append("  sf_get_onuobd_up_olt_rma(b.eqp_id) as oltIP,         \n");
+			sbf.append("  sf_get_onuobd_up_olt_name(b.eqp_id) as oltName,      \n");
+			sbf.append("  Sf_Get_Port_Id(b.node_id) as pon,                    \n");
+			sbf.append("  SF_GET_DESC_CHINA(c.OPR_STATE_ID) as portState      \n");
+			sbf.append("   from pub_two_dimension_code a,                      \n");
+			sbf.append("        rme_eqp                b,                      \n");
+			sbf.append("        rme_port               c,                      \n");
+			sbf.append("        pub_two_dimension_code d,                      \n");
+			sbf.append("        ZYQC_ftth_user_2019    e                       \n");
+			sbf.append("  where                                                \n");
+			sbf.append("  d.digcode = '" + qrCode + "'                         \n");
+			sbf.append("  and a.delete_state = '0'                             \n");
+			sbf.append("  and a.res_id = b.eqp_id                              \n");
+			sbf.append("  and c.delete_state = '0'                             \n");
+			sbf.append("  and c.port_id = d.res_id                             \n");
+			sbf.append("  and d.res_type_id = '6024'                           \n");
+			sbf.append("  and c.super_res_id = b.eqp_id                        \n");
+			sbf.append("  and b.res_type_id = '2530'                           \n");
+			sbf.append("  and c.port_id = e.assign_port_id                     \n");
+		}
+
+		try {
+			logger.info("查询端口用戶信息：\n" + sbf.toString());
+			map = dynamicQueryObjectByMap(sbf.toString(), null, null);
+		} catch (DataAccessException e) {
+			logger.error("查询端口用戶信息失败，portId：" + portId + ",qrCode:" + qrCode + "。" + e.getMessage());
+		}
+
+		return map;
+
+	}
+
+	public Map<String, Object> commonQueryObjectBySql(String sqlStr, Map paramMap, String wherePatternStr) {
+		Map<String, Object> map = null;
+		try {
+			logger.info("查询sql：\n" + sqlStr);
+			map = dynamicQueryObjectByMap(sqlStr, paramMap, wherePatternStr);
+		} catch (DataAccessException e) {
+			logger.error("查询信息失败，paramMap：" + paramMap.toString() + "\n" + e.getMessage());
+		}
+		return map;
+	}
+
+	public Map<String, Object> commonQueryListBySql(String sqlStr, Map paramMap, String wherePatternStr) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List dataList = null;
+		try {
+			logger.info("查询sql：\n" + sqlStr);
+			dataList = dynamicQueryListByMap(sqlStr, paramMap, wherePatternStr);
+		} catch (DataAccessException e) {
+			logger.error("查询信息失败，paramMap：" + paramMap.toString() + "\n" + e.getMessage());
+		}
+		map.put("dataList", dataList);
+		return map;
+	}
+
+	/**
+	 * 根据存储过程查询信息
+	 * 
+	 * @param procedureName
+	 *            存储过程名字，带参数，如：Sf_Get_eqpdetail_by_code(?,?,?,?,?,?,?,?,?,?,?,?)
+	 * @param paramList
+	 * @param intParamLength 
+	 * @return
+	 */
+	public Map<String, Object> commonQueryObjectByProcedure(String procedureName, List paramList, int intParamLength,String[] outParam) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Connection conn = null;
+		CallableStatement callStmt = null;
+		try {
+			conn = getConnection();
+			logger.info("<<call procedure>>:" + procedureName);
+			logger.info("<<paramList>>:" + paramList.toString());
+
+			callStmt = conn.prepareCall("{call "+procedureName + "}");
+			if(paramList == null || paramList.size() == 0){
+				return resultMap;
+			}
+			for (int i = 0; i < paramList.size(); i++) {
+				if (i < intParamLength) {
+					Class<? extends Object> paramClass = paramList.get(i).getClass();
+					if (paramClass.isInstance(new String(""))) {
+						callStmt.setString(i + 1, (String) paramList.get(i));
+					} else if (paramClass.isInstance(new Integer(0))) {
+						callStmt.setInt(i + 1, (Integer) paramList.get(i));
+					} else if (paramClass.isInstance(new Double(0.0))) {
+						callStmt.setDouble(i + 1, (Double) paramList.get(i));
+					}else if(paramClass.isInstance(new BigDecimal(0))){
+						callStmt.setBigDecimal(i+1, (BigDecimal) paramList.get(i));
+					}
+				} else {
+					Class<? extends Object> paramClass = paramList.get(i).getClass();
+					if (paramClass.isInstance(new String(""))) {
+						callStmt.registerOutParameter(i + 1, OracleTypes.VARCHAR);
+					}else if(paramClass.isInstance(new BigDecimal(1))){
+						callStmt.registerOutParameter(i + 1, OracleTypes.NUMBER);
+					}
+				}
+			}
+
+			callStmt.execute();
+            
+			for (int j = 0; j < paramList.size() - intParamLength; j++) {
+				Class<? extends Object> paramClass = paramList.get(j + intParamLength).getClass();
+				if (paramClass.isInstance(new String(""))) {
+					resultMap.put(outParam[j], callStmt.getString(j + 1 + intParamLength) == null ? ""
+							: callStmt.getString(j + 1 + intParamLength));
+				} else if (paramClass.isInstance(new BigDecimal(0))) {
+					resultMap.put(outParam[j], callStmt.getBigDecimal(j + 1 + intParamLength) == null ? ""
+							: callStmt.getBigDecimal(j + 1 + intParamLength));
+				}
+			}
+
+		} catch (SQLException e) {
+			logger.error("执行存储过程失败!" + procedureName);
+			logger.error(e.getMessage());
+		} finally {
+			cleanUp(conn, null, callStmt, null);
+		}
+		return resultMap;
+	}
+
+}

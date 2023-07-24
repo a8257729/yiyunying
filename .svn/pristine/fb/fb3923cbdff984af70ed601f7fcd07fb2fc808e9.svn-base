@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content=" width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title></title>
+<link type="text/css" rel="stylesheet" href="css/bootstrap.css">
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet" href="css/button.css">
+<link href="../css/mui.min.css" rel="stylesheet" />
+<script type="text/javascript" src="../js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="../js/mui.min.js"></script>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../workfloworder/js/bootstrap.js"></script>
+<script type="text/javascript" src="../workfloworder/js/bootstrap.min.js"></script>
+<script language="javascript" src="../workfloworder/js/common.js"
+	type="text/javascript"></script>
+<script language="javascript" src="js/resourceInfo.js"
+	type="text/javascript"></script>
+</head>
+<style type="text/css">
+* {
+	padding: 0px;
+	margin: 0px;
+}
+
+#signed-head {
+	height: 80px;
+	border-bottom: 15px solid #F4F4F4;
+}
+
+#signed-title {
+	border: 1px solid transparent;
+	width: 100%;
+	height: 80px;
+	line-height: 80px;
+	text-align: center;
+	background: darkorange;
+	font-size: 24px;
+	font-weight: bold;
+	color: #FFFFFF;
+}
+
+body {
+	background-color: #fff ! important;
+}
+
+.mui-input-row input {
+	width: 70% !important;
+}
+
+.mui-input-row {
+	overflow: visible;
+}
+
+.detail {
+	font-size: 14px;
+	font-weight: bold;
+	color: #A9A9A9;
+	margin-left: 5px;
+}
+
+.mui-input-clear {
+	font-size: 14px;
+	font-weight: bold;
+	color: #696969;
+}
+
+.mui-input-row span {
+	padding-left: 11px;
+}
+
+input[type=color], input[type=date], input[type=datetime-local], input[type=datetime],
+	input[type=email], input[type=month], input[type=number], input[type=password],
+	input[type=search], input[type=tel], input[type=text], input[type=time],
+	input[type=url], input[type=week], select, textarea {
+	padding: 0px 0px;
+}
+
+input {
+	overflow: visible;
+}
+
+.mui-table {
+	margin: 5px 0px;
+}
+
+.mui-card {
+	margin: 5px;
+}
+
+.mui-table-view-cell {
+	font-weight: bold;
+	color: #A9A9A9;
+	font-size: 14px;
+}
+</style>
+
+<body onload="init()">
+	<div id="signed-title">
+		资源详情 <img src="image/nav_icon_arrow.png"
+			/ style="position: absolute; left: 5px; top: 32px; height: 20px;"
+			onclick="callBack()">
+	</div>
+	<div style="background-color: #F4F4F4; width: 100%; height: 15px;"></div>
+
+
+	<div class="mui-content">
+		<form id="" class="mui-input-group detail"
+			style="height: 100% !important;">
+			<div class="mui-input-row">
+				<span>名称：</span> <input type="text" id="splitterName"
+					name="splitterName" readonly class="mui-input-clear"
+					value="" />
+			</div>
+
+			<div class="mui-input-row">
+				<span>分光比：</span> <input type="text" id="workMode" name="workMode" readonly
+					class="mui-input-clear" value="" />
+			</div>
+			<div class="mui-input-row">
+				<span>分光级别：</span> <input type="text" id="protectStyle" name="protectStyle" readonly
+					class="mui-input-clear" value="" />
+			</div>
+
+			<div class="mui-input-row">
+				<span>OLT IP：</span> <input type="text" id="oltIP" name="oltIP"
+					readonly class="mui-input-clear" />
+			</div>
+			<div class="mui-input-row">
+				<span>OLT名称：</span> <input type="text" id="oltName" readonly
+					name="oltName" class="mui-input-clear" />
+			</div>
+			<div class="mui-input-row">
+				<span>PON口：</span> <input type="text" id="pon" name="pon" readonly
+					class="mui-input-clear" />
+			</div>
+			<div class="mui-input-row">
+				<span>标签：</span> <input type="text" id="qrCode" name="qrCode"
+					 readonly class="mui-input-clear" />
+			</div>
+		</form>
+
+
+		<div class="mui-card">
+			<ul class="mui-table-view" id="ul">
+				<li class="mui-table-view-cell mui-collapse" id="all2"><a
+					class="mui-navigate-right" href="#"
+					style="font-weight: bold; color: #A9A9A9; padding-left: 11px;">资源占用详情</a>
+					<ul id="ponPortList"
+						class="mui-collapse-content mui-table-view mui-table-view-striped mui-table-view-condensed">
+						<li class="mui-table-view-cell" ponId="1288" onclick="toUserDetail(this);">
+							<div class="mui-table">
+								<span style="float: left; color: #0480BE;">杨先生</span>
+								<button
+									style="float: right; background-color: #F0CA45; color: white;">端口1</button>
+							</div>
+							<div class="mui-table">
+								<span>073000001869</span>
+							</div>
+							<div class="mui-table">
+								<span>湖南省长沙市雨花区万家丽路</span>
+							</div>
+						</li>
+
+						<li class="mui-table-view-cell">
+							<div class="mui-table">
+								<span style="float: left; color: #0480BE;">刘**</span>
+								<button
+									style="float: right; background-color: #F0CA45; color: white;">端口2</button>
+							</div>
+							<div class="mui-table">
+								<span>073000001869</span>
+							</div>
+							<div class="mui-table">
+								<span>湖南省长沙市雨花区万家丽路天上人间路上班街66号1栋8888</span>
+							</div>
+						</li>
+
+					</ul></li>
+			</ul>
+
+		</div>
+
+
+	</div>
+
+
+	<!-- 遮罩 -->
+	<div class="modal fade" id="loadingModal" data-backdrop="static">
+		<div
+			style="width: 200px; height: 20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%; margin-left: -100px; margin-top: -10px">
+			<div class="progress progress-striped active"
+				style="margin-bottom: 0;">
+				<div class="progress-bar" style="width: 100%;"></div>
+			</div>
+			<h5>正在加载...</h5>
+		</div>
+	</div>
+	<!-- 校验提示 -->
+	<div class="modal fade" id="validate" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true"
+		data-backdrop="static" style="display: none">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+
+					<img src="image/yjzd_icon1.png" id='validate_img' />
+				</div>
+				<div class="modal-body">
+					<div class="input-group">
+						<div class="form-group" id="validate_message">
+							<label id="model-message"></label>
+
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer ">
+
+					<center>
+						<button type="button" id="validate_button" class="btn btn-default"
+							data-dismiss="modal" onclick="callBackHistory()">确定</button>
+					</center>
+
+
+
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal -->
+	</div>
+
+
+	<!-- 遮罩 -->
+	<div class="modal fade" id="loadingModal" data-backdrop="static">
+		<div
+			style="width: 200px; height: 20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%; margin-left: -100px; margin-top: -10px">
+			<div class="progress progress-striped active"
+				style="margin-bottom: 0;">
+				<div class="progress-bar" style="width: 100%;"></div>
+			</div>
+			<h5>正在加载...</h5>
+		</div>
+	</div>
+
+</body>
+</html>

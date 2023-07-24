@@ -1,0 +1,18 @@
+﻿{
+	"appid": "H5F4611E9",
+	"iOS": {
+		"version": "1.0",
+		"title": "易运营1.0",
+		"focus":"1",
+		"note": "初始版本",
+		"url": ""
+	},
+	"Android": {
+		"version": "3.06",
+		"title": "有新版本可更新（3.06）",
+		"focus":"1 去除故障诊断模块 \n2.安全问题整改 ",
+		"note": "1 去除故障诊断模块 \n2.安全问题整改 ",
+		"url": "http://www.hnkdzj.com:8095/app/upload.html"
+	},
+	"models": ["M813Q","HD1900"]
+}

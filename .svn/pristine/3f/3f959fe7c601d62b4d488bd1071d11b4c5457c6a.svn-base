@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>可操作DataGrid</title>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<style type="text/css">
+body{font-size:13px}
+input{border:1 solid #A8A8A8; font-size:12; color:#000000; height:18px; padding-top: 2; padding-left: 3; background-color:#F8F8F8;}
+.datetimetext{behavior:url(/IOMPROJ/public/htc/DateTimeText/DateTimeText.htc);behaviorPath:/IOMPROJ/public/htc/DateTimeText/;}
+</style>
+<script language="javascript">
+gLangCode="zh_cn";
+</script>
+<script language="javascript" src="../../script/helper.js"></script>
+<?XML:NAMESPACE PREFIX="ZTESOFT" />
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<ZTESOFT:dateTimeText name="faultHappenDate" class="dateTimeText" useDate="true" useTime="true"  checkType="empty" getSysDate="true" />
+</body>
+</html>

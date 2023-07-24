@@ -1,0 +1,69 @@
+package com.ztesoft.mobile.v2.controller.sn.impl;
+
+import com.ztesoft.mobile.common.dao.BaseDAOImpl;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import com.ztesoft.mobile.v2.controller.sn.SnPublicService;
+import org.springframework.stereotype.Service;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+@Service
+public class SnPublicServiceImpl extends BaseDAOImpl implements SnPublicService {
+
+    public Map<String,Object> selBySystem() throws SQLException {
+        Map<String, Object> resultMap =  new HashMap<String,Object>();
+        String sqlStr=(" select CODEA from hnlt_gk.os_public where STYPE = 'APP_REPLAY_TERMINAL' ");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sqlStr);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                System.out.println(rs.getString("CODEA"));
+                resultMap.put("flag",rs.getString("CODEA"));
+            }
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+        return resultMap;
+    }
+
+    public Map<String,Object> selBySnCode(String sncode) throws DataAccessException, SQLException {
+        Map<String, Object> resultMap =  new HashMap<String,Object>();
+        String sqlStr=(" select count(*)\n" +
+                "        from  hnlt_gk.tif_router_model \n" +
+                "        where\n" +
+                "        SN=? ");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sqlStr);
+            ps.setString(1,sncode);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                Integer snc = rs.getInt("count(*)");
+                if(snc==0){
+                    resultMap.put("flag","false");
+                }
+                else {
+                    resultMap.put("flag","true");
+                }
+            }
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+        return resultMap;
+    }
+
+}

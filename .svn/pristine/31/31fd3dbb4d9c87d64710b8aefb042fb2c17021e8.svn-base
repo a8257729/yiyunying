@@ -1,0 +1,18 @@
+﻿{
+	"appid": "H5F4611E9",
+	"iOS": {
+		"version": "1.0",
+		"title": "易运营1.0",
+		"focus":"1",
+		"note": "初始版本",
+		"url": ""
+	},
+	"Android": {
+		"version": "2.67",
+		"title": "有新版本可更新（2.67）",
+		"focus":"1",
+		"note": "1.工单详情新增IPTV密码，宽带密码。2. 智能组网单回单终端扫码可以自行增加删除",
+		"url": "http://www.hnkdzj.com:8095/app/upload.html"
+	},
+	"models": ["M813Q","HD1900"]
+}

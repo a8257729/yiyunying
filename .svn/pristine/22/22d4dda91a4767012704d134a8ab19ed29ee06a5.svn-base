@@ -1,0 +1,26 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="systemService" extends="common-component-define"
+		namespace="/systemService">
+		
+		<action name="QryAllRegionAction"
+			class="com.ztesoft.mobile.outsystem.action.QryAllRegionAction">
+			
+		</action>
+		<action name="QrySystemsByRegionIdAction"
+			class="com.ztesoft.mobile.outsystem.action.QrySystemsByRegionIdAction">
+			
+		</action>
+		<action name="QrySysLogoutUrlsAction"
+			class="com.ztesoft.mobile.outsystem.action.QrySysLogoutUrlsAction">
+			
+		</action>
+		<action name="QryDataBaseDateAction"
+			class="com.ztesoft.mobile.outsystem.action.QryDataBaseDateAction">
+			
+		</action>
+	</package>
+</xwork>

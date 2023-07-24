@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+	<QueryMethod>saPortModifyInfoForEBiz</QueryMethod>
+	<Return>
+		<Content>
+			<Public>
+			      <CustDireId>1403754</CustDireId>
+				  <CustEqpId>3753</CustEqpId>
+				  <CustEqpNo>84999988</CustEqpNo>
+				  <CustRackNameZid>9998</CustRackNameZid>
+				  <CustStermNoId>2323</CustStermNoId>
+				  <CustPortLink>22</CustPortLink>
+		          <CustPortNo>1</CustPortNo>
+		          <CustDireName>广东省中山市岐头新村龙凤街</CustDireName>
+		          <OldAccessId>4444AA</OldAccessId>
+			</Public>
+		</Content>
+		<Result>000</Result>
+		<ErrorDesc>查询成功</ErrorDesc>
+	</Return>
+</Data>

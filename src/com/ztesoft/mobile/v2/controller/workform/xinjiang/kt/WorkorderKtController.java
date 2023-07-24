@@ -1,0 +1,328 @@
+package com.ztesoft.mobile.v2.controller.workform.xinjiang.kt;
+
+import com.ztesoft.mobile.v2.controller.common.WebConfigController;
+
+import com.ztesoft.mobile.v2.controller.sn.SnPublicService;
+import com.ztesoft.mobile.v2.controller.sn.impl.SnPublicServiceImpl;
+import com.ztesoft.mobile.v2.core.RequestEntity;
+import com.ztesoft.mobile.v2.core.Result;
+import com.ztesoft.mobile.v2.entity.common.JobInfo;
+import com.ztesoft.mobile.v2.entity.common.StaffInfo;
+import com.ztesoft.mobile.v2.service.workform.xinjiang.kt.WorkOrderKtService;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+
+/**
+ * @author Linping
+ *
+ */
+@Controller("xjWorkOrderKtController")
+public class WorkorderKtController extends WebConfigController {
+
+    private static final Logger logger = Logger.getLogger(WorkorderKtController.class);
+
+    private WorkOrderKtService workOrderService;
+
+    private WorkOrderKtService getWorkOrderService() {
+        return workOrderService;
+    }
+
+    @Autowired(required = false)
+    public void setWorkOrderService(WorkOrderKtService workOrderService) {
+        this.workOrderService = workOrderService;
+    }
+
+    private static String WORK_ORDER_LIST_URL = "";
+    private static String WORK_ORDER_DETIAL_URL = "";
+    private static String WORK_ORDER_ACCEPT_URL = "";
+    private static String WORK_ORDER_DEPART_URL = "";
+
+
+
+    @RequestMapping(value = {"/client/xj/kt/private/page"})
+    public @ResponseBody Result selPrivateWorkOrderByPage(@RequestBody RequestEntity requestEntity,
+                                                          HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+        String username = json.optString(StaffInfo.USERNAME_NODE);
+        Long jobId = json.optLong(JobInfo.JOB_ID_NODE);
+        Integer pageIndex = json.optInt("pageIndex");
+        Integer pageSize = json.optInt("pageSize");
+        Result result = getWorkOrderService().selPublicWorkOrderByPage(username, jobId, pageSize, pageIndex);
+        return result;
+    }
+
+    //开通工单查询--------------------------------------------------------------------
+    @RequestMapping(value = {"/client/xj/kt/private/page1"})
+    public @ResponseBody Result selPrivateWorkOrderByPage(
+            @RequestBody Map<String,Object> map) throws Exception {
+
+        String username = (String)map.get("username");
+        Long jobId = Long.valueOf((String)map.get("jobId"));
+        Integer pageIndex = Integer.parseInt((String)map.get("pageIndex"));
+        Integer pageSize = Integer.parseInt((String)map.get("pageSize"));
+        String accNbr = (String)map.get("accNbr");
+        String bokState = (String)map.get("bokState");
+        String bokTime = (String)map.get("bokTime");
+        String createDate = (String)map.get("createDate");
+        Result result = getWorkOrderService().selPublicWorkOrderByPageCondition(username, jobId, pageSize, pageIndex, accNbr, bokState, bokTime, createDate);
+        return result;
+    }
+
+
+    @RequestMapping(value = {"/client/xj/kt/private/page2"})
+    public @ResponseBody Result selPrivateWorkOrderByPage2(
+            @RequestBody Map<String,Object> map) throws Exception {
+
+        String username = (String)map.get("username");
+        Long jobId = Long.valueOf((String)map.get("jobId"));
+        Integer pageIndex = Integer.parseInt((String)map.get("pageIndex"));
+        Integer pageSize = Integer.parseInt((String)map.get("pageSize"));
+        String accNbr = (String)map.get("accNbr");
+        String bokState = (String)map.get("bokState");
+        String bokTime = (String)map.get("bokTime");
+        String createDate = (String)map.get("createDate");
+
+        String object = (String)map.get("version");
+
+        Result result = getWorkOrderService().selPublicWorkOrderByPageCondition1(username, jobId, pageSize, pageIndex, accNbr, bokState, bokTime, createDate,object);
+        return result;
+    }
+
+
+
+
+    //所需参数查询--------------------------------------------------------------------
+    @RequestMapping(value = {"/client/xj/kt/private/params"})
+
+    public @ResponseBody
+    Result selParamsByStaffId(
+            @RequestBody Map<String,Object> map) throws Exception {
+        String staff_id = (String)map.get("staff_id");
+        Result result = getWorkOrderService().selParamsByStaffId(staff_id);
+        return result;
+    }
+
+    //所需参数查询--------------------------------------------------------------------
+    @RequestMapping(value = {"/client/xj/kt/private/allparams"})
+
+    public @ResponseBody
+    String selAllParamsByStaffId(
+            @RequestBody Map<String,Object> map) throws Exception {
+        String staff_id = (String)map.get("staff_id");
+        String result = getWorkOrderService().selAllParamsByStaffId(staff_id);
+        return result;
+    }
+
+
+    //上图
+    @RequestMapping(value = {"/client/xj/kt/private/map"})
+    public @ResponseBody int upMap(
+            @RequestBody Map<String,Object> map) throws Exception {
+        String staffId = (String)map.get("staffId");
+        String orgId = (String)map.get("orgId");
+        String smx = (String)map.get("Xcoordinate");
+        String smy = (String)map.get("Ycoordinate");
+        String state = (String)map.get("state");
+        System.out.println(orgId+","+smx+","+smy+","+state);
+        int insertNum = getWorkOrderService().insertMap(staffId, orgId, smx, smy, state);
+        return insertNum;
+    }
+
+
+    //-----------------------------------------------------------------------
+//    @RequestMapping(value = {"/client/xj/kt/public/page"})
+//    public @ResponseBody Result selPublicWorkOrderByPage(@RequestBody RequestEntity requestEntity,
+//    	HttpServletRequest request, HttpServletResponse response) throws Exception {
+//
+//    	JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+//    	String username = json.optString(StaffInfo.USERNAME_NODE);
+//    	Long jobId = json.optLong(JobInfo.JOB_ID_NODE);
+//    	Integer pageIndex = json.optInt("pageIndex");
+//    	Integer pageSize = json.optInt("pageSize");
+//        Result result = getWorkOrderService().selSaPublicWorkOrderByPage(username, jobId, pageSize, pageIndex);
+//        return result;
+//    }
+
+    /**
+     * 开通待办工单详情
+     * @param requestEntity
+     * @param request
+     * @param response
+     * @return
+     */
+//    @RequestMapping(value = {"/client/xj/kt/private/detail"})
+//    public @ResponseBody Result selSaPrivateWorkOrderDetail(@RequestBody RequestEntity requestEntity, HttpServletRequest request, HttpServletResponse response) {
+//    	if(logger.isDebugEnabled()) {
+//        	logger.debug(" Call selSaPrivateWorkOrderDetail method ");
+//        }
+//
+//        JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+//        Long workOrderId = json.optLong(WorkOrderKt.WORK_ORDER_ID_NODE);
+//    	Result result = getWorkOrderService().selSaPrivateWorkOrderDetail(workOrderId);
+//        return result;
+//    }
+
+
+    /**
+     * 授权刷新
+     * @param requestEntity
+     * @param request
+     * @param response
+     * @return result
+     * @throws Exception
+     *
+     */
+    @RequestMapping(value = {"/client/auth/refresh"})
+    public @ResponseBody Result refreshAuth(@RequestBody RequestEntity requestEntity,
+                                            HttpServletRequest request, HttpServletResponse response)  {
+        if(logger.isDebugEnabled()) {
+            logger.debug(" Call authRefresh method. ");
+        }
+        JSONObject json =  JSONObject.fromObject(requestEntity.getParams());
+        Result result =getWorkOrderService().authRefresh(json);
+
+        return result;
+    }
+    @RequestMapping(value = { "/client/xj/web/kt/terminal/query1" })
+    public @ResponseBody Result webQueryTerminalInfo(@RequestBody Map<String,Object> map) throws Exception {
+        System.out.println("11111111111111111111111111111----------------------------------");
+        String staffId = (String)map.get("staffId");
+        SnPublicService snPublicService = new SnPublicServiceImpl();
+        Map resultMap = snPublicService.selBySystem(staffId);
+        Result result = null;
+        if (null==resultMap || 0 == resultMap.size()){
+            result=Result.buildParameterError();
+        }else {
+            result=Result.buildSuccess(resultMap);
+        }
+        System.out.println("-----------------------------------"+result);
+        return result;
+    }
+
+    @RequestMapping(value = { "/client/xj/web/kt/terminal/querys" })
+    public @ResponseBody Result webQueryTerminalInfo1() throws Exception {
+        SnPublicService snPublicService = new SnPublicServiceImpl();
+        Map resultMap = snPublicService.selBySystem1();
+        Result result = null;
+        if (null==resultMap || 0 == resultMap.size()){
+            result=Result.buildParameterError();
+        }else {
+            result=Result.buildSuccess(resultMap);
+        }
+        System.out.println("-----------------------------------"+result);
+        return result;
+    }
+    //
+    @ResponseBody
+    @RequestMapping(value = { "/client/xj/web/kt/terminal/query2" })
+    public Result webQueryTerminalInfo2(@RequestBody Map<String,Object> map) throws Exception {
+        if(logger.isDebugEnabled()) {
+            logger.debug(" Call authRefresh method. ");
+        }
+        String workOrderID = (String)map.get("workOrderID");
+        String sncode = (String)map.get("sncode");
+        String orderId = (String)map.get("orderId");
+        String staff_id = (String)map.get("staff_id");
+        String staff_name = (String)map.get("staff_name");
+        logger.debug("webQueryTerminalInfo2 workOrderID  "+workOrderID+"      sncode"+sncode+"      orderId"+orderId);
+        SnPublicService snPublicService = new SnPublicServiceImpl();
+        Map resultMap = snPublicService.selBySnCode(sncode,orderId,staff_id, staff_name,workOrderID);
+        Result result = null;
+        if(null == resultMap || 0 == resultMap.size()) {
+            result = Result.buildParameterError();
+        } else {
+            result = Result.buildSuccess(resultMap);
+        }
+        return result;
+    }
+    @RequestMapping(value = { "/client/xj/web/kt/terminal/query4" })
+    public @ResponseBody
+    Result webQueryTerminalInfo4(@RequestBody Map<String,Object> map) throws Exception {
+        if(logger.isDebugEnabled()) {
+            logger.debug(" Call authRefresh method. ");
+        }
+        String wk_order_id = (String)map.get("wkorderid");
+        System.out.println("-=-=-=-=-=-=?>>>>>wkorderid"+wk_order_id);
+        SnPublicService snPublicService = new SnPublicServiceImpl();
+        Map resultMap = snPublicService.selByWkOrderId(wk_order_id);
+        Result result = null;
+        if(null == resultMap || 0 == resultMap.size()) {
+            result = Result.buildParameterError();
+        } else {
+            result = Result.buildSuccess(resultMap);
+        }
+        return result;
+    }
+
+//    @RequestMapping(value = { "/client/xj/web/kt/terminal/query3" })
+//    public @ResponseBody
+//    Result webQueryTerminalInfo3(@RequestBody String sncode) throws Exception {
+//        SnPublicService snPublicService = new SnPublicServiceImpl();
+//        Map resultMap = null;
+//     //   Map resultMap = snPublicService.selBySnCode(sncode);
+//        Result result = null;
+//        if(null == resultMap || 0 == resultMap.size()) {
+//            result = Result.buildParameterError();
+//        } else {
+//            result = Result.buildSuccess(resultMap);
+//        }
+//        System.out.println(result);
+//        return result;
+//    }
+    @RequestMapping(value = {"/client/xj/kt/rob/public/page"})
+    public @ResponseBody Result selPublicWorkOrderForRobByPage(@RequestBody RequestEntity requestEntity,
+                                                               HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+        String username = json.optString(StaffInfo.USERNAME_NODE);
+        String staffId = json.optString(StaffInfo.STAFF_ID_NODE);
+        Long jobId = json.optLong(JobInfo.JOB_ID_NODE);
+        Integer pageIndex = json.optInt("pageIndex");
+        Integer pageSize = json.optInt("pageSize");
+        Result result = getWorkOrderService().selPublicWorkOrderForRobByPage(staffId, username, jobId, pageSize, pageIndex);
+        return result;
+    }
+
+    /**
+     * 设备管理 -- 设备端口状态配置操作
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = {"/client/xj/kt/workorder/roborder"})
+    public @ResponseBody Result executeRodOrderOperation(@RequestBody RequestEntity requestEntity,
+                                                         HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+        Result result = getWorkOrderService().executeRodOrderOperation(json);
+        return result;
+    }
+
+    /**
+     * 到单提醒 -- 用户token保存操作
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = {"/client/xj/kt/workorder/notifyorder/userinfo"})
+    public @ResponseBody Result saveUserInfoForNotifyOrder(@RequestBody RequestEntity requestEntity,
+                                                           HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+        JSONObject json = JSONObject.fromObject(requestEntity.getParams());
+        Result result = getWorkOrderService().saveUserInfoForNotifyOrder(json);
+        return result;
+    }
+}

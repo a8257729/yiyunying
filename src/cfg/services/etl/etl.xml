@@ -1,0 +1,111 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="etl" extends="common-component-define"
+		namespace="/etl">						
+		
+		<action name="DelEtlJdbcRuleAction"
+			class="com.ztesoft.mobile.etl.action.DelEtlJdbcRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="AddEtlJdbcRuleAction"
+			class="com.ztesoft.mobile.etl.action.AddEtlJdbcRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="MdfEtlJdbcRuleAction"
+			class="com.ztesoft.mobile.etl.action.MdfEtlJdbcRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="DeleteEtlCleanRuleAction"
+			class="com.ztesoft.mobile.etl.action.DeleteEtlCleanRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="EtlRuleManagerAction"
+			class="com.ztesoft.mobile.etl.action.EtlRuleManagerAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertEtlRuleAction"
+			class="com.ztesoft.mobile.etl.action.InsertEtlRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="DelEtlSumRuleAction"
+			class="com.ztesoft.mobile.etl.action.DelEtlSumRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="AddEtlSumRuleAction"
+			class="com.ztesoft.mobile.etl.action.AddEtlSumRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="MdfEtlSumRuleAction"
+			class="com.ztesoft.mobile.etl.action.MdfEtlSumRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="MdfTransRuleAction"
+			class="com.ztesoft.mobile.etl.action.MdfTransRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="AddTransRuleAction"
+			class="com.ztesoft.mobile.etl.action.AddTransRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="QryTransRuleAction"
+			class="com.ztesoft.mobile.etl.action.QryTransRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="MdfTransRuleItemAction"
+			class="com.ztesoft.mobile.etl.action.MdfTransRuleItemAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="AddTransRuleItemAction"
+			class="com.ztesoft.mobile.etl.action.AddTransRuleItemAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="DelTransRuleItemCompAction"
+			class="com.ztesoft.mobile.etl.action.DelTransRuleItemCompAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="QryTransRuleItemAction"
+			class="com.ztesoft.mobile.etl.action.QryTransRuleItemAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="DelTransRuleAction"
+			class="com.ztesoft.mobile.etl.action.DelTransRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="DelTransRuleItemAction"
+			class="com.ztesoft.mobile.etl.action.DelTransRuleItemAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="AddTransRuleItemCompAction"
+			class="com.ztesoft.mobile.etl.action.AddTransRuleItemCompAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertEtlCleanRuleAction"
+			class="com.ztesoft.mobile.etl.action.InsertEtlCleanRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="UpdateEtlCleanRuleAction"
+			class="com.ztesoft.mobile.etl.action.UpdateEtlCleanRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="DeleteEtlCleanRuleAction"
+			class="com.ztesoft.mobile.etl.action.DeleteEtlCleanRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="AddEtlTacheRuleAction"
+			class="com.ztesoft.mobile.etl.action.AddEtlTacheRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="MdfEtlTacheRuleAction"
+			class="com.ztesoft.mobile.etl.action.MdfEtlTacheRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="DelEtlTacheRuleAction"
+			class="com.ztesoft.mobile.etl.action.DelEtlTacheRuleAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+	</package>
+</xwork>
+

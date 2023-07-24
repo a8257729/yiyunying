@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content=" width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>宽带问题库</title>
+		<link rel="stylesheet" type="text/css" href="/MOBILE/report/broadband/css/broadbandQuestionBank.css"/>
+	</head>
+	<script src="/MOBILE/report/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<body>
+		<div id="box_top">
+			<div id="top_title">
+				宽带问题库
+			</div>
+			<div id="top_back">
+				<img src="/MOBILE/report/img/nav_icon_arrow.png" onclick="javascript:window.history.back(-1);" />
+			</div>
+			<div id="top_fresh">
+				<img src="/MOBILE/report/img/fault_order_refresh.png" onclick="myFresh()"/>
+			</div>
+		</div>
+		<div id="search_area">
+			<div id="search_case">
+				<input type="text" id="search_input" value="" placeholder="请输入要查询的内容" />
+				<button onclick="queryInfo()">查询问题</button>
+			</div>
+		</div>
+		<div id="box_middle">
+			<ul>
+				<li>
+					
+				</li>
+			</ul>
+		</div>
+		<div id="sonQuestionList"></div>
+			
+		<div class="loading"  style="display:none">
+        	<div class="pic">
+        		<img src="/MOBILE/report/img/5-121204193Q9-50.gif"/>
+        	</div>
+    	</div>
+	</body>
+	<script type="text/javascript">
+		
+		//查询问题库
+		$(function(){
+			debugger;
+			/*var url = decodeURI(window.location.href);
+			var argsIndex = url .split("?bigTitle=");
+			var  bigTitle= argsIndex[1];*/
+			var paramIds = {
+				
+			}
+			$.ajax({
+				url:"/MOBILE/api/broadband/question_bank/query/big/title",
+				type:"post",
+				data:JSON.stringify(paramIds),
+				contentType:"application/json",
+				dataType:"json",
+				success:function(data){
+					console.log("参数查询成功！");
+					var questionList =  data.resultData.questionList
+					for(var i=0;i<questionList.length;i++){
+						var html = "<div class='rectangle_case'>"+
+										"<span class='span_font'>"+questionList[i].CLASS_NAME+"</span>"+
+									"</div>";
+						$("#box_middle li").append(html);
+							
+					}
+					
+					$(".rectangle_case").unbind("click").click(function(){
+						var bigTitle = $(this).children("span").text();
+						console.log(bigTitle);
+						querySonQuestion(bigTitle);
+					})
+					
+					
+				},
+				error:function(e){
+					console.log("参数查询失败");
+				}
+			})
+			$(".loading").css("display","none");//关闭遮罩
+			
+		});
+		
+		
+		//根据类问题查询对应的子问题
+		function querySonQuestion(bigTitle){
+			$("#sonQuestionList").html("");
+			var params = {
+				"bigTitle":bigTitle
+			}
+			$.ajax({
+				url:"/MOBILE/api/broadband/question_bank/query/small/title",
+				type:"post",
+				data:JSON.stringify(params),
+				contentType:"application/json",
+				dataType:"json",
+				success:function(data){
+					debugger;
+					console.log("参数查询成功！");
+					var sonQuestionList =  data.resultData.sonQuestionList
+					for(var i=0;i<sonQuestionList.length;i++){
+						var html= "<div class='tr'>"+
+									"<tr>"+
+											"<span >"+(i+1)+"、<span>"+sonQuestionList[i].QUESTION_TITLE+"</span></span>"+
+									"</tr>"+
+								"</div>";		
+						$("#sonQuestionList").append(html);
+							
+					}
+					
+					//问题解答详情
+					$(".tr").click(function(){
+						debugger;
+						var smallTitle = $(this).find("span span").text();
+						
+						url = encodeURI("/MOBILE/report/broadband/questionDetail.html?smallTitle="+smallTitle);
+						location.href=url;
+					});
+					
+				},
+				error:function(e){
+					console.log("参数查询失败");
+				}
+			})
+		
+		}
+		
+		
+		
+		
+		//查询问题库
+		function queryInfo(){
+			debugger;
+			var search_context= $("#search_input").val();
+			console.log(search_context);
+			var paramId = {
+				"search":search_context
+			}
+			$.ajax({
+				url:"/MOBILE/api/broadband/question_bank/query/blur",
+				type:"post",
+				data:JSON.stringify(paramId),
+				contentType:"application/json",
+				dataType:"json",
+				success:function(data){
+					debugger;
+					$("#sonQuestionList").html("");
+					var blur =  data.resultData.blur
+					if(blur.length<1){
+						var htmlEmpty= "<div class='tr'>"+
+									"<tr>"+
+											"<span >1、<span>没有查询到相关信息</span></span>"+
+									"</tr>"+
+								"</div>";		
+						$("#sonQuestionList").append(htmlEmpty);
+					}
+					
+					for(var i=0;i<blur.length;i++){
+						var html= "<div class='tr'>"+
+									"<tr>"+
+											"<span >"+(i+1)+"、<span>"+blur[i].QUESTION_TITLE+"</span></span>"+
+									"</tr>"+
+								"</div>";		
+						$("#sonQuestionList").append(html);
+							
+					}
+				
+				},
+				error:function(e){
+					$("#sonQuestionList").html("");
+					var html= "<div class='tr'>"+
+									"<tr>"+
+											"<span >1、<span>没有查询到相关信息</span></span>"+
+									"</tr>"+
+								"</div>";		
+						$("#sonQuestionList").append(html);
+					console.log("参数查询失败");
+				}
+			});
+		}
+		
+		
+		
+		//刷新
+		function myFresh(){
+			window.location.reload();
+		}
+		
+		
+		
+	</script>
+</html>

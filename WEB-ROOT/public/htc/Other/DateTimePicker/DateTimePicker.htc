@@ -1,0 +1,374 @@
+<!--************************************************************
+	版权说明: 
+	文件名: DateTimePicker.htc
+	文件创建日期: 2004-05-11
+	作者: lin.zhaohua
+	功能描述: 日期时间采集控件，
+			  由一个TextBox和一个按钮组成，点击按钮弹出日历			  
+	帮助文档：PropertyList控件使用说明.doc
+	************************************************************
+	[属性]:
+	controlType:   控件类型("DateTimePicker")
+	dataType:      数据类型("string")，指返回值的数据类型
+	useDate:      【日期】是否可见，默认可见,true/false
+	useTime:      【时间】是否可见，默认可见,true/false
+	defaultValue:  默认值，格式"YYYY-MM-DD HH:MI:SS"/"YYYY-MM-DD"/"HH:MI:SS"
+	nullable:      是否可空,true/false
+	editable:      是否可用,true/false
+	value:         控件的值,字符串
+	************************************************************	
+	[方法]：
+	loadArrayDesc：导入数组描述信息	
+	loadXmlDesc：导入XML描述信息		
+	************************************************************
+	[事件]：
+	onchanged：数据发生变化后，对外响应的事件		 
+	************************************************************
+	[变更记录]
+	1)
+	修改人：lin.zhaohua
+	修改日期：2004-06-22
+	修改记录列表：增加属性(controlType、dataType)
+	2)
+	修改人：
+	修改日期：
+	修改记录列表：
+	************************************************************  -->
+<public:component tagName="DateTimePicker">
+	<public:defaults viewLinkContent/>
+	<public:property name="controlType" get="getControlType"/>
+	<public:property name="dataType" get="getDataType"/>
+	<public:property name="useDate" get="getUseDate" put="setUseDate"/>
+	<public:property name="useTime" get="getUseTime" put="setUseTime"/>	
+	<public:property name="defaultValue" put="setDefaultValue" />
+	<public:property name="nullable" get="getNullable" put="setNullable" />
+	<public:property name="editable" get="getEditable" put="setEditable" />
+	<public:property name="txtEnable" get="getTxtEditable" put="setTxtEditable" />
+	<public:property name="btnEnable" get="getBtnEnabled" put="setBtnEnabled"/>
+	<public:property name="value" get="getValue" put="setValue" />
+	<public:property name="disable" get="getDisabled" put="setDisabled" />
+	<public:property name="txtWidth" get="getTxtWidth" put="setTxtWidth" />		
+	<public:method name="loadArrayDesc" /> 	
+	<public:method name="loadXmlDesc" />	
+	<public:event name="onchanged" id="_evtonchanged" />
+</public:component>	
+
+<link href="../../inc/style/ccm.css" rel="stylesheet" type="text/css">	
+	<table border="0" cellPadding="0" cellSpacing="0" align="center" ID="tbl01">
+		<tr valign="top">
+			<td>
+				<table border="0" cellpadding="0" cellspacing="2" style="FONT-SIZE: x-small" id="tblDTP">
+					<tr> 
+						<td><input type="text" id="txtDTP"></td>
+						<td width="18"><a id="btnDTP" onclick="btnDTP_click();" onmouseover="this.style.cursor='default';"><img src="/IOMPROJ/public/htc/DateTimeText/popedit.gif" width="18" height="19" border="0"></a></td>
+					</tr>
+				</table>
+			</td>
+		</tr>	
+	</table>
+<script language="javascript">
+
+var g_bEditable = true;
+var g_bNullable = true;
+
+var dtpObject=new Object() ;
+dtpObject.useDate = true ;
+dtpObject.useTime = true ;
+dtpObject.defaultDateTime = "";
+
+txtDTP._value = "";
+txtDTP.value = "";
+
+function getControlType()
+{
+	return "DateTimePicker";
+}
+
+function getDataType()
+{
+	return "string";
+}
+
+function getUseDate()
+{   
+    return dtpObject.useDate;
+}
+function setUseDate(inValue)
+{   
+    //设置日期控件是否可见/可用 
+    if (inValue == null)
+	{
+		return;
+	}
+	if (inValue.toString() == "true")	
+	{
+		dtpObject.useDate = true;
+	}
+	if (inValue.toString() == "false") 
+	{
+		dtpObject.useDate = false;
+	}    
+}
+function getUseTime()
+{    
+    return dtpObject.useTime;
+}
+function setUseTime(inValue)
+{   
+    //设置时间控件是否可见/可用
+    if (inValue == null)
+	{
+		return;
+	}  
+	if (inValue.toString() == "true")	
+	{
+		dtpObject.useTime = true;
+	}
+	if (inValue.toString() == "false") 
+	{
+		dtpObject.useTime = false;
+	}	
+}
+function getNullable()
+{
+	return g_bNullable;
+}
+function setNullable(inValue)
+{
+	if (inValue == null)
+	{
+		return;
+	}
+	if (inValue.toString() == "true")	
+	{
+		g_bNullable = true;
+	}
+	if (inValue.toString() == "false") 
+	{
+		g_bNullable = false;
+	}	
+}
+function verifyDateTimePicker()
+{
+	if ( g_bNullable == false )
+	{		
+		if ( (txtDTP._value == "")||(txtDTP._value == null) )
+		{
+			alert("该项不能为空，请设置");
+		}		
+	}
+}
+
+function setDefaultValue(defaultVal)
+{	
+	setValue(defaultVal);
+}
+
+function getValue()
+{
+	return txtDTP._value;
+}
+function setValue(inValue)
+{	
+	if (inValue == null)
+	{
+		dtpObject.defaultDateTime = "";
+		txtDTP._value = null;
+		txtDTP.value = "";	
+	}
+	else
+	{
+		dtpObject.defaultDateTime = inValue;
+		txtDTP._value = inValue;
+		txtDTP.value = inValue;
+	}	
+}
+function getEditable()
+{
+	return g_bEditable;
+}
+function setEditable(inValue)
+{
+	var vEditable = "";
+	if (inValue == null)
+	{
+		return;
+	}
+	if (inValue.toString() == "true")	
+	{
+		vEditable = true;
+	}
+	if (inValue.toString() == "false") 
+	{
+		vEditable = false;
+	}	
+	if ( (inValue.toString() == "true")||(inValue.toString() == "false") )
+	{
+		if (g_bEditable != vEditable)
+		{	
+			g_bEditable = vEditable ;
+			if(g_bEditable)
+			{
+				btnDTP.style.color="black";
+			}
+			else
+			{
+				btnDTP.style.color="#808080";		
+			}
+		}	
+	}		
+}
+function btnDTP_click()
+{
+	  
+	if( g_bEditable == false )
+	{
+		return;
+	}  
+	//弹出一个模式对话框		
+	if ( txtDTP.value != "" )
+	{
+		dtpObject.defaultDateTime = txtDTP.value ;
+	}
+	var returnObject=new Object();
+	returnObject.DateTime = "";	
+	
+	//有日期,有时间
+	if (dtpObject.useDate && dtpObject.useTime)
+	{	
+		returnObject = window.showModalDialog("/IOMPROJ/public/htc/Other/DateTimePicker/dateTimePicker.htm",dtpObject,"dialogHeight=315px;dialogWidth=215px;status=0")
+	}
+	//只有日期,没有时间
+	if ( (dtpObject.useDate == true) && (dtpObject.useTime == false) ) 
+	{
+		returnObject = window.showModalDialog("/IOMPROJ/public/htc/Other/DateTimePicker/dateTimePicker.htm",dtpObject,"dialogHeight=250px;dialogWidth=215px;status=0")
+	}
+	//只有时间,没有日期
+	if ( (dtpObject.useDate == false) && (dtpObject.useTime == true) ) 
+	{
+		returnObject = window.showModalDialog("/IOMPROJ/public/htc/Other/DateTimePicker/dateTimePicker.htm",dtpObject,"dialogHeight=120px;dialogWidth=156px;status=0")
+	}	
+	if ( returnObject != null )
+	{	
+		var orgVal = txtDTP._value;
+		var curVal = returnObject; 
+			
+		txtDTP._value = returnObject;
+		txtDTP.value = returnObject;		
+		if (orgVal != curVal)
+		{
+			var evt = document.createEventObject();
+			evt.orgValue = orgVal;
+			evt.curValue = curVal;
+			_evtonchanged.fire(evt);
+		}
+	}
+	verifyDateTimePicker();		
+}
+function loadArrayDesc(arrProperty)
+{
+	//设置属性	
+	if ( arrProperty.hasOwnProperty ("useDate")== true )
+	{		
+		setUseDate(arrProperty.useDate);
+	}
+	if ( arrProperty.hasOwnProperty ("useTime")== true )
+	{		
+		setUseTime(arrProperty.useTime);
+	}	
+	if ( arrProperty.hasOwnProperty ("editable")== true )
+	{		
+		setEditable(arrProperty.editable);
+	}
+	if ( arrProperty.hasOwnProperty ("nullable")== true )
+	{		
+		setNullable(arrProperty.nullable);
+	}
+	if ( arrProperty.hasOwnProperty ("defaultValue")== true )
+	{		
+		setDefaultValue(arrProperty.defaultValue);
+	}		
+	if ( arrProperty.hasOwnProperty ("value")== true )
+	{		
+		setValue(arrProperty.value);
+	}	
+}
+function loadXmlDesc(xmlNode)
+{	
+	setUseDate(xmlNode.getAttribute("useDate"));	
+
+	setUseTime(xmlNode.getAttribute("useTime"));	
+	
+	setEditable(xmlNode.getAttribute("editable")); 	
+	
+	setNullable(xmlNode.getAttribute("nullable"));	
+	
+	setDefaultValue(xmlNode.getAttribute("defaultValue"));	
+	
+	setValue(xmlNode.getAttribute("value"));	
+}
+
+function getDisabled()
+{
+	return tblDTP.disabled;
+}
+
+function setDisabled(value)
+{
+	if (value==true || value=="true")
+		tblDTP.style.display="none";
+	else
+		tblDTP.style.display="";
+}
+
+function getTxtEditable()
+{
+	if(txtDTP.disabled==true)
+	{
+		return false;
+	}
+	else
+	{	
+		return true;
+	}
+}
+
+function setTxtEditable(value)
+{
+	if (value==true || value=="true")
+	{
+		txtDTP.disabled=false;
+	}
+	else
+	{
+		txtDTP.disabled=true;
+	}
+}
+
+function getTxtWidth()
+{
+	return txtDTP.style.width;
+}
+
+function setTxtWidth(value)
+{
+	txtDTP.style.width=value;
+}
+function setBtnEnabled(value)
+{
+	g_bEditable = value;
+	if(g_bEditable)
+	{
+		btnDTP.style.color="black";
+	}
+	else
+	{
+		btnDTP.style.color="#808080";
+	}
+}
+
+function getBtnEnabled()
+{
+	return g_bEditable;
+}
+</script>

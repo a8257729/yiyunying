@@ -1,0 +1,14 @@
+
+
+<style>
+   .toolTip {behavior:url(ToolTip.htc)} 
+</style>
+
+<div id='tipDiv' style="position:absolute;visibility:hidden;clip:rect(0  150  150  0);width:150px;background-color:seashell"></div>
+
+<a href="#" id='test' class=toolTip>bggtt</a>
+
+<script>
+	test.tipText='vvvvv'
+	test.tipDiv = document.all.tipDiv;
+</script>

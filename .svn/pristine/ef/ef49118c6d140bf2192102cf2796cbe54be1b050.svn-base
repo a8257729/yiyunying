@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+  <QueryMethod>ProvNetFaultForEBiz</QueryMethod>
+  <Return>
+    <ContentList>
+    	<Content>
+        <Public>
+          <OrderTitle>单向高清_故障_11111</OrderTitle>
+          <WorkOrderID>141211</WorkOrderID>
+          <WorkOrderCode>201309250502222FWBZ_CL1</WorkOrderCode>
+          <AccNbr>84999988</AccNbr>
+          <WorkOrderState>N</WorkOrderState>
+          <FirstDealTime>2013-09-25 17:23:43</FirstDealTime>
+          <FaultPhenomenaComment>高清_机顶盒不能开机至“首页”</FaultPhenomenaComment>
+          <ContactName>1</ContactName>
+          <ContactTel>123</ContactTel>
+          <OrderCode>20130925050451</OrderCode>
+          <AcceptStaff>1</AcceptStaff>
+          <Address>石岐123</Address>
+          <AlertState>10V</AlertState>
+          <IsPause>1</IsPause>
+        </Public>
+      </Content>
+      <Content>
+        <Public>
+          <OrderTitle>单向高清_故障_84999988</OrderTitle>
+          <WorkOrderID>1412753</WorkOrderID>
+          <WorkOrderCode>20130925050451FWBZ_CL1</WorkOrderCode>
+          <AccNbr>84999988</AccNbr>
+          <WorkOrderState>N</WorkOrderState>
+          <FirstDealTime>2013-09-25 17:23:43</FirstDealTime>
+          <FaultPhenomenaComment>高清_机顶盒不能开机至“首页”</FaultPhenomenaComment>
+          <ContactName>1</ContactName>
+          <ContactTel>123</ContactTel>
+          <OrderCode>20130925050451</OrderCode>
+          <AcceptStaff>1</AcceptStaff>
+          <Address>石岐123</Address>
+          <AlertState>10V</AlertState>
+          <IsPause>0</IsPause>
+        </Public>
+      </Content>
+    </ContentList>
+    <Result>000</Result>
+    <ErrorDesc>查找成功</ErrorDesc>
+    <PageSize>10</PageSize>
+    <PageNum>1</PageNum>
+    <TotalPage>1</TotalPage>
+    <TotalNum>2</TotalNum>
+  </Return>
+</Data>

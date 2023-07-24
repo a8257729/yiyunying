@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="OSS_MOBILE_SERVER_HN"
+  id="myeclipse.1364439721759"
+  context-root="/SH_MOBILE"
+  j2ee-spec="1.4"
+  archive="OSS_MOBILE_SERVER_HN.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

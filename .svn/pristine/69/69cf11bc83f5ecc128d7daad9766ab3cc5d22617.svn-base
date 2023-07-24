@@ -1,0 +1,449 @@
+package com.ztesoft.mobile.v2.service.workform.xinjiang.zy;
+
+import com.ztesoft.android.common.ComInfData;
+import com.ztesoft.android.service.EBizToIomWebservice;
+import com.ztesoft.mobile.common.dao.BaseDAOFactory;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import com.ztesoft.mobile.common.exception.XMLDocException;
+import com.ztesoft.mobile.common.xwork.execution.Dom4jUtils;
+import com.ztesoft.mobile.v2.core.BaseService;
+import com.ztesoft.mobile.v2.core.Result;
+import com.ztesoft.mobile.v2.dao.workform.hunan.HuNanDAO;
+import com.ztesoft.mobile.v2.dao.workform.hunan.HuNanDAOImpl;
+import com.ztesoft.mobile.v2.service.workform.XmlUtil;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.Node;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service("workOrderXjZyService")
+public class WorkOrderZyServiceImpl extends BaseService implements
+		WorkOrderZyService {
+
+	public static final String WS_ZY_NAMESPACE = "";
+	public static final String WS_ZY_METHOD_OPERATION_NAME = "pfServicesForEBiz";
+	private static final String[] PARAM_ZY_NAME = { "infType", "requestxml" };
+	/** *  帐号查询 */
+	private static final String XJ_ZY_RESOURCES_BROADBAND_QUERY = "queryAccountState";
+	/**
+	 * 宽带复位
+	 */
+	private static final String XJ_ZY_RESER_BROADBAND_QUERY = "resetAccount";
+	private static final boolean debug = false;
+	
+	private static final Logger logger = Logger
+			.getLogger(WorkOrderZyServiceImpl.class);
+	
+	// 调用接口服务
+	private static final EBizToIomWebservice service = new EBizToIomWebservice();
+	
+	private String callWsService(String method, String reqXml) throws Exception {
+
+		return service.callWebService(ComInfData.iomServiceUrl, WS_ZY_NAMESPACE,
+	WS_ZY_METHOD_OPERATION_NAME, PARAM_ZY_NAME, new String[] { method,
+			reqXml });
+}
+	
+	
+	/**
+	 * 获取数据源
+	 */
+	private HuNanDAO getWorkOrderDAO() {
+		String daoName = HuNanDAOImpl.class.getName();
+		return (HuNanDAO) BaseDAOFactory.getImplDAO(daoName);
+	}
+	
+	/***
+	 * 资源预判--查询
+	 * */
+	public Result queryResourcesList(JSONObject json) throws Throwable {
+		System.out.println("json"+json);
+		Result result = new Result();
+		try{
+			String search_address = json.getString("search_address");
+			String pageIndex = json.getString("pageIndex");
+			String pageSize = json.getString("pageSize");
+			String staffId = json.getString("staffId");
+			Map resultMap = getWorkOrderDAO().queryResourcesList(staffId, search_address,Integer.parseInt(pageIndex),Integer.parseInt(pageSize));
+		    result.setResultData(resultMap);
+		    result.setResultCode(1);
+		    return result;
+		}catch(Exception e){
+			e.printStackTrace();
+		    result.setResultCode(-1);
+		    return result;
+		}
+	    
+	}
+
+
+
+	public Result queryDeviceManagementInitParams(JSONObject json) {
+        System.out.println("json"+json);
+
+		String staffId = json.getString("staffId");
+		
+		List staffGirdList =null;
+		List deviceTypeList =null;
+		try {
+			staffGirdList = getWorkOrderDAO().queryStaffGirdList(staffId);
+			deviceTypeList = getWorkOrderDAO().queryDeviceTypeList(staffId);
+		} catch (DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    Map<Object, Object> result_data_node = new HashMap<Object,Object>();
+	    result_data_node.put("STAFF_GIRD_LIST", staffGirdList);
+	    result_data_node.put("DEVICE_TYPE_LIST", deviceTypeList);
+	    
+	    Result result = new Result();
+	    result.setResultData(result_data_node);
+	    result.setResultCode(1000);
+	    
+		return result;
+	}
+	
+	public Result queryDeviceListByPage(String org_id,String res_type_id,String eqp_name,Integer pageSize, Integer pageIndex){
+		 Map<Object, Object> result_data_node = new HashMap<Object,Object>();
+		try {
+			result_data_node = getWorkOrderDAO().queryDeviceListByPage(org_id, res_type_id,eqp_name, pageSize, pageIndex);
+		} catch (DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	    Result result = new Result();
+	    result.setResultData(result_data_node);
+	    result.setResultCode(1000);
+	    
+		return result;
+		
+	}
+	
+	/** 设备管理 -- 设备端口列表查询   */
+	public Result queryDevicePortListByPage(String eqp_id,String port_name,Integer pageSize, Integer pageIndex){
+		 Map<Object, Object> result_data_node = new HashMap<Object,Object>();
+		try {
+			result_data_node = getWorkOrderDAO().queryDevicePortListByPage(eqp_id, port_name, pageSize, pageIndex);
+		} catch (DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	    Result result = new Result();
+	    result.setResultData(result_data_node);
+	    result.setResultCode(1000);
+	    
+		return result;
+		
+	}
+	/**
+	 * 设备管理 -- 设备端口状态配置菜单查询
+	 * @throws DataAccessException 
+	 * 
+	 * */
+	public Result queryDeviceOperationList(JSONObject json) throws DataAccessException {
+		Result result = new Result();
+		try{
+			String state_id = json.optString("state_id");
+	    	List list = getWorkOrderDAO().queryDeviceOperationList(state_id);
+	    	
+	    	Map<Object, Object> result_data_node = new HashMap<Object,Object>();
+	    	result_data_node.put("list_data", list);
+	    	
+		    result.setResultData(result_data_node);
+		    result.setResultCode(1);
+		    return result;
+		}catch(Exception e){
+			e.printStackTrace();
+			result.setResultCode(-1);
+			return result;
+		}
+	}
+	/**
+	 * 设备管理 -- 设备端口状态配置操作
+	 * 
+	 * */
+	public Result executeDeviceOperation(JSONObject json) {
+		Result result = new Result();
+		try{
+			String staff_id = json.optString("staff_id");
+			String port_id = json.optString("port_id");
+			String oper_id = json.optString("oper_id");
+			
+			Map<Object, Object> result_data_node = getWorkOrderDAO().executeDeviceOperation(staff_id,port_id,oper_id);
+			
+//			Map<Object, Object> result_data_node = new HashMap<Object,Object>();
+//			result_data_node.put("list_data", list);
+			
+			result.setResultData(result_data_node);
+			result.setResultCode(1);
+			return result;
+		}catch(Exception e){
+			e.printStackTrace();
+			result.setResultCode(-1);
+			return result;
+		}
+	}
+
+	public Result queryTeleRollInListByPage(String eqp_id, String tele_nbr,
+			Integer pageSize, Integer pageIndex) {
+		Map<Object, Object> result_data_node = new HashMap<Object,Object>();
+		try {
+			result_data_node = getWorkOrderDAO().queryTeleRollInListByPage(eqp_id, tele_nbr, pageSize, pageIndex);
+		} catch (DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	    Result result = new Result();
+	    result.setResultData(result_data_node);
+	    result.setResultCode(1000);
+	    
+		return result;
+	}
+	
+	public Result executeDeviceRollInOperation(JSONObject json) {
+		Result result = new Result();
+		try{
+			String staff_id = json.optString("staff_id");
+			String port_id = json.optString("port_id");
+			String disseq = json.optString("disseq");
+			
+			Map<Object, Object> result_data_node = getWorkOrderDAO().executeDeviceRollInOperation(staff_id,port_id,disseq);
+			
+
+			result.setResultData(result_data_node);
+			result.setResultCode(1);
+			return result;
+		}catch(Exception e){
+			e.printStackTrace();
+			result.setResultCode(-1);
+			return result;
+		}
+	}
+	
+	
+	public Result queryResourcesBroadbandOperation(JSONObject json) {
+			String account = json.getString("account");
+			if (logger.isDebugEnabled()) {
+				logger.debug("账号ID: " + account);
+			}
+
+			Result result = null;
+			try {
+				String reqXml = getResourcesBroadbandBzRequest(account);
+				String respXml="";
+				if (debug){
+					  respXml = XmlUtil.getRemotelXmlData(XJ_ZY_RESOURCES_BROADBAND_QUERY);
+				} else {
+					  respXml = callWsService(
+						XJ_ZY_RESOURCES_BROADBAND_QUERY, reqXml);
+			    }
+				System.out.println("传送报文:"+reqXml.toString());
+				System.out.println("返回报文: + " + respXml);
+				Map resultMap = getWorkOrderDAO().queryMaxUnBildTime(account);
+//
+				result = parseResourcesBroadbandZyResponse(respXml);
+				if(resultMap!=null && !resultMap.isEmpty())
+				{
+
+					result.getResultData().put("unbind_time",resultMap.get("unbind_time"));
+				}
+
+			} catch (Exception e) {
+				if (logger.isDebugEnabled()) {
+					logger.debug(e.getMessage());
+				}
+				//
+				result = Result.buildInvokeInterError();
+			}
+
+			return result;
+		}
+
+	/**
+	 * 
+	 * 
+	 * @param workOrderId
+	 * @return
+	 */
+	private String getResourcesBroadbandBzRequest(String account) {
+		StringBuilder sb = new StringBuilder(
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	
+		sb.append("<Data>").append("<QueryMethod>").append(
+				XJ_ZY_RESOURCES_BROADBAND_QUERY).append(
+				"</QueryMethod>")
+				.append("<Params>").append("<Account>"+account+"</Account>")
+				.append("</Params>").append("</Data>")
+				.append("");
+	
+		if (logger.isDebugEnabled()) {
+			logger.debug("宽带帐号查询请求报文: " + sb.toString());
+		}
+	
+		return sb.toString();
+	}
+	
+	
+	//响应报文
+	private Result parseResourcesBroadbandZyResponse(String respXml) {
+		// TODO Auto-generated method stub
+		if (logger.isDebugEnabled()) {
+			logger.debug("宽带帐号查询响应报文: " + respXml);
+		}
+		
+		Result result = null;
+		try {
+			Document doc = Dom4jUtils.fromXML(respXml, "UTF-8");
+ 
+			String rootPath = "/Data/";
+			 
+			Node nn1=doc.selectSingleNode(rootPath+ "State");
+			Node nn2=doc.selectSingleNode(rootPath+ "IsOnline");
+			Node nn3=doc.selectSingleNode(rootPath+ "Rate");
+			Node nn4=doc.selectSingleNode(rootPath+ "IsBand");
+			Node nn5=doc.selectSingleNode(rootPath+ "LastFail");
+			
+//			//int size = rtEleList.size();
+			Map<Object, Object> resultData = new HashMap<Object, Object>();
+			resultData.put("State", nn1!=null?nn1.getText():"");
+			resultData.put("IsOnline",nn2!=null?nn2.getText():"");
+			resultData.put("Rate", nn3!=null?nn3.getText():"");
+			resultData.put("IsBand", nn4!=null?nn4.getText():"");			
+			resultData.put("LastFail",nn5!=null?nn5.getText():"");
+			result = Result.buildSuccess(resultData);
+		 
+		}catch (XMLDocException e) {
+			e.printStackTrace();
+
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+
+			result = Result.buildWSXmlParsedError();
+		} 
+		return result;
+	}
+
+
+	public Result addLoginlogOperation(JSONObject json) {
+		// TODO Auto-generated method stub
+		Result result = new Result();
+		try {
+			Map<Object, Object> result_data_node = getWorkOrderDAO().executeSaveLoginlogOperation(json);
+			if("1000".equals(result_data_node.get("resultCode"))){
+				result = Result.buildSuccess(result_data_node);
+			}else{
+				result = Result.buildParameterError();
+			}
+			return result;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = Result.buildWSXmlParsedError();
+			return result;
+		}
+	}
+	
+	
+	
+	public Result resetResourcesBroadbandOperation(JSONObject json) {
+		String user_name = json.getString("username");
+		if (logger.isDebugEnabled()) {
+			logger.debug("账号ID: " + user_name);
+		}
+
+		Result result = null;
+		try {
+			String reqXml = getResetBroadbandBzRequest(user_name);
+			String respXml="";
+			if (debug){
+				  respXml = XmlUtil.getRemotelXmlData(XJ_ZY_RESER_BROADBAND_QUERY);
+			} else {
+				  respXml = callWsService(
+						  XJ_ZY_RESER_BROADBAND_QUERY, reqXml);
+		    }
+			System.out.println("传送报文:"+reqXml.toString());
+			System.out.println("返回报文: + " + respXml);
+			
+			result = parseResetBroadbandZyResponse(respXml);
+			
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+			//
+			result = Result.buildInvokeInterError();
+		}
+
+		return result;
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param workOrderId
+	 * @return
+	 */
+	private String getResetBroadbandBzRequest(String username) {
+		StringBuilder sb = new StringBuilder(
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	
+		sb.append("<Data>").append("<QueryMethod>").append(
+				"resetAccount").append(
+				"</QueryMethod>")
+				.append("<Params>").append("<Account>"+username+"</Account>")
+				.append("</Params>").append("</Data>")
+				.append("");
+	
+		if (logger.isDebugEnabled()) {
+			logger.debug("宽带查询请求报文: " + sb.toString());
+		}
+		return sb.toString();
+	}
+	
+	
+	//响应报文
+	private Result parseResetBroadbandZyResponse(String respXml) {
+		// TODO Auto-generated method stub
+		if (logger.isDebugEnabled()) {
+			logger.debug("宽带帐号查询响应报文: " + respXml);
+		}
+		
+		Result result = null;
+		try {
+			Document doc = Dom4jUtils.fromXML(respXml, "UTF-8");
+	
+			String rootPath = "/Data/";
+			 
+			Node nn1=doc.selectSingleNode(rootPath+ "State");
+			Node nn2=doc.selectSingleNode(rootPath+ "Desc");
+			
+			Map<Object, Object> resultData = new HashMap<Object, Object>();
+	//		//int size = rtEleList.size();
+			resultData.put("State", nn1!=null?nn1.getText():"");
+			resultData.put("Desc",nn2!=null?nn2.getText():"");
+			result = Result.buildSuccess(resultData);
+		 
+		}catch (XMLDocException e) {
+			e.printStackTrace();
+	
+			if (logger.isDebugEnabled()) {
+				logger.debug(e.getMessage());
+			}
+	
+			result = Result.buildWSXmlParsedError();
+		} 
+		return result;
+	}
+	
+	
+}

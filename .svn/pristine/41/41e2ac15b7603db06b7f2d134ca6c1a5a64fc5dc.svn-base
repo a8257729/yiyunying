@@ -1,0 +1,18 @@
+package com.ztesoft.mobile.v2.service.broadband;
+
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import com.ztesoft.mobile.v2.core.Result;
+
+public interface BroadbandService {
+    Result queryBigTitle() throws DataAccessException;
+
+    Result queryQuestionByBigTitle(String paramString) throws DataAccessException;
+
+    Result queryAnswerBySmallTitle(String paramString) throws DataAccessException;
+
+    Result queryHotQustion() throws DataAccessException;
+
+    Result blurQuery(String paramString) throws DataAccessException;
+
+    Result updateAccess(String paramString1, String paramString2) throws DataAccessException;
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+  <QueryMethod>validDeviceQuerySaForEBiz</QueryMethod>
+  <Return>
+    <Result>000</Result>
+    <DeviceCode>111222-22-333-222</DeviceCode>
+    <ErrorDesc>操作成功</ErrorDesc>
+  </Return>
+</Data>

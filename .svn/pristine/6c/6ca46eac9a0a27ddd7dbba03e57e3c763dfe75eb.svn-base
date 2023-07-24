@@ -1,0 +1,85 @@
+.qick_mune {
+	overflow:hidden;
+	margin: 0px 15px;
+	width: 170px;
+}
+.qick_container {
+    left: 0;
+    margin: 0px 15px;
+    overflow:hidden;
+    width: 190px;
+    height:250px;
+}
+.shortcuts_up_btn {
+	background: url("../images/taskmenu_up.png") no-repeat scroll 0 0 transparent;
+  height: 15px;
+  margin: 0px 35px;
+	cursor: pointer;
+  width: 170px;
+	display:none;
+}
+.shortcuts_up_btn:hover {
+	background: url("../images/taskmenu_up_over.png") no-repeat scroll 0 0 transparent;
+}
+.shortcuts_down_btn {
+    background: url("../images/taskmenu_down.png") no-repeat scroll 0 0 transparent;
+    height: 15px;
+    margin: 3px 35px;
+	  cursor: pointer;
+    width: 170px;
+	  display:none;
+}
+.shortcuts_down_btn:hover {
+    background: url("../images/taskmenu_down_over.png") no-repeat scroll 0 0 transparent;
+}
+.mune_appName_ {
+	font-family: "Arial", "Helvetica", "sans-serif";
+	font-size: 12px;
+	color: 044551;
+	text-decoration: none;
+	margin: -18px 50px -60px;
+  
+}
+.mune_appName_inner_ {
+    margin: auto;
+    overflow: hidden;
+    width: 150px;
+}
+
+
+.mune_pos_left{
+	width:170px;
+	bottom:10px;
+	height:250px;
+}
+.muneButton_appIcon_ {
+    background-position: center center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    height: 28px;
+    margin-left: 4px;
+    overflow: hidden;
+    width: 28px;
+}
+.muneButton_appIconImg_ {
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 24px;
+    overflow: hidden;
+	text-align: center;
+	margin-top:5px;
+    width: 24px;
+}
+.qick_mune .mune_pos_left:hover{
+    background: url("../images/appbutton_mouseover_bg4.png") no-repeat scroll 1px 0 transparent;
+    height:243px;
+}
+.appButton_ {
+    color: white;
+    cursor: pointer;
+    display: inline;
+    float: left;
+    font-size: 12px;
+    height: 30px;
+    width: 170px;
+}

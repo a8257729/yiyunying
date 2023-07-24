@@ -1,0 +1,366 @@
+package com.ztesoft.mobile.v2.dao.workfloworder.hunan;
+
+import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import oracle.jdbc.internal.OracleTypes;
+
+import com.zterc.uos.client.SequenceGenerator;
+import com.zterc.uos.util.DateUtilities;
+import com.ztesoft.mobile.common.dao.BaseDAOImpl;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import com.ztesoft.mobile.common.helper.ClobHelper;
+import com.ztesoft.mobile.v2.service.workform.xinjiang.kt.WorkOrderKtServiceImpl;
+
+public class WorkFlowDaoImpl extends BaseDAOImpl implements WorkFlowDao
+{
+	private static final String TABLE_NAME="ARRIVE_SIGN";
+	private static final Logger logger = Logger
+			.getLogger(WorkFlowDaoImpl.class);
+
+	public void insertArriveSign(Map<String, Object> data) throws DataAccessException
+	{
+		String sqlStr = "INSERT INTO ARRIVE_SIGN(SIGN_ID,WORK_ORDER_ID,STAFF_ID,STAFF_NAME,ORG_ID,ORG_NAME,LONGITUDE,LATITUDE,SIGN_DATE,CHECK_CODE)  VALUES (?,?,?,?,?,?,?,?,sysdate,?)";
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+
+			conn = getConnection();
+			ps = conn.prepareStatement(sqlStr);
+            		int dbloop = 1;
+            		Long nextId = getPKFromMem(TABLE_NAME, 9);
+            		ps.setLong(dbloop++,nextId);
+            		ps.setLong(dbloop++,Long.parseLong((String)data.get("workid")));
+            		ps.setLong(dbloop++, Long.parseLong((String)data.get("staffid")));
+            		ps.setString(dbloop++, (String)data.get("staffname"));
+            		ps.setLong(dbloop++, Long.parseLong((String)data.get("orgid")));
+            		ps.setString(dbloop++, (String)data.get("orgname"));
+            		ps.setString(dbloop++, (String)data.get("longitude"));
+            		ps.setString(dbloop++, (String)data.get("latitude"));
+            		ps.setString(dbloop++, (String)data.get("checkCode"));
+            		ps.executeUpdate();
+		}
+		catch (Exception ex) 
+		{
+			ex.printStackTrace();
+			throw new DataAccessException(ex.getMessage(), ex);
+		}
+		finally 
+		{
+			cleanUp(conn, null, ps, null);
+		}
+	}
+
+	public void insertMobileStaffPosition(Map<String, Object> data) throws DataAccessException
+	{
+		String sqlStr = "INSERT INTO MOBILE_STAFF_POSITION(STAFF_POSITION_ID,STAFF_ID,SMX,SMY,CREATE_DATE)  VALUES (?,?,?,?,sysdate)";
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+
+			conn = getConnection();
+			ps = conn.prepareStatement(sqlStr);
+            		int dbloop = 1;
+            	Long nextId = getPKValue("MOBILE_STAFF_POSITION_SEQ");
+            		
+            		ps.setLong(dbloop++,nextId);
+            		ps.setLong(dbloop++, Long.parseLong((String)data.get("staffid")));
+            		ps.setString(dbloop++, (String)data.get("smx"));
+            		ps.setString(dbloop++, (String)data.get("smy"));
+            	
+            		ps.executeUpdate();
+		}
+		catch (Exception ex) 
+		{
+			ex.printStackTrace();
+			throw new DataAccessException(ex.getMessage(), ex);
+		}
+		finally 
+		{
+			cleanUp(conn, null, ps, null);
+		}
+		
+	}
+	
+	/**
+	 * ???????
+	 * @return
+	 * @throws DataAccessException 
+	 */
+	private Long getPKValue(String str) throws DataAccessException
+	{
+		//String sql = "select MOBILE_STAFF_POSITION_SEQ.Nextval from dual";
+		String sql = "select "+str+".Nextval from dual";
+		List result =  populateQueryByMapNoAs(new StringBuffer().append(sql));
+		 Map<String,BigDecimal> data =  (Map<String,BigDecimal>)result.get(0);
+		return Long.parseLong(data.get("NEXTVAL").toString());
+	}
+
+	public Map getPasswordByUserName(String userName) throws DataAccessException
+	{
+		String sql = "SELECT e.password as password,e.staff_id as staffId,e.agent as agent FROM UOS_STAFF e WHERE  e.state='1' and e.username = '"+userName+"'";
+		Map map = dynamicQueryObjectByMap(sql, null, null);
+	
+		return map;
+	}
+
+	public void updateUserPasswordByName(String username, String newPassword) throws DataAccessException
+	{
+		String sql = "UPDATE UOS_STAFF SET PASSWORD=? WHERE USERNAME=?";
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try{
+			conn = this.getConnection();
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, newPassword);
+			ps.setString(2, username);
+			ps.executeUpdate();
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}finally{
+			cleanUp(conn, null, ps,null);	
+		}
+		
+	}
+
+	public List getCallBackReason() throws DataAccessException
+	{
+		String sql = "select t.ID,t.return_name,t.parent_id,t.level_id from OM_RETURN_ORDER_TYPE t";
+		List result =  dynamicQueryListByMap(sql);
+		return result;
+	}
+
+	public List getResourceInfoList(String workOrderId) throws Exception
+	{
+		
+		Connection conn = null;  
+	    CallableStatement callStmt = null;  
+
+			callStmt = null; 
+			conn = getConnection();
+			callStmt = conn.prepareCall("{? = call F_APP_QUERYORDER(?)}");
+			callStmt.setString(2, workOrderId);
+			callStmt.registerOutParameter(1, OracleTypes.VARCHAR);  
+			callStmt.execute(); 
+			String resultString = callStmt.getString(1);
+			conn.close();
+			callStmt.close();
+			List result = new ArrayList();
+			result.add(resultString);
+		return result;
+	}
+	
+	
+	public String getSAInfoList(String username, Long jobId,
+			Integer pageSize, Integer pageIndex) throws Exception
+	{
+		logger.info("username :"+username);
+		logger.info("jobId :"+jobId);
+		logger.info("pageSize :"+pageSize);
+		logger.info("pageIndex :"+pageIndex);
+		Connection conn = null;  
+	    CallableStatement callStmt = null;  
+
+	    String resultString = "";
+			callStmt = null; 
+			conn = getConnection();
+			logger.info("getSAInfoList 获取connect");
+			callStmt = conn.prepareCall("{call Inf_App_saWorkOrder_Query(?,?,?,?,?,?)}");
+			
+			callStmt.setString(1, username);
+			callStmt.setLong(2, jobId);
+			callStmt.setString(3, "");
+			callStmt.setInt(4, pageSize);
+			callStmt.setInt(5, pageIndex);
+			callStmt.registerOutParameter(6, OracleTypes.INTEGER);  
+			callStmt.execute(); 
+			int id = callStmt.getInt(6);
+			callStmt.close();
+			logger.info("getSAInfoList 获取存储过程的ID :"+id);
+			String sql = "select t.request_xml from  inf_app_log t where t.id="+id;
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			Clob clob = null;
+			while(rs.next())
+			{
+				 clob = rs.getClob("request_xml");
+
+			}
+			if(clob!=null)
+			{
+				resultString =(String) ClobHelper.clobToString(clob);
+			}
+			ps.close();
+			conn.close();
+			
+			
+		return resultString;
+	}
+
+	public String getZdInfoList(String username, Long jobId,
+								Integer pageSize, Integer pageIndex) throws Exception
+	{
+		logger.info("username :"+username);
+		logger.info("jobId :"+jobId);
+		logger.info("pageSize :"+pageSize);
+		logger.info("pageIndex :"+pageIndex);
+		Connection conn = null;
+		CallableStatement callStmt = null;
+
+		String resultString = "";
+		callStmt = null;
+		conn = getConnection();
+		logger.info("getSAInfoList 获取connect");
+		callStmt = conn.prepareCall("{call Inf_App_acWorkOrder_Query(?,?,?,?,?,?)}");
+
+		callStmt.setString(1, username);
+		callStmt.setLong(2, jobId);
+		callStmt.setString(3, "");
+		callStmt.setInt(4, pageSize);
+		callStmt.setInt(5, pageIndex);
+		callStmt.registerOutParameter(6, OracleTypes.INTEGER);
+		callStmt.execute();
+		int id = callStmt.getInt(6);
+		callStmt.close();
+		logger.info("getSAInfoList 获取存储过程的ID :"+id);
+		String sql = "select t.request_xml from  inf_app_log t where t.id="+id;
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ResultSet rs = ps.executeQuery();
+		Clob clob = null;
+		while(rs.next())
+		{
+			clob = rs.getClob("request_xml");
+
+		}
+		if(clob!=null)
+		{
+			resultString =(String) ClobHelper.clobToString(clob);
+		}
+		ps.close();
+		conn.close();
+
+
+		return resultString;
+	}
+
+
+
+	public String getZDInfoList(String username, Long jobId,
+								Integer pageSize, Integer pageIndex) throws Exception
+	{
+		logger.info("username :"+username);
+		logger.info("jobId :"+jobId);
+		logger.info("pageSize :"+pageSize);
+		logger.info("pageIndex :"+pageIndex);
+		Connection conn = null;
+		CallableStatement callStmt = null;
+
+		String resultString = "";
+		callStmt = null;
+		conn = getConnection();
+		logger.info("getZDInfoList 获取connect");
+		callStmt = conn.prepareCall("{call Inf_App_zdWorkOrder_Query(?,?,?,?,?,?)}");
+
+		callStmt.setString(1, username);
+		callStmt.setLong(2, jobId);
+		callStmt.setString(3, "");
+		callStmt.setInt(4, pageSize);
+		callStmt.setInt(5, pageIndex);
+		callStmt.registerOutParameter(6, OracleTypes.INTEGER);
+		callStmt.execute();
+		int id = callStmt.getInt(6);
+		callStmt.close();
+		logger.info("getZDInfoList 获取存储过程的ID :"+id);
+		String sql = "select t.request_xml from  inf_app_log t where t.id="+id;
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ResultSet rs = ps.executeQuery();
+		Clob clob = null;
+		while(rs.next())
+		{
+			clob = rs.getClob("request_xml");
+
+		}
+		if(clob!=null)
+		{
+			resultString =(String) ClobHelper.clobToString(clob);
+		}
+		ps.close();
+		conn.close();
+
+
+		return resultString;
+	}
+
+
+
+	public List getFCallBackReason(String sql) throws Exception
+	{
+		//String sql = "select t.ID,t.return_name,t.parent_id,t.level_id from OM_RETURN_ORDER_TYPE t";
+		List result =  dynamicQueryListByMap(sql);
+		return result;
+	}
+	
+	public void insertFCallBackReason(Map<String, Object> data) throws DataAccessException
+	{
+		String sqlStr = "INSERT INTO FAULT_ORDER_TRACK(track_id,fault_order_id,work_order_id,track_date,track_org_id,track_org_name,track_staff_id,track_staff_name,track_type,track_message,track_content,create_date,oper_type)  VALUES (?,?,?,sysdate,?,?,?,?,?,?,?,sysdate,?)";
+		Connection conn = null;
+		PreparedStatement ps = null;
+		try {
+
+			conn = getConnection();
+			ps = conn.prepareStatement(sqlStr);
+            		int dbloop = 1;
+            		Long nextId = getPKValue("fault_order_track_seq");
+            		System.out.println("the nextId is :"+nextId);
+            		
+            		ps.setLong(dbloop++,nextId);
+            		ps.setLong(dbloop++, Long.parseLong(getOrderIdByWorkOrderId((String)data.get("work_order_id"))));
+            		ps.setLong(dbloop++, Long.parseLong((String)data.get("work_order_id")));
+            		ps.setLong(dbloop++, Long.parseLong((String)data.get("track_org_id")));
+            		ps.setString(dbloop++, (String)data.get("track_org_name"));
+            		ps.setLong(dbloop++, Long.parseLong((String)data.get("track_staff_id")));
+            		ps.setString(dbloop++, (String)data.get("track_staff_name"));
+            		//???????trackTypeд??1
+            		ps.setLong(dbloop++, 1);
+            		//???????track_messageд??1
+            		ps.setString(dbloop++, "反馈在途原因");
+            		ps.setString(dbloop++, (String)data.get("track_content"));
+            		ps.setLong(dbloop++, 8);
+            	
+            		ps.executeUpdate();
+		}
+		catch (Exception ex) 
+		{
+			ex.printStackTrace();
+			throw new DataAccessException(ex.getMessage(), ex);
+		}
+		finally 
+		{
+			cleanUp(conn, null, ps, null);
+		}
+		
+	}
+	
+	private String getOrderIdByWorkOrderId(String workOrderId) throws Exception
+	{
+		String sql = "select t.base_order_id from  wo_work_order t where t.id="+workOrderId;
+		List result =  dynamicQueryListByMap(sql);
+		Map data =  (Map) result.get(0);
+		String orderId = (String)data.get("base_order_id");
+		System.out.println("the orderId is :"+orderId);
+		return orderId;
+	}
+	
+
+}

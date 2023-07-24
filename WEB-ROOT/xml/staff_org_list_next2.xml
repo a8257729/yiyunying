@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+	<QueryMethod>staff_org_list</QueryMethod>
+	<Return>
+		<ContentList>
+		
+			<Content>
+				    <id>6</id>
+	          		<name>外滩</name>
+					<mhasParent>true</mhasParent>
+					<mhasChild>true</mhasChild>
+					<parent>3</parent>
+					<level>3</level>
+					<expanded>false</expanded>
+					<partyType>ORG</partyType>
+			</Content>			
+			<Content>
+				    <id>7</id>
+	          		<name>蕉蕉</name>
+					<mhasParent>true</mhasParent>
+					<mhasChild>false</mhasChild>
+					<parent>3</parent>
+					<level>3</level>
+					<expanded>false</expanded>
+					<partyType>STA</partyType>
+			</Content>
+			<Content>
+				    <id>8</id>
+	          		<name>VV</name>
+					<mhasParent>true</mhasParent>
+					<mhasChild>false</mhasChild>
+					<parent>3</parent>
+					<level>3</level>
+					<expanded>false</expanded>
+					<partyType>STA</partyType>
+			</Content>
+			
+		</ContentList>	
+		<Result>000</Result>
+		<ErrorDesc>查询成功</ErrorDesc>
+	</Return>
+</Data>

@@ -1,0 +1,56 @@
+<html>
+<head>
+	<title>PopSelect—È÷§</title>
+	<?XML:NAMESPACE PREFIX=PopSelect />
+	<?IMPORT NAMESPACE=PopSelect IMPLEMENTATION="PopSelect.htc">
+</head>
+<script language="javascript">
+	function onloadPop()
+	{
+		var obj=new Object();
+		obj.nullable="false";
+		obj.defaultValue="05";
+		obj.editable="false";
+		obj.items=new Array();
+		
+		obj.items[0]=new Object();
+		obj.items[0].value="01";
+		obj.items[0].text="text01";
+		obj.items[0].affectProperties="001,002";
+		
+		obj.items[1]=new Object();
+		obj.items[1].value="02";
+		obj.items[1].text="text02";
+		
+		obj.items[2]=new Object();
+		obj.items[2].value="03";
+		obj.items[2].text="text03";
+		
+		obj.items[3]=new Object();
+		obj.items[3].value="04";
+		obj.items[3].text="text04";
+		
+		obj.items[4]=new Object();
+		obj.items[4].value="05";
+		obj.items[4].text="text05";
+		pop01.loadArrayDesc(obj);
+	}
+</script>
+<body>
+	<table width=30%>
+		<tr>
+			<td>
+				<PopSelect:PopSelect id="pop01">
+					<PopSelect:Property nullable='false'>
+						<PopSelect:Item value="01" text="text01"></PopSelect:Item>
+						<PopSelect:Item value="02" text="text02"></PopSelect:Item>
+						<PopSelect:Item value="03" text="text03"></PopSelect:Item>
+					</PopSelect:Property>
+				</PopSelect:PopSelect></td>
+		</tr>
+		<tr>
+			<td><input type="button" value="click" onclick="onloadPop();"></td>
+		</tr>
+	</table>
+</body>
+</html>

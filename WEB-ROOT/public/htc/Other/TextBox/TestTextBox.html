@@ -1,0 +1,141 @@
+<html>
+<body onload="init()">
+<?XML:NAMESPACE PREFIX=TextBox />
+<?IMPORT NAMESPACE="TextBox" IMPLEMENTATION="TextBox.htc">
+
+<table border="0">
+	<tr>
+		<td>请选择类型: </td>		
+		<td>
+			<select id=comboType NAME="comboType">
+				<option value="string">字符串</option>
+				<option value="password">密码</option>
+				<option value="int">整数</option>
+				<option value="float">浮点数</option>				
+			</select>
+		</td>	
+	</tr>
+		<td>最小长度:  </td>		
+		<td>
+			<input type=text id="txtMinLength" NAME="txtMinLength">
+		</td>
+	<tr>
+		<td>最大长度: </td>		
+		<td>
+			<input type=text id="txtMaxLength" NAME="txtMaxLength">
+		</td>
+	</tr>
+	<tr>
+		<td>最小值:   </td>		
+		<td>
+			<input type=text id="txtMin" NAME="txtMin">
+		</td>	
+	</tr>
+	<tr>
+		<td>最大值: </td>		
+		<td>
+			 <input type=text id="txtMax" NAME="txtMax">
+		</td>	
+	</tr>
+	<tr>
+		<td>小数位数(浮点数): </td>		
+		<td>
+			<input type=text id="txtFraction" NAME="txtFraction">
+		</td>	
+	</tr>
+	<tr>
+		<td>有效校验(正则表达式):</td>
+		<td>
+			<input type=text id="txtValidateString" NAME="txtValidateString">
+		</td>	
+		<td>
+			<select id="selSuccessRegExp" onchange = "selSuccessRegExp_onchange();" name="selSuccessRegExp">
+				<option value=""> </option>
+				<option value="^\d*$">全部是数字</option>
+				<option value="^([a-z]|[A-Z])*$">全部是字母</option>
+				<option value="^((\d{15})|(\d{18}))$">身份证</option>
+				<option value="^[A-Z](([A-Z]|\d){5})$">车牌号码</option>				
+			</select>		
+		</td>
+	</tr>
+	<tr>
+		<td>是否能输入:  </td>		
+		<td>
+			<input type=checkbox id="chkEnabled" checked=true NAME="chkEnabled">
+		</td>	
+	</tr>
+	<tr>
+		<td>值: </td>		
+		<td>
+			<input type=text id="txtValue" NAME="txtValue">
+		</td>	
+	</tr>
+	<tr>
+		<td>能否为空: </td>		
+		<td>
+			 <input type=checkbox id="chkNull" checked=true NAME="chkNull">
+		</td>	
+	</tr>
+</table>
+<br>
+<button onclick="onOk()">提交</button>
+<br>
+<br>
+<table border="1" borderColorDark="lavender" borderColorLight="black" cellPadding="0" cellSpacing="0" width="98%" align="center" name="tbText" ID="tbText">
+	<tr valign=top height="30">
+		<td><TextBox:TextBox id="a1"></TextBox:TextBox></td>
+	</tr>
+</table>
+
+<script language=javascript>
+
+function init()
+{
+	var pmObjects=initTextBox();
+	document.all("a1").loadArrayDesc(pmObjects);
+}
+
+function initTextBox()
+{
+	var pmValues=new Object();
+	pmValues.dataType = comboType.value;				 //类型	
+	pmValues.minLength = txtMinLength.value;			 //最小长度
+	pmValues.maxLength = txtMaxLength.value;			 //最大长度
+	
+	pmValues.min = txtMin.value;			 //最小值
+	pmValues.max = txtMax.value;			 //最大值
+	pmValues.fraction = txtFraction.value;	 //小数位数(浮点数)
+	
+	pmValues.successRegExp = txtValidateString.value;   //有效值
+	pmValues.editable = chkEnabled.checked;				 //是否能输入
+	pmValues.value = txtValue.value;					 //值	
+	pmValues.nullAble = chkNull.checked;				 //能否为空
+	
+	return pmValues;
+}
+
+function onOk()
+{
+	var pmObjects=initTextBox();	
+	
+	if(pmObjects.minLength != "" && pmObjects.maxLength != "" && pmObjects.minLength > pmObjects.maxLength)
+	{
+		alert("最大值应该大于最小值！");
+		txtMaxLength.value = "";
+		txtMaxLength.focus();
+		return;
+	}
+	document.all("a1").loadArrayDesc(pmObjects);
+		
+}
+
+function selSuccessRegExp_onchange()
+{
+	txtValidateString.text = selSuccessRegExp.value;
+	txtValidateString.value = selSuccessRegExp.value;
+}
+
+
+</script>
+</body>
+</html>

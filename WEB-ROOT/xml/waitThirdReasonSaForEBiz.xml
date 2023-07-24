@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data> 
+  <QueryMethod>waitThirdReasonSaForEBiz</QueryMethod>
+  <Return> 
+    <Result>000</Result>  
+    <ErrorDesc>待装原因</ErrorDesc> 
+  </Return>  
+  <ReasonList> 
+    <Reason> 
+      <ReasonCode>3001</ReasonCode>  
+      <ReasonName>待装三级原因1</ReasonName> 
+      <Comment>待装三级备注1</Comment> 
+    </Reason>  
+    <Reason> 
+      <ReasonCode>3002</ReasonCode>  
+      <ReasonName>待装三级原因2</ReasonName>  
+      <Comment>待装三级备注2</Comment> 
+    </Reason>  
+    <Reason> 
+      <ReasonCode>3003</ReasonCode>  
+      <ReasonName>待装三级原因3</ReasonName> 
+      <Comment>待装三级备注3</Comment>   
+    </Reason>  
+    <Reason> 
+      <ReasonCode>3004</ReasonCode>  
+      <ReasonName>待装三级原因4</ReasonName>  
+      <Comment>待装三级备注4</Comment> 
+    </Reason> 
+  </ReasonList> 
+</Data>

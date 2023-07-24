@@ -1,0 +1,21 @@
+package com.ztesoft.mobile.v2.dao.weixin;
+
+import java.util.List;
+import java.util.Map;
+
+import net.sf.json.JSONObject;
+
+import com.ztesoft.mobile.common.dao.BaseDAO;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+
+public interface WeChatDAO extends BaseDAO {
+	
+	public Map queryUserHouseInfoByCode(String staff_id) throws DataAccessException;
+	
+	public int insertMap(String log_id,String service_num,String qrcode,String custname) throws Exception;
+	
+	public String queryWorkOrderInfo(String service_num) throws Exception;
+	
+	
+	
+}

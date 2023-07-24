@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data> 
+  <QueryMethod>workOrderReasonListForEBiz</QueryMethod>
+  <Return> 
+    <Result>000</Result>  
+    <ErrorDesc>回单原因</ErrorDesc> 
+  </Return>  
+  <ReasonList> 
+    <Reason> 
+      <ReasonCode>11</ReasonCode>  
+      <ReasonName>集团-端局原因-施工延误</ReasonName>  
+    </Reason>  
+    <Reason> 
+      <ReasonCode>12</ReasonCode>  
+      <ReasonName>集团-端局原因-数据未按时配置</ReasonName>   
+    </Reason>  
+    <Reason> 
+      <ReasonCode>13</ReasonCode>  
+      <ReasonName>集团-端局原因-施工延误</ReasonName>  
+    </Reason>  
+    <Reason> 
+      <ReasonCode>14</ReasonCode>  
+      <ReasonName>集团-端局原因-其他原因</ReasonName>  
+    </Reason> 
+  </ReasonList> 
+</Data>

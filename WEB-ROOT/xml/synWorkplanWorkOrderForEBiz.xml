@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+  <QueryMethod>synWorkplanWorkOrderForEBiz</QueryMethod>
+  <Return>
+    <ContentList>
+    	<Content>
+        <Public>
+          <OrderTitle>作业计划测试1</OrderTitle>
+          <WorkOrderID>20170304</WorkOrderID>
+          <WorkOrderCode>201309250502221Z</WorkOrderCode>
+          <OrderID>14999988</OrderID>
+          <WorkOrderState>处理中</WorkOrderState>
+          <BeginTime>2013-09-25 17:23:43</BeginTime>
+          <EndTime></EndTime>
+        </Public>
+      </Content>
+      <Content>
+        <Public>
+          <OrderTitle>作业计划测试2</OrderTitle>
+          <WorkOrderID>20170504</WorkOrderID>
+          <WorkOrderCode>201305250502222Z</WorkOrderCode>
+          <OrderID>24999988</OrderID>
+          <WorkOrderState>处理过</WorkOrderState>
+          <BeginTime>2013-09-25 17:23:43</BeginTime>
+          <EndTime>2014-01-23 15:59:57</EndTime>
+        </Public>
+      </Content>
+       <Content>
+        <Public>
+          <OrderTitle>作业计划测试3</OrderTitle>
+          <WorkOrderID>30170504</WorkOrderID>
+          <WorkOrderCode>20130325050223Z</WorkOrderCode>
+          <OrderID>34999988</OrderID>
+          <WorkOrderState>待确认</WorkOrderState>
+          <BeginTime>2013-09-25 17:23:43</BeginTime>
+          <EndTime>2014-01-23 15:59:57</EndTime>
+        </Public>
+      </Content>
+    </ContentList>
+    <Result>000</Result>
+    <ErrorDesc>查找成功</ErrorDesc>
+    <PageSize>10</PageSize>
+    <PageNum>1</PageNum>
+    <TotalPage>1</TotalPage>
+    <TotalNum>3</TotalNum>
+  </Return>
+</Data>

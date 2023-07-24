@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <!--方式一：使用JobDetailBean，任务类必须实现Job接口
+    <bean id="parameterSyncJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="name" value="parameterSyncJob"></property>
+        <property name="jobClass" value="com.metroside.mcloud.uas.task.quartz.ParamSyncQuartzJobBean"></property>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="service">
+                    <value>[NOTE]参数定时更新定时任务</value>
+                </entry>
+            </map>
+        </property>
+    </bean>      -->
+
+    <!-- ======================== 调度触发器 ========================
+    <bean id="CronTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="parameterSyncJob"></property>
+        <property name="cronExpression" value="0 0/2 * * * ?"></property>
+    </bean>    -->
+
+    <!-- ======================== 调度工厂 ========================
+    <bean id="SpringJobSchedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="CronTriggerBean"/>
+            </list>
+        </property>
+    </bean>     -->
+
+    <!-- 任务1配置 -->
+    <bean name="queryIptvLoginResultJob" class="com.ztesoft.mobile.v2.controller.assistant.QueryIptvLoginResultJob"/>
+    <bean id="jobDetail_queryIptvLoginResult" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!-- 执行的类 -->
+        <property name="targetObject">
+            <ref bean="queryIptvLoginResultJob" />
+        </property>
+        <!-- 类中的方法 -->
+        <property name="targetMethod">
+            <value>queryIPTVLastLoginInfo</value>
+        </property>
+    </bean>
+    <bean id="cronTrigger_queryIptvLoginResult" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="jobDetail_queryIptvLoginResult" />
+        </property>
+        <!-- 每一秒钟执行一次 -->
+        <property name="cronExpression">
+            <value>0 0 2 * * ?</value>
+        </property>
+    </bean>
+
+    <!-- 总配置 -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <!-- 添加触发器 -->
+        <property name="triggers">
+            <list>
+                <ref bean="cronTrigger_queryIptvLoginResult" />
+            </list>
+        </property>
+    </bean>
+
+</beans>

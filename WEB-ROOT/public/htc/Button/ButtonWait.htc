@@ -1,0 +1,11 @@
+<!-- @edit moejoe(lmh_user@hotmail.com) -->
+<public:component>
+<PUBLIC:ATTACH event="oncontentready" onevent="initLoad()" />
+<script language="JScript" type="Text/JScript">
+function initLoad(){
+element.attachEvent("onmousedown",function(){element.style.cursor="wait";});
+element.attachEvent("onmouseout",function(){element.style.cursor="default";});
+element.attachEvent("onmouseup",function(){element.style.cursor="default";});
+}
+</script>
+</public:component>

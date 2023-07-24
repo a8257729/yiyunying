@@ -1,0 +1,15 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="security" extends="common-component-define"
+		namespace="/security">
+
+		<action name="OptMobileStaffSecConfigAction"
+			class="com.ztesoft.mobile.security.action.OptMobileStaffSecConfigAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+
+	</package>
+</xwork>

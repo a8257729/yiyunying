@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>在途装机工单</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/echarts-all.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js" ></script>
+		<script src="../js/template.min.js" ></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<a class="mui-pull-right mui-icon iconfont icon-rili" id="showUserPicker"></a>
+			<h1 id="title" class="mui-title">装维服务</h1>
+			
+		</header>
+		<div class="mui-content">
+			<div class="chart-pie" id="lineChart"></div>
+			<div id="content"></div>
+			<script id="tpl" type="text/html">
+			<table id="tabel" freezeRowNum="1" freezeColumnNum="1" class="am-table am-table-bordered am-table-centered am-table-striped">
+				<thead>
+					<tr>
+						<th>装维服务（装机）</th>
+						<th>装机及时率（周）</th>
+						<th>装机成功率（周）</th>
+						<th>投诉处理及时率（周）</th>
+						<th>投诉解决率（周）</th>
+						<th>重复投诉率（周）</th>
+					
+					</tr>
+					
+				</thead>
+				<tbody>
+					{{each dataArr as item i}}
+					<tr class="mui-tr">
+						<th>{{item[0]}}</th>
+						<td>{{item[1]}}</td>
+						<td>{{item[2]}}</td>
+						<td>{{item[3]}}</td>
+						<td>{{item[4]}}</td>
+						<td>{{item[5]}}</td>
+						
+					</tr>
+					{{/each}}
+					
+				</tbody>
+			</table>
+			</script>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/mui.picker.min.js"></script>
+		<script>
+			//时间选择器
+			var currPickerObj = {};
+			var picker = new mui.PopPicker();
+			picker.setData(getDateArray());
+			var showUserPickerButton = document.getElementById('showUserPicker');
+			showUserPickerButton.addEventListener('tap', function(event) {
+				picker.show(function(items) {
+					currPickerObj = items[0];
+				});
+
+			}, false);
+			
+			//图表
+            cityArr.remove(0);
+			var getOption = function(chartType) {
+				var chartOption = {
+					title: {
+						text: '服务投诉',
+				
+						x: 'center'
+					},
+					tooltip: {
+						trigger: 'item',
+						formatter: "{b} : {c}"
+					},
+					legend: {
+						show: false,
+						orient: 'vertical',
+						x: 'left',
+						data: cityArr
+					},
+					toolbox: {
+						show: false
+						
+					},
+					calculable: true,
+					series: [{
+						name: '服务投诉',
+						type: 'pie',
+						radius: '55%',
+						center: ['50%', '60%'],
+						data: randomCityArrayPie()
+					}]
+				};
+				return chartOption;
+			};
+			var byId = function(id) {
+				return document.getElementById(id);
+			};
+
+			var lineChart = echarts.init(byId('lineChart'));
+			lineChart.setOption(getOption('pie'));
+
+            var data = {
+				dataArr:randomCityArrayPercent(6)
+			};
+			console.log(data);
+			var html = template('tpl', data);
+			document.getElementById('content').innerHTML = html;
+			
+		</script>
+	</body>
+
+</html>

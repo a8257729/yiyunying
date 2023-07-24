@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data> 
+  <Return> 
+    <Result>000</Result>  
+    <ErrorDesc>无退单原因</ErrorDesc> 
+  </Return>  
+  <ReasonList> 
+    <Reason> 
+      <ErrorCode>0001</ErrorCode>  
+      <ErrorName>退单原因/CRM送网络激活的必须参数缺少1</ErrorName>  
+      <TargetTache>退单目标环节名称</TargetTache> 
+    </Reason>  
+    <Reason> 
+      <ErrorCode>0002</ErrorCode>  
+      <ErrorName>退单原因/改账号(前端)2</ErrorName>  
+      <TargetTache>退单原因/改速率和资费</TargetTache> 
+    </Reason>  
+    <Reason> 
+      <ErrorCode>0003</ErrorCode>  
+      <ErrorName>单原因/改速率和资费3</ErrorName>  
+      <TargetTache>退单目标环节名称</TargetTache> 
+    </Reason>  
+    <Reason> 
+      <ErrorCode>0004</ErrorCode>  
+      <ErrorName>退单原因/其他类型4</ErrorName>  
+      <TargetTache>退单目标环节名称</TargetTache> 
+    </Reason> 
+  </ReasonList> 
+</Data>

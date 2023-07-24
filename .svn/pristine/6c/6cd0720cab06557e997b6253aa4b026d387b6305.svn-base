@@ -1,0 +1,15 @@
+.online_icon{
+	     		background-image:url(/MOBILE/IM/image/online.gif) !important;
+	     	}
+	     	.busy_icon{
+	     		background-image:url(/MOBILE/IM/image/online.gif) !important;
+	     	}
+	     	.outline_icon{
+	     		background-image:url(/MOBILE/IM/image/offline.gif) !important;
+	     	}
+	     	.online_state {
+			    background-image: url(/MOBILE/IM/image/user.gif ) !important;
+			}
+			.group_icon{
+				 background-image: url(/MOBILE/IM/image/group.gif ) !important;
+			}

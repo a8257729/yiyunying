@@ -1,0 +1,20 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd" >
+<xwork>
+		<include file="cfg/services/common_service/common_component_define.xml" />
+		<include file="cfg/services/system/system.xml" />
+		<include file="cfg/services/etl/etl.xml" />
+		<include file="cfg/services/staffmapping/mappingservice.xml" />
+		<include file="cfg/services/system_service/systemservice.xml" />
+		<include file="cfg/services/outersystem/outerSystemService.xml" />
+		<include file="cfg/services/mobsystem/mobsystem.xml" />
+		<include file="cfg/services/pushmessage/pushmessage.xml" />
+		<include file="cfg/services/im/im_service.xml" />
+		<include file="cfg/services/message/message.xml" />
+        <include file="cfg/services/security/security.xml" />
+        <include file="cfg/services/app/app_manage.xml" />
+        <include file="cfg/services/rest/rest.xml" />
+        <include file="cfg/services/mobile/mobile.xml" />
+        <include file="cfg/services/interf/interf_serv.xml" />
+</xwork>

@@ -1,0 +1,187 @@
+package com.ztesoft.eoms.web;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.MapUtils;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.RequestUtils;
+
+import com.ztesoft.eoms.common.dao.BaseDAOFactory;
+import com.ztesoft.eoms.common.helper.StringHelper;
+import com.ztesoft.eoms.web.dao.attachment.AttachmentDAO;
+import com.ztesoft.eoms.web.dao.attachment.AttachmentDAOImpl;
+
+public class DownloadServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1235330543016868849L;
+
+    private static String eomsDocPath = null;
+
+    public void init() throws ServletException {
+        super.init();
+        eomsDocPath = AttachmentHelper.getEomsDocPath();
+        if (eomsDocPath == null || eomsDocPath.trim().equals("")) {
+            eomsDocPath = getServletContext().getRealPath("/") +
+                          "/download";
+        }
+    }
+
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response) throws ServletException,
+            IOException {
+        try {
+        	request.setCharacterEncoding("UTF-8");
+        	String fileName = RequestUtils.getRequiredStringParameter(request, "fileName");
+            int fileSize = 1;
+            String filePoint = null;
+            String contentType = null;
+            InputStream in = null;			//需要下载的文件流
+            System.out.println(" =================================fileName : " + fileName);
+             //直接下载文件
+        	if(!StringHelper.isNull(fileName)){
+        		filePoint = eomsDocPath + "/help/" + fileName;
+        		contentType = getContentType(fileName);
+        		 System.out.println(" =================================filePoint : " + filePoint);
+        		 System.out.println(" =================================contentType : " + contentType);
+        		File file = new File(filePoint);
+        		if(file.exists()){
+            		in = new FileInputStream(filePoint);
+            		fileSize = in.available();      			
+        		}
+
+        	//从doc表中找到文件信息并下载
+        	}else{
+                String fileKey = RequestUtils.getRequiredStringParameter(request,
+                "key");
+		        Map fileInfo = getFileUploadDAO().selByDocKey(fileKey);
+		
+		        if (fileInfo == null) {
+		            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+		            return;
+		        }
+		
+		        filePoint = eomsDocPath + "/" +
+		                           MapUtils.getString(fileInfo, "point"); 
+        		File file = new File(filePoint);
+        		if(file.exists()){
+            		in = new FileInputStream(filePoint);
+            		fileSize = in.available();      			
+        		}
+		        contentType = MapUtils.getString(fileInfo, "contentType");
+		        
+	            fileName = MapUtils.getString(fileInfo, "fileName");
+	            String strFileSize = MapUtils.getString(fileInfo, "size");
+	            try {
+	                fileSize = Integer.parseInt(strFileSize);
+	            } catch (Exception ex) {
+
+	                fileSize = 1;
+	            }
+        	}
+
+
+            if(in !=null){
+                response.setContentType(contentType);
+                response.setContentLength(fileSize);
+                response.setHeader("Content-Disposition",
+                        "attachment; filename=\"" +
+                        AttachmentHelper.toUtf8String(fileName) + "\""); 
+                OutputStream out = response.getOutputStream();
+                FileCopyUtils.copy(in, out);
+
+                in.close();
+                out.flush();
+                out.close();
+            }else{
+            	response.setContentType("text/html;charset=UTF-8");
+            	PrintWriter out = response.getWriter();
+	            out.println(
+	                    "<html><meta http-equiv='Content-Type' content='text/html; charset=GBK'>" +
+	                    "<script language='javascript'>" +
+	                    "alert('该文件不存在或已删除,如有问题请联系管理员!');" +
+	                    "window.close();</script></html>");
+	            out.close();
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response) throws ServletException,
+            IOException {
+    	doGet(request,response);
+    }
+
+    private AttachmentDAO getFileUploadDAO() {
+        String daoName = AttachmentDAOImpl.class.getName();
+        return (AttachmentDAO) BaseDAOFactory.getImplDAO(daoName);
+    }
+    
+	private String getContentType(String fileName) {   
+	    String fileNameTmp = fileName.toLowerCase();   
+	    String ret = "";   
+	    if (fileNameTmp.endsWith("txt")) {   
+	        ret = "text/plain";   
+	    }   
+	    if (fileNameTmp.endsWith("gif")) {   
+	        ret = "image/gif";   
+	    }   
+	    if (fileNameTmp.endsWith("jpg")) {   
+	        ret = "image/jpeg";   
+	    }   
+	    if (fileNameTmp.endsWith("jpeg")) {   
+	        ret = "image/jpeg";   
+	    }   
+	    if (fileNameTmp.endsWith("jpe")) {   
+	        ret = "image/jpeg";   
+	    }   
+	    if (fileNameTmp.endsWith("zip")) {   
+	        ret = "application/zip";   
+	    }   
+	    if (fileNameTmp.endsWith("rar")) {   
+	        ret = "application/rar";   
+	    }   
+	    if (fileNameTmp.endsWith("doc")) {   
+	        ret = "application/msword";   
+	    }   
+	    if (fileNameTmp.endsWith("ppt")) {   
+	        ret = "application/vnd.ms-powerpoint";   
+	    }   
+	    if (fileNameTmp.endsWith("xls")) {   
+	        ret = "application/vnd.ms-excel";   
+	    }   
+	    if (fileNameTmp.endsWith("html")) {   
+	        ret = "text/html";   
+	    }   
+	    if (fileNameTmp.endsWith("htm")) {   
+	        ret = "text/html";   
+	    }   
+	    if (fileNameTmp.endsWith("tif")) {   
+	        ret = "image/tiff";   
+	    }   
+	    if (fileNameTmp.endsWith("tiff")) {   
+	        ret = "image/tiff";   
+	    }   
+	    if (fileNameTmp.endsWith("pdf")) {   
+	        ret = "application/pdf";   
+	    }
+	    if (fileNameTmp.endsWith("url")) {   
+	        ret = "text/plain";   
+	    }   
+	    return ret;   
+	}
+
+}

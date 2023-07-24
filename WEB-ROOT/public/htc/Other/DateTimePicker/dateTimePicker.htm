@@ -1,0 +1,54 @@
+<html>
+<head>
+<title>日期时间.................................................</title>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<?XML:NAMESPACE PREFIX=Calendar />
+<?IMPORT NAMESPACE="Calendar" IMPLEMENTATION="/IOMPROJ/public/htc/Other/Calendar/Calendar.htc">
+<style type="text/css">
+.spanButton {
+	font-family: Tahoma;
+	font-size: 11px;
+	padding-bottom: 5px;
+	background-color:#d4d0c8;
+	border-style:groove;
+	border-width:thin;
+	border-top-style:groove;
+}
+</style>
+<link href="/IOMPROJ/public/css/style.css" rel="stylesheet" type="text/css">	
+</head>
+<body   bgcolor='#D5EBFF'>
+<table border=0 cellpadding=0 cellspacing=0>
+<tr><td colspan=2><Calendar:Calendar id="dtpCalendar"></Calendar:Calendar></td></tr>
+<tr><td align=center><input type="button" onclick="onOK();" value="确定" class="button_blue">&nbsp;<input type="button" onclick="onCancel();" value="取消" class="button_blue"></td></tr>
+</table>
+<script language=javascript>
+	/*前面，调用该页面前的赋值
+		var dtpObject=new Object();
+		dtpObject.useDate = true;
+		dtpObject.useTime = true;
+		dtpObject.defaultDateTime = "2002-10-10"
+	*/	
+	var inObject = window.dialogArguments;	
+	
+	dtpCalendar.useDate = inObject.useDate;	
+	dtpCalendar.useTime = inObject.useTime;
+	
+	if ( inObject.defaultDateTime != "" )
+	{
+		dtpCalendar.setValue(inObject.defaultDateTime);	
+	}	
+	function onCancel()
+	{
+		window.opener = null;
+		window.close();
+	}	
+	function onOK()
+	{		
+		returnValue = dtpCalendar.getValue();	   
+	    window.opener = null;
+		window.close();		
+	}	 	
+</script>
+</body>
+</html>

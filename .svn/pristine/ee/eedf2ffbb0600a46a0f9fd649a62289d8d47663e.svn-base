@@ -1,0 +1,14 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="rest" extends="common-component-define"
+		namespace="/rest">
+
+		<action name="OptRestServiceAction"
+			class="com.ztesoft.mobile.v2.action.rest.OptRestServiceAction">
+		</action>
+		
+	</package>
+</xwork>

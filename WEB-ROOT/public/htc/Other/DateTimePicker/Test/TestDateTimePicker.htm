@@ -1,0 +1,25 @@
+<html>
+<head>
+<title></title>
+<?XML:NAMESPACE PREFIX=DateTimePicker />
+<?IMPORT NAMESPACE="DateTimePicker" IMPLEMENTATION="DateTimePicker.htc">
+</head>
+<body>
+<table>
+	<tr>	
+		<td width="160px">
+			<DateTimePicker:DateTimePicker id=dp1 onchanged="dp1_onchanged();" ></DateTimePicker:DateTimePicker>
+		</td>
+	</tr>
+</table>
+
+
+<script language=javascript>
+function dp1_onchanged()
+{
+	alert(dp1.value);
+}
+</script>
+
+</body>
+</html>

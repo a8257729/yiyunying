@@ -1,0 +1,36 @@
+<public:component>
+<public:property name="tipText" put="setTipText" />
+<public:property name="tipDiv" put="setTipDiv" />
+<PUBLIC:ATTACH event="onmouseover" onevent="showTip()" />
+<PUBLIC:ATTACH event="onmouseout" onevent="hideTip()" />
+<PUBLIC:ATTACH event="onmousemove" onevent="showTip()" />
+
+<script language="JScript" type="Text/JScript">
+	var toolTipText = 'test';
+	var tipDiv =null;
+	function showTip(){
+		if(tipDiv){
+		  var toolTips =  "<TABLE  border=0  cellPadding=2  cellSpacing=1  width=100%  align=center  bgcolor=#008080>"  +
+                      "<TR><TD  style=BACKGROUND-COLOR:white;COLOR:blue;FONT-FAMILY:宋体;FONT-SIZE:9pt;TEXT-DECORATION:none> "  +
+                     toolTipText+"</TD></TR></TABLE>";
+     
+      tipDiv.innerHTML= toolTips;
+      tipDiv.style.pixelLeft=event.x+10
+      tipDiv.style.pixelTop=event.y
+      tipDiv.style.visibility="visible"
+    }
+	}
+	function hideTip(){
+		if(tipDiv){
+    	tipDiv.style.visibility='hidden';
+    }
+	}
+	function setTipText(tipTextStr){
+		toolTipText = tipTextStr;
+	}
+	function setTipDiv(pSrc){
+		tipDiv = pSrc;
+	}
+
+</script>
+</public:component>

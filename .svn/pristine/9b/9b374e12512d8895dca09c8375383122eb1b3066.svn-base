@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>在途装机工单（日报）</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/echarts-all.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/data-bind.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js"></script>
+		<script src="../js/template.min.js"></script>
+		<script src="../js/global.js"></script>
+
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<a class="mui-pull-right mui-icon iconfont icon-rili" id="showUserPicker"></a>
+			<h1 id="title" class="mui-title">在途装机工单</h1>
+
+		</header>
+		<div class="mui-content">
+			<div class="chart" id="lineChart"></div>
+			<div id="content"></div>
+			<script id="tpl" type="text/html">
+				<table id="tabel" freezeRowNum="1" freezeColumnNum="1" class="am-table am-table-bordered am-table-centered am-table-striped">
+					<thead>
+						<tr>
+							<th rowspan="2">州市</th>
+							<th rowspan="2">在途工单总数</th>
+							<th colspan="3">在途时长维度</th>
+							<th colspan="2">代维单位维度</th>
+							<th colspan="6">当前环节</th>
+						</tr>
+						<tr>
+							<th>在途≤3天</th>
+							<th>3＜在途≤7天</th>
+							<th>在途＞7天</th>
+							<th>铁通 </th>
+							<th>非铁通</th>
+							<th>订单接收</th>
+							<th>宽带资源配置</th>
+							<th>自动激活施工</th>
+							<th>装机</th>
+							<th>资源竣工（自动）</th>
+							<th>资料竣工（自动）</th>
+
+						</tr>
+					</thead>
+					<tbody>
+						{{each dataArr as item i}}
+						<tr class="mui-tr">
+							<th areaid="{{item.areaId}}" class="area-name">{{item.area_name}}</th>
+							<td>{{item.V_ZZTD}}</td>
+							<td>{{item.transit_less_3}}</td>
+							<td>{{item.transit_greater_3_less_7}}</td>
+							<td>{{item.transit_greater_7}}</td>
+							<td>{{item.railcom}}</td>
+							<td>{{item.railcom_not}}</td>
+							<td>{{item.V_DDJS}}</td>
+							<td>{{item.V_ZYPZ}}</td>
+							<td>{{item.V_ZDJHSG}}</td>
+							<td>{{item.V_ZJ}}</td>
+							<td>{{item.V_ZYJG}}</td>
+							<td>{{item.V_ZLJG}}</td>
+						</tr>
+						{{/each}}
+
+					</tbody>
+				</table>
+			</script>
+		</div>
+
+		<script>
+		    var cityArray = [];
+		    var cityDataArray = [];
+		    var areaId = 26;
+		    var nowDate = new Date();
+		    var beginDateStr = '2016-10-10 00:00:00';
+		    var endDateStr = createQueryEndDateStr(nowDate);
+		    
+			mui.plusReady(function() {
+
+				//时间选择器
+				var picker = new mui.DtPicker({
+					"type": "date"
+				});
+				var showUserPickerButton = document.getElementById('showUserPicker');
+				showUserPickerButton.addEventListener('tap', function(event) {
+					picker.show(function(items) {
+						var date = new Date(items.value);
+						endDateStr = createQueryEndDateStr(date);
+                        query_report_data(getDataCallBack, areaId,beginDateStr,endDateStr,"1");
+					});
+
+				}, false);
+
+				//图表
+				var getOption = function(chartType) {
+					var chartOption = {
+
+						tooltip: {
+							trigger: 'item',
+							formatter: "{b} : {c} "
+						},
+						legend: {
+							data: ['在途工单总数']
+						},
+						grid: {
+							x: 35,
+							x2: 10,
+							y: 30,
+							y2: 25
+						},
+						toolbox: {
+							show: false,
+							feature: {
+								mark: {
+									show: true
+								},
+								dataView: {
+									show: true,
+									readOnly: false
+								},
+								magicType: {
+									show: true,
+									type: ['line', 'bar']
+								},
+								restore: {
+									show: true
+								},
+								saveAsImage: {
+									show: true
+								}
+							}
+						},
+						calculable: false,
+						xAxis: [{
+							type: 'category',
+							data: cityArray
+						}],
+						yAxis: [{
+							type: 'value',
+							splitArea: {
+								show: true
+							}
+						}],
+						series: [{
+							name: '在途工单总数',
+							type: chartType,
+							data: cityDataArray
+						}]
+					};
+					return chartOption;
+				};
+				var byId = function(id) {
+					return document.getElementById(id);
+				};
+
+				query_report_data(getDataCallBack, areaId,beginDateStr,endDateStr,"1");
+
+				function getDataCallBack(jsondataStr) {
+					var jsondata = JSON.parse(jsondataStr);
+					var data = {
+						dataArr: jsondata
+					};
+					console.log(JSON.stringify(data));
+					if(jsondata.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+					cityArray.length = 0;
+					cityDataArray.length = 0;
+					for(var i=0;i<jsondata.length;i++){
+						var item = jsondata[i];
+						cityArray.push(item.area_name);
+						cityDataArray.push(item.V_ZZTD);
+					}
+					
+					var lineChart = echarts.init(byId('lineChart'));
+				    lineChart.setOption(getOption('bar'));
+
+					var html = template('tpl', data);
+					document.getElementById('content').innerHTML = html;
+
+					//增加列表项点击事件
+					$('.mui-tr').on('tap', 'th', function() {
+						var id = 'report2-1.html';
+						var areaId = this.getAttribute('areaid');
+						mui.openWindow({
+							url: id,
+							id: id,
+							styles: {
+								popGesture: 'close'
+							},
+							show: {
+								aniShow: ''
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+                                areaId: areaId,
+                                beginDateStr: beginDateStr,
+                                endDateStr: endDateStr
+							}
+						});
+
+					});
+
+					freezeTableInit();
+				}
+
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="immanager" extends="common-component-define"
+		namespace="/immanager">
+		
+									
+		<action name="InsertGroupAction"
+			class="com.ztesoft.eoms.im.action.InsertGroupAction">
+			<interceptor-ref name="transactionController" />
+		</action>		
+		<action name="DeleteGroupAction"
+			class="com.ztesoft.eoms.im.action.DeleteGroupAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="UpdateGroupAction"
+			class="com.ztesoft.eoms.im.action.UpdateGroupAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="MoveFriToGroupAction"
+			class="com.ztesoft.eoms.im.action.MoveFriToGroupAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="DeleteFriFromGroupAction"
+			class="com.ztesoft.eoms.im.action.DeleteFriFromGroupAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertFriendQuickAction"
+			class="com.ztesoft.eoms.im.action.InsertFriendQuickAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="QryFriendByGroupAndStaffAction"
+			class="com.ztesoft.eoms.im.action.QryFriendByGroupAndStaffAction">
+			
+		</action>
+		
+		<action name="ImServerIsOnLineAction"
+			class="com.ztesoft.eoms.im.action.ImServerIsOnLineAction">
+		
+		</action>
+		
+		<action name="InsertChatLogAction"
+			class="com.ztesoft.eoms.im.action.InsertChatLogAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="QryOnLineStateByStaffIdAction"
+			class="com.ztesoft.eoms.im.action.QryOnLineStateByStaffIdAction">
+
+		</action>
+		<action name="QryUnReadByStaffAction"
+			class="com.ztesoft.eoms.im.action.QryUnReadByStaffAction">
+		</action>
+		<action name="UpdateReadStateAction"
+			class="com.ztesoft.eoms.im.action.UpdateReadStateAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="InsertBiggroupAction"
+			class="com.ztesoft.eoms.im.action.InsertBiggroupAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="CreateBigGroupAction"
+			class="com.ztesoft.eoms.im.action.CreateBigGroupAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="QryBigGroupByIdAction"
+			class="com.ztesoft.eoms.im.action.QryBigGroupByIdAction">
+			
+		</action> 
+		<action name="UpdateBigGroupAction"
+			class="com.ztesoft.eoms.im.action.UpdateBigGroupAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="DeleteBigGroupAction"
+			class="com.ztesoft.eoms.im.action.DeleteBigGroupAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="QryBigGroupByStaffIdXAction"
+			class="com.ztesoft.eoms.im.action.QryBigGroupByStaffIdXAction">
+			
+		</action>
+		<action name="UpdateMsgReadStateAction"
+			class="com.ztesoft.eoms.im.action.UpdateMsgReadStateAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+	</package>
+</xwork>

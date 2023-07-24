@@ -1,0 +1,84 @@
+<html>
+	<head>
+		<title>Calendar Example2</title>		
+	</head>
+	<body>
+	    <?XML:NAMESPACE PREFIX=MYCAL />		
+		<?IMPORT NAMESPACE="MYCAL" IMPLEMENTATION="calendar.htc" /> 
+		
+	    <MYCAL:Calendar id=Calendar1 onchanged="Button10_Click();" >
+	    </MYCAL:Calendar> 	   
+        <br>
+        <br>	        
+        <button onclick="Button0_Click()"  ID="Button0">getValue</button>&nbsp
+        <button onclick="Button5_Click()"  ID="Button5">setBeginDateAndTime(1970-1-1 00:00:00)</button>&nbsp
+        <input id=beginDate NAME="beginDate"></input>        
+        <br>        
+        <button onclick="Button1_Click()"  ID="Button1">setDate(invisible)</button>&nbsp
+        <button onclick="Button2_Click()"  ID="Button2">setDate(visible)</button>        
+        <br>        
+        <button onclick="Button3_Click()"  ID="Button3">setTime(invisible)</button>&nbsp
+        <button onclick="Button4_Click()"  ID="Button4">setTime(visible)</button>
+        <br>
+        <button onclick="Button6_Click()"  ID="Button6">setDateByProperty(1970-1-1)</button>&nbsp
+        <button onclick="Button7_Click()"  ID="Button7">setTimeByProperty(00:00:00)</button>
+        <br>
+        <button onclick="Button8_Click()"  ID="Button8">getDateByProperty</button>&nbsp
+        <button onclick="Button9_Click()"  ID="Button9">getTimeByProperty</button>         
+        <br>
+        <button  ID="Button10">Hid(lose focus)</button>&nbsp
+        <button onclick="Button11_Click()" ID="Button11">Display</button>
+    
+	    
+		<script language="javascript">		    
+		    function Button0_Click()
+		    {	
+		        alert(Calendar1.getValue());		            
+		    }
+		    function Button1_Click()
+		    {			     
+		        Calendar1.useDate = false;
+		    }
+		    function Button2_Click()
+		    {			     
+		        Calendar1.useDate = true;
+		    }
+		    function Button3_Click()
+		    {			     
+		        Calendar1.useTime = false;
+		    }
+		    function Button4_Click()
+		    {			     
+		        Calendar1.useTime = true;
+		    }
+		    function Button5_Click()
+		    {		        
+		       Calendar1.setValue(beginDate.value);		       
+		    }
+		    function Button6_Click()
+		    {		        
+		       Calendar1.curDate = beginDate.value; 	       
+		    }	  
+		    function Button7_Click()
+		    {		        
+		       Calendar1.curTime = beginDate.value;    
+		    } 
+		    function Button8_Click()
+		    {		        
+		       alert(Calendar1.curDate); 
+		    }      		    
+		    function Button9_Click()
+		    {		        
+		       alert(Calendar1.curTime);
+		    }  
+		    function Button10_Click()
+		    {		        
+		       alert(Calendar1.curTime);
+		    }  
+		    function Button11_Click()
+		    {		        
+		       Calendar1.setDisplay();
+		    }  			   
+		</script>		
+	</body>
+</html>

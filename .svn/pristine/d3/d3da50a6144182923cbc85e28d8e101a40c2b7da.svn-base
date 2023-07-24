@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+  <QueryMethod>materialQuerySaForEBiz</QueryMethod>
+  <Return>
+    <ContentList>
+      <Content>
+        <Public>
+          <MaterialId>1403754</MaterialId>
+          <MaterialName>材料1</MaterialName>
+          <MaterialClass>材料</MaterialClass>
+          <Spec>规格型号1</Spec>
+          <Unit>中兴单位</Unit>
+          <Price>50RMB</Price>
+          <ComposeFlag>否</ComposeFlag>
+        </Public>
+      </Content>
+      <Content>
+        <Public>
+          <MaterialId>1403753</MaterialId>
+          <MaterialName>材料2</MaterialName>
+          <MaterialClass>材料</MaterialClass>
+          <Spec>规格型号2</Spec>
+          <Unit>中兴单位</Unit>
+          <Price>30RMB</Price>
+          <ComposeFlag>否</ComposeFlag>
+        </Public>
+      </Content>
+      <Content>
+        <Public>
+          <MaterialId>1403752</MaterialId>
+          <MaterialName>材料3</MaterialName>
+          <MaterialClass>材料</MaterialClass>
+          <Spec>规格型号3</Spec>
+          <Unit>中兴单位</Unit>
+          <Price>10RMB</Price>
+          <ComposeFlag>否</ComposeFlag>
+        </Public>
+      </Content>
+    </ContentList>
+    <Result>000</Result>
+    <ErrorDesc>查找成功</ErrorDesc>
+    <TotalNum>3</TotalNum>
+  </Return>
+</Data>

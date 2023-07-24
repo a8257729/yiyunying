@@ -1,0 +1,381 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>服务评价</title>
+<meta name="viewport"
+	content=" width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<link type="text/css" href="css/weui.min.css" rel="stylesheet" />
+<link type="text/css" href="css/jquery-weui.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="css/mui.min.css"> 
+<link type="text/css" href="css/haoping.css" rel="stylesheet" />
+
+
+</head>
+<style>
+.weui-toast {
+	width: 10.6em;
+}
+
+.weui-toast_content {
+	color: white;
+}
+</style>
+<body>
+	<div class="mui-content">
+		<div class="order-evaluation clearfix" style="padding-top: 5px;">
+			<h5 style="margin-top: 15px;">欢迎您对本次服务进行评价</h5>
+			<!-- <p>请严肃认真对待此次评价哦！您的评价对我们真的真的非常重要！</p> -->
+			<div class="block">
+				<ul>
+					<li data-default-index="0">
+						<div>
+							<input style="margin-left: -0.5em;" type="radio" name="haoping" value="1" aria-label="haoping" />1
+							<input style="margin-left: 1em;" type="radio" name="haoping" value="2" aria-label="haoping" />2
+							<input style="margin-left: 1em;" type="radio" name="haoping" value="3" aria-label="haoping" />3
+							<input style="margin-left: 1em;" type="radio" name="haoping" value="4" aria-label="haoping" />4
+							<input style="margin-left: 1em;" type="radio" name="haoping" value="5" aria-label="haoping" />5
+							<br />
+							<input style="margin-left: -0.5em;"  type="radio" name="haoping" value="6" aria-label="haoping" />6
+							<input style="margin-left: 1em;" type="radio" name="haoping" value="7" aria-label="haoping" />7
+							<input style="margin-left: 1em;" type="radio" name="haoping" value="8" aria-label="haoping" />8
+							<input style="margin-left: 1em;" type="radio" name="haoping" value="9" aria-label="haoping" />9
+							<input style="margin-left: 1em;" type="radio" name="haoping" value="10" aria-label="haoping" />10
+							<em class="level"></em>
+						</div>
+						
+					</li>
+				</ul>
+			</div>
+			<div class="order-evaluation-text">本次服务 给您留下了什么印象呢？</div>
+			<div class="order-evaluation-checkbox">
+				<ul class="clearfix">
+					<li class="order-evaluation-check" data-impression="1">服务态度好<i
+						class="iconfont icon-checked"></i></li>
+					<li class="order-evaluation-check" data-impression="2">装机效率高<i
+						class="iconfont icon-checked"></i></li>
+					<li class="order-evaluation-check" data-impression="3">布线美观<i
+						class="iconfont icon-checked"></i></li>
+					<li class="order-evaluation-check" data-impression="4">布线规范<i
+						class="iconfont icon-checked"></i></li>
+					<li class="order-evaluation-check" data-impression="5">耐心<i
+						class="iconfont icon-checked"></i></li>
+					<li class="order-evaluation-check" data-impression="6">细致<i
+						class="iconfont icon-checked"></i></li>
+					<li class="order-evaluation-check" data-impression="7">服务用语规范<i
+						class="iconfont icon-checked"></i></li>
+					<li class="order-evaluation-check" data-impression="8">按时赴约<i
+						class="iconfont icon-checked"></i></li>
+				</ul>
+			</div>
+			<div class="order-evaluation-textarea">
+				<textarea name="content" id="TextArea1" onKeyUp="words_deal();"></textarea>
+				<span>亲，您还可以在这里对装维人员服务吐槽，还可以输入<em id="textCount">20</em>个字
+				</span>
+			</div>
+			<div style="text-align: center;">
+				<button onclick="validatePingjia();" id="order_evaluation"
+					class="mui-btn mui-btn-primary"
+					style="width: 30%; margin-bottom: 20px; background-color: cornflowerblue">评价完成</button>
+			</div>
+			<!-- <a href="javascript:;" id="order_evaluation">评价完成</a> -->
+		</div>
+
+		<div id="order_evaluate_modal" class="dmlei_tishi_info"></div>
+
+	</div>
+	<script language="javascript" src="js/common.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery-weui.min.js"></script>
+	<script type="text/javascript" src="js/config.js"></script>
+	<script type="text/javascript">
+	    debugger;
+		var score = 0;
+		var requestParam = GetURLRequestParam();
+		var orderId = requestParam.orderId;//订单id
+		var account = requestParam.account;//宽带账号
+		//var url = "http://192.168.106.104:7001";
+
+		//根据下标获取印象文字
+		function byIndexYinxiang(index) {
+			debugger;
+			var str = "";
+			switch (index) {
+			case '1':
+				str = "服务态度好";
+				break;
+			case '2':
+				str = "装机效率高";
+				break;
+			case '3':
+				str = "布线美观";
+				break;
+			case '4':
+				str = "布线规范";
+				break;
+			case '5':
+				str = "耐心";
+				break;
+			case '6':
+				str = "细致";
+				break;
+			case '7':
+				str = "服务用语规范";
+				break;
+			case '8':
+				str = "按时赴约";
+				break;
+			}
+
+			return str;
+		}
+
+		/*
+		 * 根据index获取 str
+		 * **/
+		function byIndexLeve(index) {
+			var str = "";
+			switch (index) {
+			case 0:
+				str = "超差";
+				break;
+			case 1:
+				str = "差评";
+				break;
+			case 2:
+				str = "较差";
+				break;
+			case 3:
+				str = "中等";
+				break;
+			case 4:
+				str = "一般";
+				break;
+			case 5:
+				str = "满意";
+				break;
+			case 6:
+				str = "好评";
+				break;
+			case 7:
+				str = "超好";
+				break;
+			case 8:
+				str = "很棒";
+				break;
+			case 9:
+				str = "超棒";
+				break;
+			case 10:
+				str = "满分";
+				break;
+			}
+			return str;
+		}
+		//  星星数量
+		var stars = [ [ 'x2.png', 'x1.png', 'x1.png', 'x1.png', 'x1.png' ],
+				[ 'x2.png', 'x2.png', 'x1.png', 'x1.png', 'x1.png' ],
+				[ 'x2.png', 'x2.png', 'x2.png', 'x1.png', 'x1.png' ],
+				[ 'x2.png', 'x2.png', 'x2.png', 'x2.png', 'x1.png' ],
+				[ 'x2.png', 'x2.png', 'x2.png', 'x2.png', 'x2.png' ], ];
+		$(".block li").find("img").hover(
+				function(e) {
+					var obj = $(this);
+					var index = obj.index();
+					if (index < (parseInt($(".block li").attr(
+							"data-default-index")) - 1)) {
+						return;
+					}
+					var li = obj.closest("li");
+					var star_area_index = li.index();
+					for (var i = 0; i < 5; i++) {
+						li.find("img").eq(i).attr("src",
+								"images/" + stars[index][i]);//切换每个星星
+					}
+					$(".level").html(byIndexLeve(index));
+					
+				}, function() {
+				})
+
+		$(".block li").hover(
+				function(e) {
+				},
+				function() {
+					var index = $(this).attr("data-default-index");//点击后的索引
+					index = parseInt(index);
+					console.log("index", index);
+					$(".level").html(byIndexLeve(index - 1));
+					console.log(byIndexLeve(index - 1));
+					$(".order-evaluation ul li:eq(0)").find("img").attr("src",
+							"images/x1.png");
+					for (var i = 0; i < index; i++) {
+
+						$(".order-evaluation ul li:eq(0)").find("img").eq(i)
+								.attr("src", "images/x2.png");
+					}
+				})
+		$("li div input[name='haoping']").click(
+				function() {
+					var obj = $(this);
+					var li = obj.closest("li");
+					var star_area_index = li.index();
+					var index1 = obj.index();
+					li.attr("data-default-index", (parseInt(index1) + 1));
+					var index = $(".block li").attr("data-default-index");//点击后的索引
+					index = parseInt(index);
+					console.log("index", index);
+					$(".level").html(byIndexLeve(index - 1));
+					console.log(byIndexLeve(index - 1));
+					$(".order-evaluation ul li:eq(0)").find("img").attr("src",
+							"images/x1.png");
+					score = $(this).val();
+					for (var i = 0; i < index; i++) {
+						$(".order-evaluation ul li:eq(0)").find("img").eq(i)
+								.attr("src", "images/x2.png");
+					}
+					
+				});
+		//印象
+		$(".order-evaluation-check").click(function() {
+			if ($(this).hasClass('checked')) {
+				//当前为选中状态，需要取消
+				$(this).removeClass('checked');
+			} else {
+				//当前未选中，需要增加选中
+				$(this).addClass('checked');
+			}
+		});
+		//评价字数限制
+		function words_deal() {
+			var curLength = $("#TextArea1").val().length;
+			if (curLength > 20) {
+				var num = $("#TextArea1").val().substr(0, 20);
+				$("#TextArea1").val(num);
+				alert("超过字数限制，多出的字将被截断！");
+			} else {
+				$("#textCount").text(20 - $("#TextArea1").val().length);
+			}
+		}
+		/* $("#order_evaluation").click(
+				function() {
+					$("#order_evaluate_modal").html("感谢您的评价！么么哒(* ￣3)(ε￣ *)")
+							.show().delay(3000).hide(500);
+				}) */
+	    function validatePingjia(){
+	    	var param = {
+					orderId : orderId,
+					account : account
+				};
+			var params = {
+				param : JSON.stringify(param),
+				method : 'queryWechatEvaluation'
+			}
+
+			$.showLoading();
+			console.log("params:" + JSON.stringify(params,null,'\t'));
+			$.ajax({
+				url : config.serverUrl + "/MOBILE/api/client/common/commonQueryObjectBySqlForWechat",
+				type : "GET",//必须是get请求
+				dataType : "jsonp",//请求的数据类型
+				jsonp : "callback",//请求类型是回调
+				jsonpCallback : "callbackFunction",//数据请求成功时回调的方法
+				data : params,
+				success : function(result) {
+					$.hideLoading();
+					if (result && result.resultCode == '1000') {
+						console.log(JSON.stringify(result));
+						if(result.resultData != null && result.resultData.data_info != null){
+							var score  = result.resultData.data_info.score;
+							if(score > 0){
+								$.toast('您已经评价过了！','forbidden');
+							}else{
+								submitPingjia();
+							}
+						}else{
+							submitPingjia();
+						}
+					} else {
+						console.log("后台错误");
+					}
+
+				},
+				error : function(result) {
+					$.hideLoading();
+				}
+
+			});
+		}			
+
+		function submitPingjia() {
+			console.log("score：" + score);
+			if (score == 0) {
+				debugger;
+				$.toast('您还没有星级评分，请先评分再提交！', 'forbidden');
+				return;
+			}
+			var installedScore = $("li");
+			var installedStr = '';
+			for (var i = 0; i < installedScore.length; i++) {
+				if ($(installedScore[i]).attr('class') == 'order-evaluation-check checked') {
+					installedStr = installedStr
+							+ ','
+							+ byIndexYinxiang($(installedScore[i]).attr(
+									'data-impression'));
+					console.log($(installedScore[i]).attr('data-impression'));
+				}
+			}
+			if(installedStr == ''){
+				$.toast('您还没有选择印象，请先选择印象再提交！', 'forbidden');
+				return;
+			}
+			
+		    installedStr = installedStr.substr(1);
+			console.log(installedStr);
+			var detail = $("#TextArea1").val();
+			var param = {
+					orderId : orderId,
+					score : score,
+					installedScore : installedStr,
+					otherdesc : detail,
+					account : account
+				};
+			//$.toast('评价提交成功！');
+			var params = {
+				param : JSON.stringify(param),
+				method : 'submitWechatEvaluation'
+			}
+
+			$.showLoading();
+			console.log("params:" + JSON.stringify(params,null,'\t'));
+			$.ajax({
+				url : config.serverUrl + "/MOBILE/api/client/common/commonInsertObjectForWechat",
+				type : "GET",//必须是get请求
+				dataType : "jsonp",//请求的数据类型
+				jsonp : "callback",//请求类型是回调
+				jsonpCallback : "callbackFunction",//数据请求成功时回调的方法
+				data : params,
+				success : function(result) {
+					$.hideLoading();
+					if (result && result.resultCode == '1000') {
+						console.log(JSON.stringify(result));
+						/* $.toast('评价提交成功！',function(){
+							history.back(-1);
+						}); */
+						window.location.href = 'msg.html';
+					} else {
+						$.hideLoading();
+						$.toast('评价失败！','forbidden');
+					}
+
+				},
+				error : function(result) {
+					$.hideLoading();
+					$.toast('评价失败！','forbidden');
+				}
+
+			});
+
+		}
+	</script>
+</body>
+</html>

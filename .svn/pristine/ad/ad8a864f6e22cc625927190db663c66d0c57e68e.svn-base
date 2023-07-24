@@ -1,0 +1,9 @@
+jndi.url=t3\://127.0.0.1\:9001
+jndi.factory=weblogic.jndi.WLInitialContextFactory
+jndi.principal=weblogic
+jndi.credentials=weblogic
+
+xmpp.ip = 10.45.47.142
+xmpp.port = 9002
+opi.url = http://127.0.0.1/
+server.url = http://220.196.38.12:9001/

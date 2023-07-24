@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!--系统配置文件，对eoms中所有需要配置参数进行集中配置-->
+
+
+<!DOCTYPE config [
+<!ELEMENT itemnode ( item+ ) >
+<!ATTLIST itemnode name NMTOKEN #REQUIRED >
+
+<!ELEMENT config ( itemnode+ ) >
+
+<!ELEMENT item ( #PCDATA ) >
+<!ATTLIST item is_required ( false | true ) #IMPLIED >
+<!ATTLIST item key ID #REQUIRED >
+     ]>
+
+  <!--
+  itemnode 节点集合
+  item  节点
+  is_required = "true" 不允许item中为空值
+  is_required = "false"或者不配，则允许item中为空值
+-->
+
+<config>
+  <itemnode name="common">
+    <!-- 数据库类型    MSSQL05: Microsoft SQLSERVER 2005  MSSQL :Microsoft SQLSERVER 2000   ORACLE : ORACLE SYBASE :SYBASE  有些老代码的Dao后缀需要这个为后缀。请注意大小写-->
+    <item key="com.ztesoft.eoms.database" is_required="true">Oracle</item>
+     <!-- Identity列取函数名称  SqlServer支持三种获取方式，SCOPE_IDENTITY，IDENT_CURRENT ，IDENTITY -->
+    <item key="com.ztesoft.eoms.database.identity.function" is_required="false">IDENTITY</item>
+    <!--数据库connection链接获取方式   JDBC:通过JDBC方式在本地进行链接，适用于本地进行测试。JNDI:通过JNDI方式在服务器里进行链接，适用于服务器环境   -->
+    <item key="com.ztesoft.eoms.databse.connectType" is_required="true">JNDI</item> 
+    <!-- 服务器数据库 JNDI数据源配置，如果com.ztesoft.eoms.databse.connectType配置为JNDI的链接方式，则该数据项必须 -->
+    <item key="com.ztesoft.eoms.database.jndi.datasourceName">jdbc/UOSFlowTxDataSource</item>
+    <!-- 客户端数据库JDBC数据源配置 如果com.ztesoft.eoms.databse.connectType配置为JDBC的链接方式，则以下com.ztesoft.eoms.database.jdbc.开头的数据项必须 -->
+    <item key="com.ztesoft.eoms.database.jdbc.db.url">jdbc:oracle:thin:@134.101.8.69:1521:mobile</item>
+    <item key="com.ztesoft.eoms.database.jdbc.db.driver">oracle.jdbc.driver.OracleDriver</item>
+    <!-- 和密码加密处理,只读取密文，不读取明文。具体加密解密方式请问   Dawn  -->
+    <item key="com.ztesoft.eoms.database.jdbc.db.user">aXFkYQ==</item>
+    <item key="com.ztesoft.eoms.database.jdbc.db.pwd">aXFkYQ==</item>
+    <!--JTA的JNDI事务名称-->
+    <item key="com.ztesoft.eoms.transaction.jndiName">java:comp/UserTransaction</item>
+  </itemnode>
+</config>

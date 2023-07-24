@@ -1,0 +1,19 @@
+package com.ztesoft.mobile.v2.dao.app;
+
+import com.ztesoft.mobile.common.dao.BaseDAO;
+
+import java.sql.SQLException;
+import java.util.Map;
+
+public interface MobileDataInstallDAO extends BaseDAO {
+    public Map<String,String> queryDataInstallByOrg(String org_id) throws SQLException;
+
+    public Map<String,String> querySelOrgByAccount(String account) throws SQLException;
+
+    public Map<String,String> queryBSSProject(String work_order_id) throws SQLException;
+
+    public Map<Object,Object> queryOBDInfo(String qrCode, String wkOrderId) throws SQLException;
+
+    public Map<String,String> querymakeProcessData(String work_order_id) throws SQLException;
+    public Map<Object,Object> processDataInstall( Map<String,Object> paramMap) throws SQLException;
+}

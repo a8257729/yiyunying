@@ -1,0 +1,18 @@
+﻿{
+	"appid": "H5F4611E9",
+	"iOS": {
+		"version": "1.0",
+		"title": "易运营1.0",
+		"focus":"1",
+		"note": "初始版本",
+		"url": ""
+	},
+	"Android": {
+		"version": "2.55",
+		"title": "有新版本可更新（2.55）",
+		"focus":"1",
+		"note": "1、安全问题，2更新功能掌沃通测速，3组网工单强制校验按地区控制",
+		"url": "http://www.hnkdzj.com:8095/app/upload.html"
+	},
+	"models": ["M813Q","HD1900"]
+}

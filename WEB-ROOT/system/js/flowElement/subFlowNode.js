@@ -1,0 +1,68 @@
+/////////////////////////////////////////////////////
+// ZTESoft corp. 2005-11-15
+// Author : Xu.fei3
+// commits: Implementation of the subflow node
+/////////////////////////////////////////////////////
+
+function SubFlowNode(){
+	_extends(this, SimpleNode);
+	
+	this.setIcon("subflow");
+	this.setText("子流程节点");
+	this.setNodeType("SubFlow");
+	this.icon.oncontextmenu = Controller.showSubFlowMenu;
+	
+	//生成XPDL
+	this.generateActivityXPDL = function(){
+		var xpdl = "<Activity Id='" + this.activity.id + "' Name='" + this.activity.name + "'>";
+		
+		//加上描述
+		if(this.activity.description){
+			xpdl += "<Description>" + this.activity.description + "</Description>";
+		}else{
+			xpdl += "<Description />"
+		}
+		
+		//限制
+		if(this.activity.limit){
+			xpdl += "<Limit>" + this.activity.limit + "</Limit>";
+		}else{
+			xpdl += "<Limit />";
+		}
+		
+		//执行者
+		if(this.activity.performer){
+			xpdl += "<Performer>" + this.activity.performer + "</Performer>";
+		}else{
+			xpdl += "<Performer />";
+		}
+		
+		//开始模式
+		xpdl += "<StartMode>" + this.activity.startMode + "</StartMode>";
+		
+		//结束模式
+		xpdl += "<FinishMode>" + this.activity.finishMode + "</FinishMode>";
+		
+		//优先级
+		if(this.activity.priority){
+			xpdl += "<Priority>" + this.activity.priority + "</Priority>";
+		}else{
+			xpdl += "<Priority />"
+		}
+		
+		//扩展属性
+		xpdl += "<xpdl:ExtendedAttributes>";
+		for(var i=0; i<this.activity.extendedAttributes.length; i++){
+			xpdl += "<xpdl:ExtendedAttribute Name='" + this.activity.extendedAttributes[i].name
+				 + "' Value='" + this.activity.extendedAttributes[i].value +"' />";
+		}
+		xpdl += "</xpdl:ExtendedAttributes>";
+		
+		xpdl += "</Activity>";
+		return xpdl;
+	}
+	
+	//生成这个子流程本身的流程XPDL
+	this.generateSubFlowXPDL = function(){
+	}
+}

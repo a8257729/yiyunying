@@ -1,0 +1,791 @@
+package com.ztesoft.mobile.v2.dao.app;
+
+import com.ztesoft.mobile.common.dao.BaseDAOImpl;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import com.ztesoft.mobile.common.helper.StringUtil;
+import oracle.jdbc.internal.OracleTypes;
+import net.sf.json.JSONObject;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class MobileDataInstallDAOImpl extends BaseDAOImpl implements MobileDataInstallDAO {
+
+    public Map<String,String> queryDataInstallByOrg(String org_id) throws SQLException {
+        Map<String, String> resultMap =  new HashMap<String,String>();
+        String sqlStr=("SELECT count(1) as flag FROM uos_scan2aaabind_org@dblink_to_iom T where t.org_id ='"+org_id+ "'");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sqlStr);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+
+                resultMap.put("flag",String.valueOf(rs.getInt("flag")));
+            }
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+        return resultMap;
+    }
+
+    public Map<String, String> querySelOrgByAccount(String account) throws SQLException {
+        Map<String, String> resultMap =  new HashMap<String,String>();
+        String sqlStr=("select a.eqp_name as EQP_NAME, a.bss_pro_name as BSS_PRO_NAME\n" +
+                "  from srv_business s, srv_instance t, asn_link_route r, rme_eqp a\n" +
+                " where s.region_code = decode(substr('"+ account +"', 1, 6),\n" +
+                "                              '073105',\n" +
+                "                              '0732',\n" +
+                "                              '073102',\n" +
+                "                              '0733',\n" +
+                "                              substr('"+ account +"', 1, 4))\n" +
+                "   and s.delete_state = '0'\n" +
+                "   and s.lan_id is null\n" +
+                "   and (s.tele_no = '"+ account +"' or s.tele_no = substr('"+ account +"', 5))\n" +
+                "   and t.dis_seq = s.dis_seq\n" +
+                "   and t.delete_state = '0'\n" +
+                "   and t.srv_id <> '1001'\n" +
+                "   and t.opr_state_id <> '170001'\n" +
+                "   and r.delete_state = '0'\n" +
+                "   and t.route_id = r.link_id\n" +
+                "   and r.parent_res_id = a.eqp_id\n" +
+                "   and a.delete_state = '0'\n" +
+                "   and a.res_type_id = '2530'");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sqlStr);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                resultMap.put("flag1",rs.getString(1));
+                resultMap.put("flag2",rs.getString(2));
+            }
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+        return resultMap;
+    }
+
+
+    public Map<String, String> queryPixianCode(String wk_order_id) throws SQLException {
+        Map<String, String> resultMap =  new HashMap<String,String>();
+        String sqlStr=("SELECT aa.digcode as digCode \n" +
+                "FROM \n" +
+                "(Select p.digcode as digCode ,t.create_date\n" +
+                " From Uos_Datamake t left join pub_two_dimension_code p on t.res_port_id = p.res_id where t.wk_order_id = "+wk_order_id+"and t.oper_type =2 and p.res_type_id = '6024' \n" +
+                " union\n" +
+                "Select p.digcode as digCode ,t.create_date\n" +
+                " From UOS_SCAN2AAABAND t left join pub_two_dimension_code p on t.new_obd_port_id = p.res_id where t.wk_order_id = "+wk_order_id+"  and p.res_type_id = '6024' \n" +
+                "order by create_date desc) aa");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sqlStr);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                resultMap.put("digCode",rs.getString(1));
+
+            }
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+        return resultMap;
+    }
+
+    public Map<String,String> queryBSSProject(String work_order_id) throws SQLException {
+        Map<String, String> resultMap =  new HashMap<String,String>();
+        String sqlStr=("");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+        String projectName ="";
+        String flag ="";
+        String msg ="";
+        try {
+            conn = getConnection();
+            cs = conn.prepareCall("{ call PKG_SCAN2AAABAND.sab_QueryOrderInfo(?,?,?,?,?) }");
+            cs.setString(1, work_order_id);
+            cs.registerOutParameter(2, java.sql.Types.VARCHAR);
+            cs.registerOutParameter(3, java.sql.Types.VARCHAR);
+            cs.registerOutParameter(4, java.sql.Types.VARCHAR);
+            cs.registerOutParameter(5, java.sql.Types.VARCHAR);
+            logger.info("----准备执行P_CREATE_ORDER-----");
+            cs.execute();
+            projectName = cs.getString(3);
+            flag = cs.getString(4);
+            msg = cs.getString(5);
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+        resultMap.put("project_name",projectName);
+        resultMap.put("ret_code",flag);
+        resultMap.put("ret_msg",msg);
+        return resultMap;
+    }
+
+    public Map<String, String> queryPowerModel1(String order_id, String hgu_sn, String staffId, String staffName) throws SQLException {
+        Map<String, String> resultMap =  new HashMap<String,String>();
+        String sqlStr=("");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+        String flag ="";
+        String msg ="";
+        try {
+            conn = getConnection();
+            cs = conn.prepareCall("{ call hnlt_gk.f_commit_terminal_transfer(?,?,?,?,?,?) }");
+            cs.setString(1, order_id);
+            cs.setString(2, hgu_sn);
+            cs.setString(3, staffId);
+            cs.setString(4, staffName);
+            cs.registerOutParameter(5, java.sql.Types.VARCHAR);
+            cs.registerOutParameter(6, java.sql.Types.VARCHAR);
+
+            logger.info("----准备执行P_CREATE_ORDER-----");
+            cs.execute();
+
+            flag = cs.getString(5);
+            msg = cs.getString(6);
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+
+        resultMap.put("ret_code",flag);
+        resultMap.put("ret_msg",msg);
+        return resultMap;
+    }
+
+    public Map<String,String> queryPowerModel(String base_order_id, String hgu_sn, String staffId, String staffName) throws SQLException {
+        Map<String, String> resultMap =  new HashMap<String,String>();
+        String sqlStr=("");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+        String projectName ="";
+        String flag ="";
+        String msg ="";
+        try {
+            conn = getConnection();
+            cs = conn.prepareCall("{ call f_commit_terminal_hgu_sn(?,?,?,?,?,?) }");
+            cs.setString(1, base_order_id);
+            cs.setString(2, hgu_sn);
+            cs.setString(3, staffId);
+            cs.setString(4, staffName);
+            cs.registerOutParameter(5, java.sql.Types.VARCHAR);
+            cs.registerOutParameter(6, java.sql.Types.VARCHAR);
+
+            logger.info("----准备执行P_CREATE_ORDER-----");
+            cs.execute();
+
+            flag = cs.getString(5);
+            msg = cs.getString(6);
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+
+        resultMap.put("ret_code",flag);
+        resultMap.put("ret_msg",msg);
+        return resultMap;
+    }
+
+    /**
+     * 数据下发
+     * @param paramMap
+     * @return
+     * @throws SQLException
+     */
+    public Map<Object,Object> processDataInstall( Map<String,Object> paramMap) throws SQLException {
+        Map<Object, Object> resultMap =  new HashMap<Object,Object>();
+        String hgu_sn = paramMap.get("hgu_sn").toString();
+        String stb_mac = paramMap.get("stb_mac").toString();
+        String eqp_id = paramMap.get("eqp_id").toString();
+        String port_id = paramMap.get("port_id").toString();
+        String wk_order_id = paramMap.get("wk_order_id").toString();
+        String staff_id = paramMap.get("staff_id").toString();
+        String staff_name = paramMap.get("staff_name").toString();
+        String inf_type = paramMap.get("inf_type").toString();
+        String hgu_pon = paramMap.get("hgu_pon")==null?"":paramMap.get("hgu_pon").toString();
+        String sqlStr=("");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+
+        String flag ="";
+        String msg ="";
+        try {
+            conn = getConnection();
+            cs = conn.prepareCall("{ call hnlt_gk.PKG_SCAN2AAABAND.F_SCAN2AAABAND(?,?,?,?,?,?,?,?,?,?,?) }");
+            cs.setString(1, wk_order_id);
+            cs.setString(2, hgu_sn);
+            cs.setString(3, stb_mac);
+            cs.setString(4, eqp_id);
+            cs.setString(5, port_id);
+            cs.setString(6, staff_id);
+            cs.setString(7, staff_name);
+            cs.setString(8, inf_type);
+            cs.setString(9, hgu_pon);
+            cs.registerOutParameter(10, java.sql.Types.VARCHAR);
+            cs.registerOutParameter(11, java.sql.Types.VARCHAR);
+
+            logger.info("----准备执行P_CREATE_ORDER-----");
+            cs.execute();
+
+            flag = cs.getString(10);
+            msg = cs.getString(11);
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+
+        resultMap.put("ret_code",flag);
+        resultMap.put("ret_msg",msg);
+        return resultMap;
+    }
+
+    public Map<Object, Object> processDataInstall1(Map<String, Object> paramMap) throws SQLException {
+        Map<Object, Object> resultMap =  new HashMap<Object,Object>();
+        String wk_order_id = paramMap.get("wk_order_id").toString();
+        String hgu_sn = paramMap.get("hgu_sn").toString();
+        String staff_id = paramMap.get("staff_id").toString();
+        String loid = paramMap.get("loid").toString();
+        String new_pwd = paramMap.get("new_pwd").toString();
+        String aaa_portid = paramMap.get("aaa_portid").toString();
+        String aaa_olt_ip = paramMap.get("aaa_olt_ip").toString();
+        String aaa_pon_no = paramMap.get("aaa_pon_no").toString();
+        String aaa_hgu_sn = paramMap.get("aaa_hgu_sn").toString();
+        String aaa_bindtype = paramMap.get("aaa_bindtype").toString();
+        String band3a_rult_id = paramMap.get("band3a_rult_id").toString();
+        String username = paramMap.get("username").toString();
+
+        String sqlStr=("");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+
+        String flag ="";
+        String desc ="";
+        try {
+            conn = getConnection();
+            cs = conn.prepareCall("{ call hnlt_gk.F_UOS_CHGHGU_TRANSFER(?,?,?,?,?,?,?,?,?,?,?,?,?,?) }");
+            cs.setString(1, wk_order_id);
+            cs.setString(2, hgu_sn);
+            cs.setString(3, staff_id);
+            cs.setString(4, loid);
+            cs.setString(5, new_pwd);
+            cs.setString(6, aaa_portid);
+            cs.setString(7, aaa_olt_ip);
+            cs.setString(8, aaa_pon_no);
+            cs.setString(9, aaa_hgu_sn);
+            cs.setString(10, aaa_bindtype);
+            cs.setString(11, band3a_rult_id);
+            cs.setString(12, username);
+            cs.registerOutParameter(13, java.sql.Types.VARCHAR);
+            cs.registerOutParameter(14, java.sql.Types.VARCHAR);
+
+            logger.info("----准备执行P_CREATE_ORDER-----");
+            cs.execute();
+
+            flag = cs.getString(13);
+            desc = cs.getString(14);
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+
+        resultMap.put("ret_code",flag);
+        resultMap.put("ret_desc",desc);
+        return resultMap;
+    }
+
+//    public Map<String,String> queryOBDInfo(String qrCode) throws SQLException {
+//        Map<String, String> resultMap =  new HashMap<String,String>();
+//        String sqlStr=("");
+//        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+//        Connection conn = null;
+//        PreparedStatement ps = null;
+//        CallableStatement cs = null;
+//        ResultSet rs = null;
+//
+//        try {
+//            conn = getConnection();
+//            cs = conn.prepareCall("{ call sab_QueryOBDInfo(?,?,?,?,?,?,?,?,?,?,?,?,?,?) }");
+//            cs.setString(1, qrCode);
+//            cs.registerOutParameter(2, java.sql.Types.VARCHAR);
+//            cs.registerOutParameter(3, java.sql.Types.VARCHAR);
+//            cs.registerOutParameter(4, java.sql.Types.VARCHAR);
+//            cs.registerOutParameter(5, java.sql.Types.VARCHAR);
+//
+//            cs.registerOutParameter(6, java.sql.Types.VARCHAR);
+//            cs.registerOutParameter(7, java.sql.Types.VARCHAR);
+//            cs.registerOutParameter(8, java.sql.Types.VARCHAR);
+//            cs.registerOutParameter(9, java.sql.Types.VARCHAR);
+//
+//            cs.registerOutParameter(10, java.sql.Types.VARCHAR);
+//            cs.registerOutParameter(11, java.sql.Types.VARCHAR);
+//            cs.registerOutParameter(12, java.sql.Types.VARCHAR);
+//            cs.registerOutParameter(13, java.sql.Types.VARCHAR);
+//            cs.registerOutParameter(14, java.sql.Types.VARCHAR);
+//            logger.info("----准备执行P_CREATE_ORDER-----");
+//            cs.execute();
+//            resultMap.put("obd_id",cs.getString(2)==null?"":cs.getString(2));
+//            resultMap.put("obd_name",cs.getString(3)==null?"":cs.getString(3));
+//            resultMap.put("obd_remark",cs.getString(4)==null?"":cs.getString(4));
+//            resultMap.put("obd_prjName",cs.getString(5)==null?"":cs.getString(5));
+//            resultMap.put("obd_proNo",cs.getString(6)==null?"":cs.getString(6));
+//
+//            resultMap.put("dire_id",cs.getString(7)==null?"":cs.getString(7));
+//            resultMap.put("dire_name",cs.getString(8)==null?"":cs.getString(8));
+//            resultMap.put("olt_id",cs.getString(9)==null?"":cs.getString(9));
+//
+//            resultMap.put("olt_ip",cs.getString(10)==null?"":cs.getString(10));
+//            resultMap.put("pon_id",cs.getString(11)==null?"":cs.getString(11));
+//            resultMap.put("pon_code",cs.getString(12)==null?"":cs.getString(12));
+//
+//        } finally {
+//            cleanUp(conn, null, ps, rs);
+//        }
+//
+//
+//        return resultMap;
+//    }
+
+    public Map<Object, Object> queryOBDInfo(String qrCode, String wkOrderId) {
+        // qrCode = "6901285991219";
+        Map<Object, Object> resultMap = new HashMap<Object, Object>();
+        Connection conn = null;
+        CallableStatement callStmt = null;
+        try {
+            conn = getConnection();
+
+            logger.info("<<<qrCode>>>:" + qrCode);
+            logger.info("<<<wkOrderId>>>:" + wkOrderId);
+            // if (StringUtil.isNull(qrCode)) {
+            String resultQrCode = "";
+
+            StringBuffer queryQrCodeSql = new StringBuffer();
+            queryQrCodeSql.append(" Select t.HGU_PON as hgu_pon,t.HGU_HG as hgu_hg,t.HGU_SN as hgu_sn,t.NEW_OBD_CODE as qrCode,t.NEW_OBD_PORT_ID as portId,p.digcode as digCode \n");
+            queryQrCodeSql.append(" From UOS_SCAN2AAABAND@DBLINK_TO_IOM t left join pub_two_dimension_code p on t.NEW_OBD_PORT_ID = p.res_id where t.wk_order_id = '" + wkOrderId + "'\n");
+            //  queryQrCodeSql.append(" order by t.create_date desc");
+            Map<String, Object> map = null;
+            try {
+                map = dynamicQueryObjectByMap(queryQrCodeSql.toString(), null, null);
+            } catch (DataAccessException e) {
+                logger.error("wkOrderId:" + wkOrderId + "UOS_SCAN2AAABAND " + e.getMessage());
+            }
+            String portId = "";
+            String digCode = "";
+            String hgu_sn = "";
+            String hgu_hg="";
+            String hgu_pon="";
+            if (map != null && map.size() > 0) {
+                resultQrCode = (String) map.get("qrCode");
+                portId = (String) map.get("portId");
+                digCode = (String) map.get("digCode");
+                hgu_sn = (String) map.get("hgu_sn");
+
+                hgu_hg = (String) map.get("hgu_hg");
+                hgu_pon = (String) map.get("hgu_pon");
+
+            }
+            // }
+
+            logger.info("<<<resultQrCode>>>:" + resultQrCode);
+
+            callStmt = conn.prepareCall("{ call PKG_SCAN2AAABAND.sab_QueryOBDInfo(?,?,?,?,?,?,?,?,?,?,?,?,?,?)  }");
+            if(StringUtil.isNull(qrCode)){
+
+                callStmt.setString(1, resultQrCode);
+            }else{
+
+                callStmt.setString(1, qrCode);
+            }
+
+            callStmt.registerOutParameter(2, java.sql.Types.VARCHAR);
+            callStmt.registerOutParameter(3, java.sql.Types.VARCHAR);
+            callStmt.registerOutParameter(4, java.sql.Types.VARCHAR);
+            callStmt.registerOutParameter(5, java.sql.Types.VARCHAR);
+
+            callStmt.registerOutParameter(6, java.sql.Types.VARCHAR);
+            callStmt.registerOutParameter(7, java.sql.Types.VARCHAR);
+            callStmt.registerOutParameter(8, java.sql.Types.VARCHAR);
+            callStmt.registerOutParameter(9, java.sql.Types.VARCHAR);
+
+            callStmt.registerOutParameter(10, java.sql.Types.VARCHAR);
+            callStmt.registerOutParameter(11, java.sql.Types.VARCHAR);
+            callStmt.registerOutParameter(12, java.sql.Types.VARCHAR);
+            callStmt.registerOutParameter(13, java.sql.Types.VARCHAR);
+            callStmt.registerOutParameter(14, java.sql.Types.VARCHAR);
+            callStmt.execute();
+
+
+//            resultMap.put("oltName", oltName);
+
+//            resultMap.put("address",address);
+//            resultMap.put("standName",standName);
+
+
+            //obd_id
+            resultMap.put("eqpId",callStmt.getString(2)==null?"":callStmt.getString(2));
+            //obd_name
+            resultMap.put("splitterName",callStmt.getString(3)==null?"":callStmt.getString(3));
+            //obd_remark
+            resultMap.put("remark",callStmt.getString(4)==null?"":callStmt.getString(4));
+            resultMap.put("obd_prjName",callStmt.getString(5)==null?"":callStmt.getString(5));
+            resultMap.put("obd_proNo",callStmt.getString(6)==null?"":callStmt.getString(6));
+
+            resultMap.put("qrCode", resultQrCode);
+            resultMap.put("portId", portId);
+            resultMap.put("digCode", digCode);
+            resultMap.put("hgu_sn", hgu_sn);
+            resultMap.put("hgu_hg", hgu_hg);
+            resultMap.put("hgu_pon", hgu_pon);
+
+            resultMap.put("dire_id",callStmt.getString(7)==null?"":callStmt.getString(7));
+            resultMap.put("dire_name",callStmt.getString(8)==null?"":callStmt.getString(8));
+            //olt_id
+            resultMap.put("resId",callStmt.getString(9)==null?"":callStmt.getString(9));
+
+
+            resultMap.put("oltIP",callStmt.getString(10)==null?"":callStmt.getString(10));
+            resultMap.put("ponId",callStmt.getString(11)==null?"":callStmt.getString(11));
+            //pon_code
+            resultMap.put("pon",callStmt.getString(12)==null?"":callStmt.getString(12));
+
+            StringBuffer sbf = new StringBuffer();
+            sbf.append(
+                    " select c.position as portName , SF_GET_DESC_CHINA(c.OPR_STATE_ID) as state ,port_id as portId\n");
+            sbf.append(" from rme_eqp a, pub_two_dimension_code b, rme_port c           \n");
+            sbf.append(" where a.delete_state = '0'                                     \n");
+            sbf.append("  and a.res_type_id = '2530'                                    \n");
+            sbf.append("  and a.eqp_id = b.res_id                                       \n");
+            sbf.append("  and b.delete_state = '0'                                      \n");
+            sbf.append("  and b.res_type_id  in( '2530','160001')                       \n");
+            sbf.append("  and c.delete_state = '0'                                      \n");
+            sbf.append("  and c.super_res_id = a.eqp_id                                 \n");
+            if(StringUtil.isNull(qrCode)){
+                sbf.append("  and b.digcode ='" + resultQrCode + "' ");
+            }else{
+                sbf.append("  and b.digcode ='" + qrCode + "' ");
+            }
+            sbf.append(" order by portName");
+
+            List ponPortList = null;
+            try {
+                ponPortList = dynamicQueryListByMap(sbf.toString(), null, null);
+            } catch (DataAccessException e) {
+                logger.error("根据qrCode查询PON List" + qrCode + "PON List:" + e.getMessage());
+            }
+
+            //query resId
+            String yzPortId = "";
+            StringBuilder sb = new StringBuilder();
+            sb.append(" select r.res_id as resId                                   \n");
+            sb.append("    from Asn_Link_Route r, srv_instance i,wo_work_order a   \n");
+            sb.append("   where r.Delete_State = '0'                               \n");
+            sb.append("     And r.Link_Id = i.Route_Id                             \n");
+            sb.append("     and i.Dis_Seq = to_char(a.base_order_id)               \n");
+            sb.append("     And i.Srv_Id <> ('1001')                               \n");
+            sb.append("     And i.Delete_State = '0'                               \n");
+            sb.append("     and a.id= '" + wkOrderId + "'                           ");
+            try {
+                map = dynamicQueryObjectByMap(sb.toString(), null, null);
+            } catch (DataAccessException e) {
+                logger.error("wkOrderId:" + wkOrderId + ",  query resId" + e.getMessage());
+            }
+            if (null != map) {
+                yzPortId = (String) map.get("resId");
+                logger.info("wkOrderId:" + wkOrderId + ",Asn_Link_Route" + yzPortId);
+
+                if (ponPortList != null && ponPortList.size() > 0 && !StringUtil.isNull(yzPortId)) {
+                    for (Object portInfo : ponPortList) {
+                        if (((Map) portInfo).get("portId").equals(yzPortId)) {
+                            ((Map) portInfo).put("state", "占用");
+                        }
+                    }
+                }
+            }
+            resultMap.put("ponPortList", ponPortList);
+        } catch (SQLException e) {
+            resultMap.put("flag_desc", "qrCode:" + qrCode + "不存在!");
+            e.printStackTrace();
+        } finally {
+            cleanUp(conn, null, callStmt, null);
+        }
+        return resultMap;
+    }
+
+    public String queryOrderInfo(String staffId1) throws SQLException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+        String flag ="";
+        try {
+            conn = getConnection();
+            cs = conn.prepareCall("{ call HNLT_GK.INF_APP_HPAGE_QUERY(?,?) }");
+            cs.setString(1, staffId1);
+            cs.registerOutParameter(2, OracleTypes.VARCHAR);
+            cs.execute();
+            flag = cs.getString(2);
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+        logger.info("result---:"+flag);
+        return flag;
+    }
+
+    public Map<String,String> querymakeProcessData(String wk_order_id) throws SQLException {
+        Map<String, String> resultMap =  new HashMap<String,String>();
+        String sqlStr=("SELECT t.NEW_WG_STATE_IPTV as wg_iptv_state,t.NEW_WG_RULT_ID_IPTV as wg_ret_id_iptv,t.NEW_WG_RULT_DESC_IPTV as wg_iptv_desc,t.AAA_RULT_ID as aaa_ret_id,t.AAA_RULT_DESC as aaa_ret_desc,t.NEW_WG_RULT_ID as wg_ret_id,t.NEW_WG_RULT_DESC as wg_ret_desc,t.NEW_BAND3A_WG_RULT_ID as band3a_wg_ret_id,t.NEW_BAND3A_WG_RULT_DESC as band3a_wg_ret_desc,t.NEW_WG_STATE as wg_state,t.AAA_STATE as  aaa_state,t.NEW_BAND3A_STATE as band3A_state FROM hnlt_gk.UOS_SCAN2AAABAND T where t.WK_ORDER_ID ='"+wk_order_id+ "'");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sqlStr);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+
+                resultMap.put("aaa_ret_id",rs.getString("aaa_ret_id")==null?"":rs.getString("aaa_ret_id"));
+                resultMap.put("aaa_ret_desc",rs.getString("aaa_ret_desc")==null?"":rs.getString("aaa_ret_desc"));
+                resultMap.put("wg_ret_id",rs.getString("wg_ret_id")==null?"":rs.getString("wg_ret_id"));
+                resultMap.put("wg_ret_desc",rs.getString("wg_ret_desc")==null?"":rs.getString("wg_ret_desc"));
+                resultMap.put("band3a_wg_ret_id",rs.getString("band3a_wg_ret_id")==null?"":rs.getString("band3a_wg_ret_id"));
+                resultMap.put("band3a_wg_ret_desc",rs.getString("band3a_wg_ret_desc")==null?"":rs.getString("band3a_wg_ret_desc"));
+
+                resultMap.put("wg_ret_id_iptv",rs.getString("wg_ret_id_iptv")==null?"":rs.getString("wg_ret_id_iptv"));
+                resultMap.put("wg_iptv_desc",rs.getString("wg_iptv_desc")==null?"":rs.getString("wg_iptv_desc"));
+                String wg_state = String.valueOf(rs.getInt("wg_state"));
+                String aaa_state = String.valueOf(rs.getInt("aaa_state"));
+                String band3A_state = String.valueOf(rs.getInt("band3A_state"));
+                String wg_iptv_state = String.valueOf(rs.getInt("wg_iptv_state"));
+
+                resultMap.put("wg_iptv_state",wg_iptv_state);
+
+                resultMap.put("wg_state",wg_state);
+                resultMap.put("wg_state_name",getStateName(wg_state));
+
+                resultMap.put("aaa_state",aaa_state);
+                resultMap.put("aaa_state_name",getStateName(aaa_state));
+
+                resultMap.put("band3a_state",band3A_state);
+                resultMap.put("band3a_state_name",getStateName(band3A_state));
+            }
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+        return resultMap;
+    }
+
+    private String getStateName(String key)
+    {
+        String result = "";
+        if("0".equals(key))
+        {
+            result="初始状态";
+        }
+        if("1".equals(key))
+        {
+            result="已扫描";
+        }
+        if("3".equals(key))
+        {
+            result="失败";
+        }
+
+        return result;
+    }
+
+
+    public void insertYHCount(String qrCode,String type) throws SQLException {
+        Map<String, String> resultMap =  new HashMap<String,String>();
+        String sqlStr="insert into YH_CLICK_COUNT(QRCODE,OPERATION_TYPE) VALUES(?,?)";
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sqlStr);
+            ps.setString(1,qrCode);
+            ps.setString(2,type);
+            ps.execute();
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+
+    }
+
+    public Map<String,String> queryOrderTypeById(String orderId) throws SQLException {
+        String orderType= "";
+        Map<String, String> resultMap =  new HashMap<String,String>();
+        String sqlStr=("SELECT (case when t.service_id = '600909' then '6' else decode(ooki.evt_with_prod_id ,'9','1','71','2','72','2','32','4','7')  end ) as order_type ,\n" +
+                " ra.num as  cityCode,\n" +
+                " ua.city_code as  districtCode ,decode(ua.acronym,'0732','0731','0733','0731',ua.acronym)||ooki.acc_nbr  as  acc_nbr \n" +
+                "FROM om_order T\n" +
+                "left join hnlt_gk.om_order_key_info ooki on ooki.id = t.id\n" +
+                "left join hnlt_gk.uos_area_city_map ua on ua.area_id = t.area_id\n" +
+                "left join spc_region_china@to_ibss ra on ra.region_code = ua.acronym\n" +
+                " where t.id = ? and  rownum=1 ");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sqlStr);
+            ps.setInt(1,Integer.parseInt(orderId));
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                orderType = rs.getString("order_type");
+                String cityCode = rs.getString("cityCode");
+                String districtCode = rs.getString("districtCode");
+                String accNbrCode = rs.getString("acc_nbr");
+                resultMap.put("orderType",orderType);
+                resultMap.put("cityCode",cityCode);
+                resultMap.put("districtCode",districtCode);
+                resultMap.put("accNbrCode",accNbrCode);
+
+            }
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+        return resultMap;
+    }
+
+    public String queryStaffTel(String staffId) throws SQLException {
+        String phone= "";
+        String sqlStr=("select mobile_tel  as phone from uos_staff where staff_id= ?");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sqlStr);
+            ps.setInt(1,Integer.parseInt(staffId));
+            rs = ps.executeQuery();
+            while (rs.next()) {
+
+                phone = rs.getString("phone");
+            }
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+        return phone;
+    }
+
+    public Map<String,Object> queryZWTSpeedInfo(String accNbr) throws SQLException
+    {
+        Map<String, Object> resultMap =  new HashMap<String,Object>();
+        String sqlStr=(" select  order_id as orderId  from  hnlt_gk.TEST_REPORT_SPEED_NEW where rownum=1 and net_code=?   order by create_date desc");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sqlStr);
+            ps.setString(1,accNbr);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                resultMap.put("orderId",rs.getObject("orderId"));
+//                phone = rs.getString("phone");
+            }
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+
+        return resultMap;
+    }
+
+    public List<Map> querySpotSpeedInfo(String orderId) throws SQLException
+    {
+        List<Map> list = new ArrayList<Map>();
+        String sqlStr=("  select test_area as spot,max_speed,average_speed,less_speed from  hnlt_gk.TEST_REPORT_SPEED_NEW_spot where ORDER_ID=?  and rownum<6");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sqlStr);
+            ps.setString(1,orderId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Map<String, Object> resultMap =  new HashMap<String,Object>();
+                resultMap.put("spot",rs.getObject("spot")==null?"":rs.getObject("spot"));
+                resultMap.put("max_speed",rs.getObject("max_speed")==null?"":rs.getObject("max_speed"));
+                resultMap.put("average_speed",rs.getObject("average_speed")==null?"":rs.getObject("average_speed"));
+                resultMap.put("less_speed",rs.getObject("less_speed")==null?"":rs.getObject("less_speed"));
+                list.add(resultMap);
+            }
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+
+        return list;
+    }
+    public Map<String, Object> queryLightState(String orderId) throws SQLException {
+        Map<String, Object> resultMap =  new HashMap<String,Object>();
+
+        String sqlStr=("");
+        System.out.println("-----sql----"+sqlStr.toString()+"---------------------------");
+        Connection conn = null;
+        PreparedStatement ps = null;
+        CallableStatement cs = null;
+        ResultSet rs = null;
+
+        String flag ="";
+        String desc ="";
+        try {
+            conn = getConnection();
+            cs = conn.prepareCall("{ call hnlt_gk.P_APP_KT_PROCESS_CHECK(?,?) }");
+            cs.setString(1, orderId);
+
+            cs.registerOutParameter(2, java.sql.Types.VARCHAR);
+
+
+            logger.info("----准备执行P_CREATE_ORDER-----");
+            cs.execute();
+
+            desc = cs.getString(2);
+            JSONObject js  = JSONObject.fromObject(desc);
+            resultMap.put("nFlagArrivalSign",js.getString("nFlagArrivalSign"));
+            resultMap.put("nFlagSm",js.getString("nFlagSm"));
+            resultMap.put("nFlagYh",js.getString("nFlagYh"));
+            resultMap.put("nFlagSpeed",js.getString("nFlagSpeed"));
+            resultMap.put("nFlagPower",js.getString("nFlagPower"));
+            resultMap.put("nFlagZWT",js.getString("nFlagZWT"));
+            System.out.println("queryLightState :"+desc);
+        } finally {
+            cleanUp(conn, null, ps, rs);
+        }
+
+        //resultMap.put("ret_code",flag);
+        resultMap.put("ret_desc",desc);
+        return resultMap;
+    }
+
+
+}

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>应用下载次数统计</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    
+    <!-- 
+    <script type="text/javascript" src="/MOBILE/api/assets/zepto/zepto.min.js"></script>
+     -->
+     
+     <link rel="stylesheet" href="/MOBILE/api/assets/jquery/mobile/jquery.mobile-1.3.1.css">
+     
+    <script type="text/javascript" src="/MOBILE/api/assets/jquery/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/MOBILE/api/highcharts/js/highcharts.js"></script>
+	<script type="text/javascript" src="/MOBILE/api/highcharts/js/modules/canvas-tools.js"></script>
+	
+	<script type="text/javascript" src="/MOBILE/api/assets/jquery/mobile/jquery.mobile-1.3.1.min.js"></script>
+	
+	<script type="text/javascript">
+		$(function () {
+		
+			function doStat(json) {
+				doStat1(json);
+				//timeline(json);
+				//doStat2(json);
+			}
+			
+			function doTimelineStat(json) {
+				timeline(json);
+			}
+			
+			//统计调用次数
+			function doStat1(json) {
+			
+				var nameList = json["nameList"];
+				var dataList = json["dataList1"];
+				//var dataList2 = json["dataList2"];
+				//var dataList3 = json["dataList3"];
+
+		        $('#container1').highcharts({
+		            chart: {
+		                type: 'bar'
+		            },
+		            title: {
+		                text: '应用下载次数统计'
+		            },
+		            subtitle: {
+		                text: ''
+		            },
+		            xAxis: {
+		                categories: nameList,
+		                title: {
+		                    text: '应用名称'
+		                }
+		            },
+		            yAxis: {
+		                min: 0,
+		                title: {
+		                    text: '单位(次)',
+		                    align: 'high'
+		                },
+		                labels: {
+		                    overflow: 'justify'
+		                }
+		            },
+		            tooltip: {
+		                valueSuffix: ' 次'
+		            },
+		            plotOptions: {
+		                bar: {
+		                    dataLabels: {
+		                        enabled: true
+		                    }
+		                }
+		            },
+		            legend: {
+		                layout: 'vertical',
+		                align: 'right',
+		                verticalAlign: 'top',
+		                x: -100,
+		                y: 100,
+		                floating: true,
+		                borderWidth: 1,
+		                backgroundColor: '#FFFFFF',
+		                shadow: true
+		            },
+		            credits: {
+		                enabled: false
+		            },
+		            series: [{
+		                name: '应用下载次数',
+		                data: dataList
+		            }]
+		        });
+			}
+			
+			function timeline(json) {
+				var nameList = json["nameList"];
+				var monthNameList = json["monthNameList"];
+				var dataList1 = json["dataList1"];
+				var dataList2 = json["dataList2"];
+				var dataList3 = json["dataList3"];
+				var dataList4 = json["dataList4"];
+		        $('#container3').highcharts({
+		            chart: {
+		                type: 'line',
+		                marginRight: 130,
+		                marginBottom: 60
+		            },
+		            title: {
+		                text: '最近一个月内应用下载统计',
+		                x: -20 //center
+		            },
+		            xAxis: {
+		                categories: nameList,
+		                title: {
+		                    text: '下载日期'
+		                }
+		            },
+		            yAxis: {
+		                title: {
+		                    text: '单位(次数)'
+		                },
+		                plotLines: [{
+		                    value: 0,
+		                    width: 1,
+		                    color: '#808080'
+		                }]
+		            },
+		            tooltip: {
+		                valueSuffix: '次'
+		            },
+		            legend: {
+		                layout: 'vertical',
+		                align: 'right',
+		                verticalAlign: 'top',
+		                x: -10,
+		                y: 100,
+		                borderWidth: 0
+		            },
+		            series: [{
+		                name: '易运营智能终端',
+		                data: dataList2
+		            }, {
+		                name: '爱资源应用',
+		                data: dataList1
+		            }]
+		        });
+		        
+		        $('#container4').highcharts({
+		            chart: {
+		                type: 'line',
+		                marginRight: 130,
+		                marginBottom: 60
+		            },
+		            title: {
+		                text: '每月应用下载统计',
+		                x: -20 //center
+		            },
+		            xAxis: {
+		                categories: monthNameList,
+		                title: {
+		                    text: '下载月份'
+		                }
+		            },
+		            yAxis: {
+		                title: {
+		                    text: '单位(次数)'
+		                },
+		                plotLines: [{
+		                    value: 0,
+		                    width: 1,
+		                    color: '#808080'
+		                }]
+		            },
+		            tooltip: {
+		                valueSuffix: '次'
+		            },
+		            legend: {
+		                layout: 'vertical',
+		                align: 'right',
+		                verticalAlign: 'top',
+		                x: -10,
+		                y: 100,
+		                borderWidth: 0
+		            },
+		            series: [{
+		                name: '易运营智能终端',
+		                data: dataList4
+		            }, {
+		                name: '爱资源应用',
+		                data: dataList3
+		            }]
+		        });
+		    }
+			
+			$.ajax({
+			  url: '/MOBILE/api/web/stat/shanghai/serv/downloadcount',
+			  dataType: 'json',
+			  success: function(data) {
+			  	doStat(data);
+			  },
+			  error: function() {
+			  	alert("加载数据失败");
+			  }
+			});
+			
+			$.ajax({
+			  url: '/MOBILE/api/web/stat/shanghai/serv/downloaddate',
+			  dataType: 'json',
+			  success: function(data) {
+			  	doTimelineStat(data);
+			  },
+			  error: function() {
+			  	alert("加载数据失败");
+			  }
+			});
+				
+		});
+	
+
+	</script>
+
+  </head>
+  
+  <body>
+		
+		<!--
+		<div data-role="collapsible" data-collapsed-icon="arrow-d" data-expanded-icon="arrow-u">
+		    <h4>查询条件: </h4>
+			<div data-role="controlgroup">
+	            <input type="checkbox" name="checkbox-1-a" id="checkbox-1-a">
+	            <label for="checkbox-1-a">One</label>
+	            <input type="checkbox" name="checkbox-2-a" id="checkbox-2-a">
+	            <label for="checkbox-2-a">Two</label>
+	            <input type="checkbox" name="checkbox-3-a" id="checkbox-3-a">
+	            <label for="checkbox-3-a">Three</label>
+        	</div>
+		</div>
+		-->
+		<div id="container1" >
+		</div>
+		<br />
+		<div id="container3" >
+		</div>
+		<br />
+		<div id="container4" >
+		</div>
+		<br />
+	</body>
+</html>

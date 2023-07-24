@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>各代维公司装维指标报表</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css"
+			href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/echarts-all.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/common5.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js"></script>
+		<script src="../js/template.min.js"></script>
+		<script src="../js/data-bind.js"></script>
+		<script src="../js/global.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		<a class="mui-icon mui-icon-left-nav mui-pull-left" onClick="back_index()"></a>
+		<a class="mui-pull-right mui-icon iconfont icon-rili"
+			id="showUserPicker"></a>
+		<h1 id="title" class="mui-title">
+			各代维公司装维指标报表
+		</h1>
+		</header>
+		<div class="mui-content">
+			<div id="content"></div>
+			<script id="tpl" type="text/html">
+			<table id="tabel" freezeRowNum="2" freezeColumnNum="0" class="am-table am-table-bordered am-table-centered am-table-striped">
+				<thead>
+					<tr>
+						<th id="time" rowspan="1" colspan="10" style="text-align:left;">时间</th>
+					</tr>
+					<tr>
+						<th >维护公司</th>		
+						<th >装维师傅</th>				
+						<th >15分钟新装预约及时率</th>
+						<th >15分钟修障预约及时率</th>
+						<th >8小时装机及时率</th>
+						<th >4小时修障及时率</th>
+						<th >测速及时率</th>
+						<th >自动激活成功率</th>
+						<th >IPTV专网率</th>
+						<th >重复故障率</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{each dataArr as item i}}
+					<tr class="mui-tr" areaName={{item.area_name}} company={{item.company}}>
+						<th style="font-weight:bold" >{{item.company}}</th>
+						<th style="font-weight:bold" >{{item.staff_name}}</th>
+						<td style="font-weight:bold" >{{item.rate_kt_jishi}}</td>
+						<td style="font-weight:bold" >{{item.rate_sa_jishi}}</td>
+						<td style="font-weight:bold" >{{item.rate_in_8}}</td>
+						<td style="font-weight:bold" >{{item.rate_in_4}}</td>
+						<td style="font-weight:bold" >{{item.rate_dabiao}}</td>
+						<td style="font-weight:bold" >{{item.rate_rms}}</td>
+						<td style="font-weight:bold" >{{item.rate_iptv}}</td>
+						<td style="font-weight:bold" >{{item.rate_if_chongfu}}</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			</script>
+		</div>
+		<script>
+		//å²³é³
+			var nowDate = new Date();
+			var beginDateStr = hsTools.getParam("beginDateStr");
+		    var endDateStr = createQueryEndDateStr(nowDate);
+		    var staffId = hsTools.getParam("staffId");
+		    var type = hsTools.getParam("type");
+		    
+		    var areaName = hsTools.getChineseParam("areaName");
+		    var company = hsTools.getChineseParam("company");
+		    
+		    var timeType = "date";
+		    var id = hsTools.getParam("id");
+			      
+		    //mui.plusReady(function() {
+		    if(type == "month"){
+		    	$('#title').text(areaName+$('#title').text()+'(月报)');
+		    	timeType = "month";
+		    	
+
+		    }else if(type == "day"){
+		    	$('#title').text(areaName+$('#title').text()+'(日报)');
+		    	timeType = "date";
+		    	
+   
+		    }
+		    
+		    //时间选择器
+			var picker = new mui.DtPicker({
+					"type": timeType
+			});
+			
+			var showUserPickerButton = document.getElementById('showUserPicker');
+			showUserPickerButton.addEventListener('tap', function(event) {
+				picker.show(function(items) {
+					var date = new Date(items.value);
+					endDateStr = createQueryEndDateStr(date);
+					beginDateStr = items.value.replace(/-/g,"");
+                    query_report_data4(getDataCallBack,beginDateStr,areaName,company);
+				});
+
+			}, false);
+			
+			query_report_data4(getDataCallBack,beginDateStr,areaName,company);
+			
+			function getDataCallBack(jsondataStr) {
+					if(jsondataStr.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+			
+					var jsondata = JSON.parse(jsondataStr);
+					var data = {
+						dataArr: jsondata
+					};
+					console.log(JSON.stringify(data));
+					if(jsondata.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+
+					var html = template('tpl', data);
+					document.getElementById('content').innerHTML = html;
+					$('#time').text("时间："+beginDateStr);
+					//增加列表项点击事件
+					
+					
+					freezeTableInit();
+				}
+			function back_index(){
+				//跳转首页  
+        		window.location.href='report_company.html?type='+type+'&staffId='+staffId+'&areaName='+areaName+'&beginDateStr='+beginDateStr; 
+			}		
+			
+		</script>
+	</body>
+
+</html>

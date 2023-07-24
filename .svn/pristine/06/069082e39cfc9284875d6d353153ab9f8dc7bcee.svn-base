@@ -1,0 +1,347 @@
+<html>
+<head>
+<title></title>
+<?XML:NAMESPACE PREFIX=DPNS />
+<?IMPORT NAMESPACE=DPNS IMPLEMENTATION="PropertyList.htc">
+</head>
+<!--
+<script language="javascript" src="ProtoType.js">
+-->
+<script language="javascript">
+var saveData;
+var saveData2;
+
+function init()
+{
+	button1_onclick();	
+}
+function dp1_onitemchanged()
+{
+	//数据发生变化后，触发
+	//alert(event.id + " " + event.orgValue + " "+ event.curValue );	
+}
+function initDynamicProperty()
+{	
+	//-------模拟数据------------		
+
+	var arrPropertys=new Array();
+	
+	arrPropertys[0]=new Object();	
+	arrPropertys[0].id="1001";
+	arrPropertys[0].displayName="证件类型";	
+	arrPropertys[0].type ="ComboBox";
+	arrPropertys[0].defaultValue = null;
+	arrPropertys[0].nullAble = false;
+	arrPropertys[0].groupDesc = "1";
+		//-----选择数据-----
+		var items=new Array()	
+		items[0]=new Object();	
+		items[0].text ="身份证";
+		items[0].value ="001";	
+			
+		items[1]=new Object();	
+		items[1].text ="军官证";
+		items[1].value ="002";		
+	arrPropertys[0].items = items;	
+	
+	arrPropertys[1]=new Object();
+	arrPropertys[1].id="1002";
+	arrPropertys[1].displayName="产品适合人群";	
+	arrPropertys[1].type ="ComboBox";	
+	arrPropertys[1].multipleChoice = true;
+	arrPropertys[1].nullAble = "false";			
+	arrPropertys[1].enabled = "false";
+	arrPropertys[1].groupDesc = "3";
+		//-----选择数据-----
+		var items=new Array()	
+		items[0]=new Object();	
+		items[0].text ="16岁以下";
+		items[0].value ="001";	
+			
+		items[1]=new Object();	
+		items[1].text ="16岁～28岁";
+		items[1].value ="002";
+		
+		items[2]=new Object();	
+		items[2].text ="28岁～40岁";
+		items[2].value ="003";
+		
+		items[3]=new Object();	
+		items[3].text ="40岁以上";
+		items[3].value ="004";				
+	arrPropertys[1].items = items;
+	
+	arrPropertys[2]=new Object();	
+	arrPropertys[2].id="1003";
+	arrPropertys[2].displayName="产品推出日期";	
+	arrPropertys[2].type ="DateTimePicker";	
+	arrPropertys[2].useDate = true;
+	arrPropertys[2].useTime = true;	
+	arrPropertys[2].groupDesc = "其他";
+	
+	
+	arrPropertys[3]=new Object();	
+	arrPropertys[3].id="1004";
+	arrPropertys[3].displayName="证件号码";	
+	arrPropertys[3].type ="TextBox";
+	arrPropertys[3].dataType1 ="I04";	
+	arrPropertys[3].isNumber = true;
+	arrPropertys[3].minLength = 4;
+	arrPropertys[3].maxLength = 6;
+	arrPropertys[3].enabled = true;	
+	arrPropertys[3].groupDesc = "其他";		
+	
+	arrPropertys[4]=new Object();	
+	arrPropertys[4].id="1005";
+	arrPropertys[4].displayName="证件号码2";	
+	arrPropertys[4].type ="TextBox";
+	arrPropertys[4].dataType1 ="I04";	
+	arrPropertys[4].isNumber = true;
+	arrPropertys[4].minLength = 4;
+	arrPropertys[4].maxLength = 6;
+	arrPropertys[4].enabled = true;	
+	arrPropertys[4].groupDesc = "其他";
+	
+	return arrPropertys;
+}
+
+function button1_onclick()
+{
+	var arrProperty = initDynamicProperty();
+	document.all("DP_sample1").loadArrayDesc(arrProperty);	
+}
+
+/*
+function button2_onclick()
+{	
+	var xml="";	
+	
+	xml+="<Properties>";
+	
+	xml+="<Property id='1001' displayName='证件类型' type='ComboBox' groupDesc='1'  >";
+	xml+=	"<Item text='身份证' value='001'></Item>";
+	xml+=	"<Item text='军官证' value='002'></Item>";				
+	xml+="</Property>";	
+	
+	xml+="<Property id='1002' displayName='产品适合人群' type='ComboBox' multipleChoice='true' value='002' groupDesc='2'>";
+	xml+=	"<Item text='16岁以下' value='001'></Item>";
+	xml+=	"<Item text='16岁～28岁' value='002'></Item>";	
+	xml+=	"<Item text='28岁～40岁' value='003'></Item>";	
+	xml+=	"<Item text='40岁以上' value='004'></Item>";				
+	xml+="</Property>";		
+	
+	xml+="<Property id='1003' displayName='产品推出日期' type='DateTimePicker' useDate='true' useTime='true' enabled='true' groupDesc='1'>";
+	xml+="</Property>";	
+	
+	xml+="<Property id='1004' displayName='证件号码' type='TextBox' isNumber='true' minLength='4' maxLength='6' enabled='false' groupDesc='其他'>";
+	xml+="</Property>";		
+			
+	xml+="</Properties>";	
+	
+	var xmlDoc = new ActiveXObject("msxml2.Domdocument");
+	xmlDoc.loadXML(xml);
+	document.all("DP_sample1").loadXmlDesc(xmlDoc.documentElement);	
+	
+}
+*/
+
+function button5_onclick()
+{	
+	//通过 xml文件直接导入	
+	var xmlDoc = new ActiveXObject("msxml2.Domdocument");	
+	xmlDoc.async = false;	
+	if ( xmlDoc.load("PropertyList.xml") )
+	{	    
+		document.all("DP_sample1").loadXmlDesc(xmlDoc.documentElement);		
+	}
+	else
+	{
+		alert("导入XML文件时出错");
+	}	
+}
+
+function button2_onclick()
+{	
+	var xml="";	
+	
+	xml+="<Properties totalColumn='' columnSpan='20' isGroup='true' isTitleRow=''>";	
+	
+	xml+="<Property id='1001' displayName='接入方式' type='ComboBox' groupDesc='1' nullable='false' defaultValue='001'>";
+	xml+=	"<Item text='ADSL' value='001' affectProperties='1011,1012'></Item>";
+	xml+=	"<Item text='DDN' value='002' affectProperties='1013'></Item>";
+	xml+=	"<Item text='其他' value='003'></Item>";
+	xml+=	"<Item text='11' value='004'></Item>";
+	xml+=	"<Item text='22' value='005'></Item>";
+	xml+=	"<Item text='33' value='006'></Item>";	
+	xml+="</Property>";		
+	
+	xml+="<Property id='1011' displayName='ADSL帐号' type='TextBox' minLength='6' maxLength='6' groupDesc='其他'>";
+	xml+="</Property>";
+	/*
+	xml+="<Property id='1012' displayName='ADSL密码' type='TextBox' minLength='6' maxLength='6' groupDesc='其他'>";
+	xml+="</Property>";
+	*/
+	
+	xml+="<Property id='1012' displayName='限制密码' type='TextBox' defaultValue='' nullable='true' editable='true' dataType='string' minLength='' maxLength='' successRegExp='' ruleScript='' exceptionMessage='请确认[限制密码]的输入值！'>";
+	xml+="</Property>";	
+	
+	xml+="<Property id='1013' displayName='DDN接入号码' type='TextBox' minLength='1' maxLength='6' groupDesc='其他'>";
+	xml+="</Property>";	
+	
+	xml+="<Property id='1021' displayName='单价' type='TextBox' dataType='int' groupDesc='购买'>";
+	xml+="</Property>";
+	
+	xml+="<Property id='1022' displayName='数量' type='TextBox' dataType='int' groupDesc='购买'>";
+	xml+="</Property>";
+	
+	
+	
+	xml+="<Property id='1023' displayName='最低价' type='TextBox' dataType='int' editable='true' defaultValue='1000' groupDesc='购买'>";
+	xml+="</Property>";
+	
+	xml+="<Property id='1024' displayName='程控业务' type='AdvComboBox' nullable='true' multipleChoice='true'>";
+	xml+=	"<Item text='国内直拨' value='001'></Item>";
+	xml+=	"<Item text='国际直拨' value='002'></Item>";
+	xml+=	"<Item text='来电显示' value='003'></Item>";
+	xml+="</Property>";
+	
+	xml+="<Property id='1025' displayName='产品推出日期' type='DateTimePicker' useDate='true' useTime='false' enabled='true'>";
+	xml+="</Property>";		
+	
+	
+	xml+="<Group id='1031' usage='1' properties='1021,1022,1023' validateScript='_prop1021*_prop1022&lt;_prop1023' ExceptionMessage='不能超过最低价'>";
+	xml+="</Group>";	
+		
+	xml+="<Group id='1032' usage='1' properties='1024' validateScript='_prop1024.contains(\"003\")' ExceptionMessage='必须包含指定产品'>";
+	xml+="</Group>";
+	
+	
+			
+	xml+="</Properties>";	
+	
+	var xmlDoc = new ActiveXObject("msxml2.Domdocument");
+	xmlDoc.loadXML(xml);
+	document.all("DP_sample1").loadXmlDesc(xmlDoc.documentElement);	
+	
+}
+
+
+function button6_onclick()
+{	
+	var xml="";	
+	
+	xml+="<Properties totalColumn='' columnSpan='20' isGroup='true' isTitleRow='' isGroupName='true'>";	
+	
+	xml+="<Property id='1001' displayName='接入方式' type='ComboBox' groupDesc='1' nullable='false' defaultValue='001' multipleChoice='true'>";
+	xml+=	"<Item text='ADSL' value='001' affectProperties='1011,1012'></Item>";
+	xml+=	"<Item text='DDN' value='002' affectProperties='1013'></Item>";
+	xml+=	"<Item text='其他' value='003'></Item>";
+	xml+="</Property>";		
+	
+	xml+="<Property id='1011' displayName='ADSL帐号' type='TextBox' minLength='6' maxLength='6' groupDesc='其他'>";
+	xml+="</Property>";
+	
+	xml+="<Property id='1012' displayName='ADSL密码' type='TextBox' minLength='6' maxLength='6' groupDesc='其他'>";
+	xml+="</Property>";
+	
+	xml+="<Property id='1013' displayName='DDN接入号码' type='TextBox' minLength='1' maxLength='6' groupDesc='其他'>";
+	xml+="</Property>";	
+	
+	xml+="<Property id='1021' displayName='单价' type='TextBox' dataType='int' groupDesc='购买'>";
+	xml+="</Property>";
+	
+	xml+="<Property id='1022' displayName='数量' type='TextBox' dataType='int' groupDesc='购买'>";
+	xml+="</Property>";	
+	
+	xml+="<Property id='1023' displayName='最低价' type='TextBox' dataType='int' editable='true' defaultValue='1000' groupDesc='购买'>";
+	xml+="</Property>";
+	
+	xml+="<Property id='1024' displayName='程控业务' type='ComboBox' nullable='true' multipleChoice='true'>";
+	xml+=	"<Item text='国内直拨' value='001'></Item>";
+	xml+=	"<Item text='国际直拨' value='002'></Item>";
+	xml+=	"<Item text='来电显示' value='003'></Item>";
+	xml+="</Property>";	
+	
+	
+	xml+="<Group id='1031' usage='1' properties='1021,1022,1023' validateScript='_prop1021*_prop1022&lt;_prop1023' ExceptionMessage='不能超过最低价'>";
+	xml+="</Group>";	
+		
+	xml+="<Group id='1032' usage='1' properties='1024' validateScript='_prop1024.contains(\"003\")' ExceptionMessage='必须包含指定产品'>";
+	xml+="</Group>";	
+			
+	xml+="</Properties>";	
+	
+	var xmlDoc = new ActiveXObject("msxml2.Domdocument");
+	xmlDoc.loadXML(xml);
+	document.all("DP_sample1").loadXmlDesc(xmlDoc.documentElement);	
+	
+}
+
+function button3_onclick()
+{
+	try
+	{
+		saveData = document.all("DP_sample1").saveData();	
+	}
+	catch(e)
+	{
+		
+	}	
+	
+}
+
+function button4_onclick()
+{
+	if (saveData != null)
+	{
+		//先初始化控件，再导入保存的数据
+		button2_onclick();
+		
+		document.all("DP_sample1").loadData(saveData);
+	}
+	else
+	{
+		alert("请先保存数据,按saveData按钮");
+	}
+}
+
+function button7_onclick()
+{
+	saveData2 = document.all("DP_sample1").saveData();
+}
+
+function button8_onclick()
+{
+	if (saveData2 != null)
+	{
+		//先初始化控件，再导入保存的数据
+		button6_onclick();
+		
+		document.all("DP_sample1").loadData(saveData2);
+	}
+	else
+	{
+		alert("请先保存数据,按saveData按钮");
+	}
+}
+
+</script>
+<body onload="init();">
+	<a>请查看[PropertyList控件使用说明]</a>
+	<br>
+	<br>	
+	<button onclick="button2_onclick();" id="Button2">第一个订单</button>&nbsp
+	<button onclick="button3_onclick();" id="Button3">saveData</button>&nbsp
+	<button onclick="button4_onclick();" id="Button4">loadData </button>
+	<br>
+	<br>		
+	<button onclick="button6_onclick();" id="Button6">第二个订单</button>&nbsp
+	<button onclick="button7_onclick();" id="Button7">saveData</button>&nbsp
+	<button onclick="button8_onclick();" id="Button8">loadData </button>
+	<br>
+	<br>
+	<DPNS:DynamicProperty id="DP_sample1" height="100%" totalColumn="2" columnSpan="20"  isGroup="true" isTitle="false" onitemchanged="dp1_onitemchanged();"></DPNS:DynamicProperty>
+	<br>
+	<br>
+</body>
+</html>

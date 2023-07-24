@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content=" width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>故障一键处理</title>
+<link type="text/css" rel="stylesheet" href="css/mui.min.css">
+<link type="text/css" rel="stylesheet" href="css/bootstrap.css">
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet" href="css/button.css">
+<script type="text/javascript" src="js/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script language="javascript" src="js/common.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/config.js"></script>
+</head>
+<style type="text/css">
+* {
+	padding: 0px;
+	margin: 0px;
+}
+
+body {
+	background-color: #fff ! important;
+}
+
+.mui-input-row input {
+	width: 65% !important;
+}
+
+.mui-input-row a {
+	width: 60% !important;
+}
+
+.mui-input-row {
+	overflow: visible;
+}
+
+.detail {
+	font-size: 14px;
+	font-weight: bold;
+	color: #A9A9A9;
+	margin-left: 5px;
+}
+
+.mui-input-clear {
+	font-size: 14px;
+	font-weight: bold;
+	color: #696969;
+}
+
+.mui-input-row span {
+	padding-left: 2px;
+}
+
+input[type=color], input[type=date], input[type=datetime-local], input[type=datetime],
+	input[type=email], input[type=month], input[type=number], input[type=password],
+	input[type=search], input[type=tel], input[type=text], input[type=time],
+	input[type=url], input[type=week], select, textarea {
+	padding: 0px 0px;
+}
+
+input {
+	overflow: visible;
+}
+
+.mui-table {
+	margin: 5px 0px;
+}
+
+.mui-card {
+	margin: 5px;
+}
+
+.mui-table-view-cell {
+	font-weight: bold;
+	color: #A9A9A9;
+	font-size: 14px;
+}
+
+#save {
+	border: 1px solid transparent;
+	width: 80%;
+	background-color: cornflowerblue;
+	border-radius: 10px;
+	color: white;
+	font-size: 15px;
+}
+
+#submit {
+	border: 1px solid transparent;
+	width: 100%;
+	height: 60px;
+	float: left;
+	line-height: 60px;
+	text-align: center;
+	margin-top: 30px;
+}
+
+.mui-table-view-cell span {
+	margin-left: -25px;
+}
+
+.label {
+	padding-left: 15px !important;
+}
+
+.mui-table-view-cell>a:not (.mui-btn ) {
+	padding-left: 2px;
+}
+</style>
+
+<body onload="init()">
+	<!--<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<a id="title" class="mui-title">联通用户信息</a>
+		</header>-->
+
+	<div class="mui-content" style="padding: 5px 5px;">
+		<div class="mui-card" style="">
+			<ul class="mui-table-view" id="ul">
+				<li class="mui-table-view-cell mui-collapse mui-active" id="all2">
+					<a class="mui-navigate-right">故障类型</a>
+					<ul id="u2"
+						class="mui-collapse-content mui-table-view mui-table-view-striped mui-table-view-condensed">
+						<li class="mui-table-view-cell" id="" orderId="">
+							<div class="mui-table">
+								<div class="mui-table-cell mui-col-xs-10">
+									<div class="mui-input-row">
+										<span>无法上网：</span><input name="faultType"
+											style="float: right;" type="radio" onclick="clickInput(1)" />
+									</div>
+									<div class="mui-input-row">
+										<span>上网慢：</span><input name="faultType" style="float: right;"
+											type="radio" onclick="clickInput(2)" />
+									</div>
+									<div class="mui-input-row">
+										<span>频繁掉线：</span><input name="faultType"
+											style="float: right;" type="radio" onclick="clickInput(3)" />
+									</div>
+								</div>
+							</div>
+
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<form id="" class="mui-input-group detail"
+			style="height: 100% !important; padding-top: 10px;">
+			<div class="mui-input-row">
+				<span>投诉人姓名：</span> <input type="text" id="userName" name=""
+					 class="mui-input-clear" value="" />
+			</div>
+			<div class="mui-input-row">
+				<span>联系电话：</span> <input type="text" id="phoneNumber" name=""
+					 class="mui-input-clear" value="" />
+			</div>
+
+		</form>
+	</div>
+
+	<div id="submit">
+		<button id="save" style="padding: 0px 0px;" onclick="submit()">确定</button>
+	</div>
+
+	<div class="modal fade" id="loadingModal" data-backdrop="static">
+		<div
+			style="width: 200px; height: 20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%; margin-left: -100px; margin-top: -10px">
+			<div class="progress progress-striped active"
+				style="margin-bottom: 0;">
+				<div class="progress-bar" style="width: 100%;"></div>
+			</div>
+			<h5>正在加载...</h5>
+		</div>
+	</div>
+
+</body>
+
+<script type="text/javascript">
+	var qrcode = "";
+	var staffName = "";
+	var staff_tel = "";
+	var custName = "";
+	var account = "";
+	var phoneNumber = "";
+	var createDate = "";
+	var address = "";
+	var areaField = "";
+	var faultType = "";
+	var result;//诊断结果
+	var fromDiagnose;//是否从一键诊断页面过来
+	
+	//app后台地址
+	//var serverUrl = "http://192.168.106.104:7001";
+	//var serverUrl = "http://220.248.160.253:9022";
+	function init() {
+		debugger;
+		requestParam = GetURLRequestParam();
+		staffName = requestParam.staffName;
+		staff_tel = requestParam.staff_tel;
+		custName = requestParam.custName;
+		account = requestParam.account;
+		phoneNumber = requestParam.phoneNumber;
+		createDate = requestParam.createDate;
+		address = requestParam.address;
+		areaField = requestParam.areaField;
+		qrcode = requestParam.qrcode;
+		fromDiagnose = requestParam.fromDiagnose;
+		
+		faultType = "";
+		result = requestParam.result;
+
+		$("#userName").val(custName);
+		$("#phoneNumber").val(phoneNumber);
+
+	}
+
+	function submit() {
+		debugger;
+		if ("" == faultType) {
+			alert("请选择故障类型");
+			return;
+		}
+		//显示遮罩
+		phoneNumber = $("#phoneNumber").val();
+		custName = $("#userName").val();
+		$("#loadingModal").modal('show');
+		var param = {
+			areaField : areaField,
+			cust_name : custName,
+			service_num : account,
+			address : address,
+			phone : phoneNumber,
+			faultType : faultType,
+			result: result
+		};
+		$
+				.ajax({
+					url : config.serverUrl + "/MOBILE/api/client/wechat/fault/report",
+					type : "GET",//必须是get请求
+					dataType : "jsonp",//请求的数据类型
+					jsonp : "callBack",//请求类型是回调
+					jsonpCallback : "callbackFunction",//数据请求成功时回调的方法
+					data : param,
+					success : function(result) {
+						debugger;
+						//关闭遮罩
+						$("#loadingModal").modal('hide');
+						var resultCode = result.resultCode;
+						if (resultCode == '1000' && result) {
+							alert('报修成功！');
+							if(fromDiagnose){
+								history.go(-2);
+							}else{
+								forwardToPage();
+							}
+
+						} else {
+							alert('报修失败！');
+						}
+
+					},
+					error : function(result) {
+						//关闭遮罩
+						debugger;
+						$("#loadingModal").modal('hide');
+						alert('报修失败！');
+						console.log("testJsonp返回结果：" + JSON.stringify(result));
+						console.log("testJsonp失败");
+					}
+
+				});
+
+	}
+
+	function callbackFunction() {
+
+	}
+	function clickInput(data) {
+		if (data == 1) {
+			faultType = "无法上网";
+		}
+		if (data == 2) {
+			faultType = "上网慢";
+		}
+		if (data == 3) {
+			faultType = "频繁掉线";
+		}
+	}
+
+	function forwardToPage() {
+		//window.location.href = "yh.html" + "?d=" + qrcode;
+		history.back(-1);
+	}
+</script>
+
+</html>

@@ -1,0 +1,117 @@
+TestPagingAction = com.ztesoft.eoms.test.TestPagingAction
+StaffPagingAction = com.ztesoft.eoms.oaas.staff.web.StaffPagingAction
+StaffRoleAction = com.ztesoft.eoms.oaas.staff.web.StaffRoleAction
+NationSelAction = com.ztesoft.eoms.oaas.staff.web.NationSelAction
+GetJobByOrgAction = com.ztesoft.eoms.oaas.job.web.GetJobByOrgAction
+AreaTreeSelAction = com.ztesoft.eoms.oaas.role.web.AreaTreeSelAction
+RoleConfSelAction = com.ztesoft.eoms.oaas.role.web.RoleConfSelAction
+RoleHoldSelAction = com.ztesoft.eoms.oaas.role.web.RoleHoldSelAction
+PrivConfSelAction = com.ztesoft.eoms.oaas.privilege.web.PrivConfSelAction
+PrivHoldSelAction = com.ztesoft.eoms.oaas.privilege.web.PrivHoldSelAction
+GetJobOrgAction = com.ztesoft.eoms.oaas.job.web.GetJobOrgAction
+GetHoldJobAction = com.ztesoft.eoms.oaas.job.web.GetHoldJobAction
+AreaCmoSelAction = com.ztesoft.eoms.oaas.org.web.AreaCmoSelAction
+OrgTmpCmoSelAction = com.ztesoft.eoms.oaas.org.web.OrgTmpCmoSelAction
+QryThirdStaffPaging = com.ztesoft.eoms.outersystem.action.QryThirdStaffPaging
+OrgTreeAction = com.ztesoft.eoms.oaas.org.web.OrgTreeAction
+OrgJobGridAction = com.ztesoft.eoms.oaas.org.web.OrgJobGridAction
+JobRolesGridAction = com.ztesoft.eoms.oaas.org.web.JobRolesGridAction
+JobStaffsGridAction = com.ztesoft.eoms.oaas.org.web.JobStaffsGridAction
+QryThirdStaffAllPaging = com.ztesoft.eoms.outersystem.action.QryThirdStaffAllPaging
+QryAllSystemsAction = com.ztesoft.eoms.outersystem.action.QryAllSystemsAction
+OrgTreeActionCheck = com.ztesoft.eoms.oaas.org.web.OrgTreeActionCheck
+PostCmoSelAction =com.ztesoft.eoms.oaas.post.web.PostCmoSelAction
+StaffTreeAction = com.ztesoft.eoms.oaas.staff.web.StaffTreeAction
+OrgRoleConfTreAction = com.ztesoft.eoms.oaas.org.web.OrgRoleConfTreAction
+JobPrivHoldSelAction =com.ztesoft.eoms.oaas.org.web.JobPrivHoldSelAction
+SelInfoByCondAction = com.ztesoft.eoms.infomanager.action.SelInfoByCondAction
+RoleByAreaGridAction = com.ztesoft.eoms.oaas.role.web.RoleByAreaGridAction
+RolePrivListAction =com.ztesoft.eoms.oaas.role.web.RolePrivListAction
+SelInfoTypAction = com.ztesoft.eoms.infomanager.action.SelInfoTypAction
+PrivClassGridAction = com.ztesoft.eoms.oaas.privilege.web.PrivClassGridAction
+QryAllSysRegionAction = com.ztesoft.eoms.outersystem.action.QryAllSysRegionAction
+QryOuterSystemAction=com.ztesoft.eoms.outersystem.action.QryOuterSystemAction
+QryAllSysCompanyAction = com.ztesoft.eoms.outersystem.action.QryAllSysCompanyAction
+PrivGridAction =com.ztesoft.eoms.oaas.privilege.web.PrivGridAction
+SelNewsByCondAction =com.ztesoft.eoms.infomanager.action.SelNewsByCondAction
+QueryEomsdocDirAction = com.ztesoft.eoms.document.action.QueryEomsdocDirAction
+JobPrivTreeGridAction = com.ztesoft.eoms.oaas.org.web.JobPrivTreeGridAction
+JobAllPrivTreeGridAction = com.ztesoft.eoms.oaas.org.web.JobAllPrivTreeGridAction
+ModuleTreeAction = com.ztesoft.eoms.oaas.menu.web.ModuleTreeAction
+MenuGridAction = com.ztesoft.eoms.oaas.menu.web.MenuGridAction
+JobPrivGrantTreeAction = com.ztesoft.eoms.oaas.org.web.JobPrivGrantTreeAction
+JobPrivHoldTreeAction = com.ztesoft.eoms.oaas.org.web.JobPrivHoldTreeAction
+JobRolePrivTreeAction = com.ztesoft.eoms.oaas.org.web.JobRolePrivTreeAction
+RolePrivHoldTreeAction = com.ztesoft.eoms.oaas.role.web.RolePrivHoldTreeAction
+RolePrivGrantTreeAction = com.ztesoft.eoms.oaas.role.web.RolePrivGrantTreeAction
+QryOnlineStaffGroupAction = com.ztesoft.eoms.im.action.QryOnlineStaffGroupAction
+QryOnlineStaffsAction = com.ztesoft.eoms.im.action.QryOnlineStaffsAction
+QueryEomsdocAction=com.ztesoft.eoms.document.action.QueryEomsdocAction
+QryMyGroupsAction =com.ztesoft.eoms.im.action.QryMyGroupsAction
+QryUnitJobAction = com.ztesoft.eoms.portalconfig.action.QryUnitJobAction
+CalendarTaskGridAction = com.ztesoft.eoms.CalendarTask.action.CalendarTaskGridAction
+OrgTmpTreeAction =com.ztesoft.eoms.oaas.orgTmp.web.OrgTmpTreeAction
+SelBssAction =com.ztesoft.eoms.bbs.action.SelBssAction
+OrgTmpJobTmpGridAction = com.ztesoft.eoms.oaas.orgTmp.web.OrgTmpJobTmpGridAction
+OrgTmpRoleGridAction = com.ztesoft.eoms.oaas.orgTmp.web.OrgTmpRoleGridAction
+RoleAllPrivTreeGridAction = com.ztesoft.eoms.oaas.orgTmp.web.RoleAllPrivTreeGridAction
+RolePrivTreeAction =com.ztesoft.eoms.oaas.orgTmp.web.RolePrivTreeAction
+SelBbsByIdAction =com.ztesoft.eoms.bbs.action.SelBbsByIdAction
+JobTmpLevelSelAction =com.ztesoft.eoms.oaas.orgTmp.web.JobTmpLevelSelAction
+selBbsTypeAction =com.ztesoft.eoms.bbs.action.selBbsTypeAction
+PostRoleHoldSelAction = com.ztesoft.eoms.oaas.role.web.PostRoleHoldSelAction
+PostRoleConfSelAction = com.ztesoft.eoms.oaas.role.web.PostRoleConfSelAction
+PostRolePrivTreeAction = com.ztesoft.eoms.oaas.post.web.PostRolePrivTreeAction
+PostPrivHoldTreeAction = com.ztesoft.eoms.oaas.post.web.PostPrivHoldTreeAction
+PostPrivGrantTreeAction =com.ztesoft.eoms.oaas.post.web.PostPrivGrantTreeAction
+QueryEomsdocRemarkLevelAction =com.ztesoft.eoms.document.action.QueryEomsdocRemarkLevelAction
+QueryEomsdocRemarkAction=com.ztesoft.eoms.document.action.QueryEomsdocRemarkAction
+QueryEomsdocVerAction=com.ztesoft.eoms.document.action.QueryEomsdocVerAction
+SSOLogoutSysAction =com.ztesoft.eoms.sso.SSOLogoutSysAction
+QryAllProvAction =com.ztesoft.eoms.weather.action.QryAllProvAction
+QryCityByProvAction =com.ztesoft.eoms.weather.action.QryCityByProvAction
+MblOffcPrivGrantSelAction = com.ztesoft.eoms.mobileoffice.action.MblOffcPrivGrantSelAction
+MblOffcPrivHasSelAction =com.ztesoft.eoms.mobileoffice.action.MblOffcPrivHasSelAction
+UpdateOnlineStateAction =com.ztesoft.eoms.im.action.UpdateOnlineStateAction
+LogoutIMAction =com.ztesoft.eoms.im.action.LogoutIMAction
+QryChatLogPagingAction =com.ztesoft.eoms.im.action.QryChatLogPagingAction
+QryThirdStaffByIpAction =com.ztesoft.eoms.outersystem.action.QryThirdStaffByIpAction
+QryNotepadExtAction =com.ztesoft.eoms.notepad.action.QryNotepadExtAction
+QryGroupsByStaffIdAction =com.ztesoft.eoms.im.action.QryGroupsByStaffIdAction
+QryContactGroupAction=com.ztesoft.eoms.contact.action.QryContactGroupAction
+QryContGroupStaffRelaAction=com.ztesoft.eoms.contact.action.QryContGroupStaffRelaAction
+QryOnlineStaffInfoAction=com.ztesoft.eoms.systemmanager.action.QryOnlineStaffInfoAction
+QryAllSSOTypeAction = com.ztesoft.eoms.outersystem.action.QryAllSSOTypeAction
+QrySysUsageStatisticAction=com.ztesoft.eoms.systemmanager.action.QrySysUsageStatisticAction
+DocNodeTreeAction =com.ztesoft.eoms.helperdoc.action.DocNodeTreeAction
+QryGroupStaffListByIdAction =com.ztesoft.eoms.im.action.QryGroupStaffListByIdAction
+QryOuterSysUsageStatAction=com.ztesoft.eoms.systemmanager.action.QryOuterSysUsageStatAction
+SelEmailByCondAction =com.ztesoft.eoms.email.action.SelEmailByCondAction
+QryStaffByGroupIdAction = com.ztesoft.eoms.im.action.QryStaffByGroupIdAction
+QryAllSystemLogoAction=com.ztesoft.eoms.outersystem.action.QryAllSystemLogoAction
+QryAllSystemWorkItem=com.ztesoft.eoms.tipmethod.action.QryAllSystemWorkItem
+QryOuterSysUsageColCharAction=com.ztesoft.eoms.systemmanager.action.QryOuterSysUsageColCharAction
+QrySysUsageColCharAction =com.ztesoft.eoms.systemmanager.action.QrySysUsageColCharAction
+
+
+QryPortalViewListExtAction =com.ztesoft.eoms.portalconfig.action.QryPortalViewListExtAction
+QryThirdStaffAccountAction =com.ztesoft.eoms.outersystem.action.QryThirdStaffAccountAction
+
+SelQaAction =com.ztesoft.eoms.qa.action.SelBssAction
+selQaTypeAction =com.ztesoft.eoms.qa.action.selBbsTypeAction
+SelQaByIdAction =com.ztesoft.eoms.qa.action.SelBbsByIdAction
+
+
+FunctionModuleStaticAction = com.ztesoft.eoms.applybaseinfo.action.FunctionModuleStaticAction
+FunctionModleDetailAction  = com.ztesoft.eoms.applybaseinfo.action.FunctionModleDetailAction
+
+selSystemAction=com.ztesoft.eoms.applybaseinfo.action.SelSystemAction
+selCompanyAction=com.ztesoft.eoms.applybaseinfo.action.SelCompanyAction
+selBaseInfoByCondAction=com.ztesoft.eoms.applybaseinfo.action.SelBaseInfoByCondAction
+SelBaseInfoForSearchAction=com.ztesoft.eoms.applybaseinfo.action.SelBaseInfoForSearchAction
+
+selPortalInfoByCondAction=com.ztesoft.eoms.portalinfo.action.SelPortalInfoAction
+
+QryKpiDirAction=com.ztesoft.eoms.portalconfig.portlets.other.action.QryKpiDirAction
+
+

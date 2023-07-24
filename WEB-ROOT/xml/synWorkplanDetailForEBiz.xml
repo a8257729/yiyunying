@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+	<QueryMethod>synWorkplanDetailForEBiz</QueryMethod>
+	<Return>
+		<Content>
+			<Public>
+			    <WorkOrderID>1403754</WorkOrderID>
+          		<OrderID>748543</OrderID>
+				<WorkOrderCode>297884</WorkOrderCode>
+				<WorkContent>作业计划描述</WorkContent>
+				<OrderTitle>作业计划测试详情</OrderTitle>
+				<BeginTime>2013-08-15 13:12:42</BeginTime>
+				<EndTime>2013-08-15 13:12:42</EndTime>
+				<OrgName>中国电信</OrgName>
+				<StaffName>陈志业</StaffName>
+				<RoleName>运维人员</RoleName>
+				<WorkTime>20</WorkTime>		
+				<WorkOrderState>处理中</WorkOrderState>				
+			</Public>			
+		</Content>
+		<Result>000</Result>
+		<ErrorDesc>查询成功</ErrorDesc>
+	</Return>
+</Data>

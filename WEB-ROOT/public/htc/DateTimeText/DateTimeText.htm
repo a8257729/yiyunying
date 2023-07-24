@@ -1,0 +1,17 @@
+<html>
+<head>
+<title>Calendar</title>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<link rel="stylesheet" type="text/css" href="DateTimeText.css">
+<?XML:NAMESPACE PREFIX="ZTESOFT" />
+<script language="javascript">document.write('<?IMPORT NAMESPACE="ZTESOFT" IMPLEMENTATION="Calendar_'+ window.dialogArguments.langCode +'.htc" />');</script>
+</head>
+<body>
+<ZTESOFT:calendar id="caldr_" onCalDblClick="onOK()" />
+</body>
+</html>
+<script language="javascript">
+<!--
+function DateTimePicker(){var inObject = window.dialogArguments;document.all.caldr_.useDate = inObject.useDate;document.all.caldr_.useTime = inObject.useTime;document.all.caldr_.value = inObject.value;};DateTimePicker();function onCancel(){window.close();};function onOK(){window.returnValue = document.all.caldr_.value;window.close();}
+//-->
+</script>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="gbk"?>
+<SERVICE>
+    <SERINO>20130905180813</SERINO>
+    <RETURNINFO>
+        <RETURNCODE>000</RETURNCODE>
+        <RETURNDETAIL>执行成功</RETURNDETAIL>
+    </RETURNINFO>
+    <ORDERINFO>
+        <ORDERCODE>SGZ-20130820-0002-01_01</ORDERCODE>
+        <ORDERTITLE>vfreg5366</ORDERTITLE>
+        <ORDERSTATE>正常执行中</ORDERSTATE>
+        <COLUMNS>
+            <COLUMN>
+                <COLUMNNAME>申请日期</COLUMNNAME>
+                <COLUMNVALUE>2013-08-20 15:15:05</COLUMNVALUE>
+            </COLUMN>
+            <COLUMN>
+                <COLUMNNAME>服务</COLUMNNAME>
+                <COLUMNVALUE>故障流程</COLUMNVALUE>
+            </COLUMN>
+            <COLUMN>
+                <COLUMNNAME>完成期限</COLUMNNAME>
+                <COLUMNVALUE>2013-08-20 15:15:05</COLUMNVALUE>
+            </COLUMN>
+            <COLUMN>
+                <COLUMNNAME>受理人</COLUMNNAME>
+                <COLUMNVALUE>孙俊华</COLUMNVALUE>
+            </COLUMN>
+            <COLUMN>
+                <COLUMNNAME>受理部门</COLUMNNAME>
+                <COLUMNVALUE>网络监控处</COLUMNVALUE>
+            </COLUMN>
+            <COLUMN>
+                <COLUMNNAME>备注</COLUMNNAME>
+                <COLUMNVALUE>665</COLUMNVALUE>
+            </COLUMN>
+        </COLUMNS>
+    </ORDERINFO>
+    <CUSTINFO></CUSTINFO>
+    <RESOURCEINFO>
+        <NEWRESOURCEINFO></NEWRESOURCEINFO>
+        <OLDRESOURCEINFO></OLDRESOURCEINFO>
+    </RESOURCEINFO>
+    <DESIGNINFO></DESIGNINFO>
+    <DATABUSINFO></DATABUSINFO>
+</SERVICE>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>在途装机工单</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js" ></script>
+		<script src="../js/template.min.js" ></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<a class="mui-pull-right mui-icon iconfont icon-rili" id="showUserPicker"></a>
+			<h1 id="title" class="mui-title">网络投诉</h1>
+			
+		</header>
+		<div class="mui-content">
+			<div id="content"></div>
+			<script id="tpl" type="text/html">
+			<table id="tabel" freezeRowNum="1" freezeColumnNum="1" class="am-table am-table-bordered am-table-centered am-table-striped">
+				<thead>
+					<tr>
+						<th>州市</th>
+						<th>账号密码问题</th>
+						<th>上网时出现断线</th>
+						<th>网页打开慢</th>
+						<th>下载慢</th>
+						<th>视频播放不流畅</th>
+						<th>网络电视慢</th>
+						<th>游戏卡断或掉线</th>
+						<th>所有网页无法打开</th>
+						<th>部分网页无法打开</th>
+						<th>网络无法连接</th>
+						<th>合计	用户数</th>
+
+					</tr>
+					
+				</thead>
+				<tbody>
+					{{each dataArr as item i}}
+					<tr class="mui-tr">
+						<th>{{item[0]}}</th>
+						<td>{{item[1]}}</td>
+						<td>{{item[2]}}</td>
+						<td>{{item[3]}}</td>
+						<td>{{item[4]}}</td>
+						<td>{{item[5]}}</td>
+						<td>{{item[6]}}</td>
+						<td>{{item[7]}}</td>
+						<td>{{item[8]}}</td>
+						<td>{{item[9]}}</td>
+						<td>{{item[10]}}</td>
+						<td>{{item[11]}}</td>
+						
+					</tr>
+					{{/each}}
+					
+				</tbody>
+			</table>
+			</script>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/mui.picker.min.js"></script>
+		<script>
+			//时间选择器
+			var picker = new mui.DtPicker({
+				"type":"date"
+			});
+			var showUserPickerButton = document.getElementById('showUserPicker');
+			showUserPickerButton.addEventListener('tap', function(event) {
+				picker.show(function(items) {
+					
+				});
+
+			}, false);
+			
+			var data = {
+				dataArr:randomCityArray(12)
+			};
+			console.log(data);
+			var html = template('tpl', data);
+			document.getElementById('content').innerHTML = html;
+
+            //增加列表项点击事件
+			mui('.mui-tr').on('tap', 'td', function() {
+				var id = 'report5-1.html';
+				mui.openWindow({
+					url: id,
+					id: id,
+					styles: {
+						popGesture: 'close'
+					},
+					show: {
+						aniShow: ''
+					},
+					waiting: {
+						autoShow: false
+					},
+					extras: {
+						
+					}
+				});
+
+			});
+			
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,14 @@
+package com.ztesoft.mobile.v2.service.app;
+
+import com.ztesoft.mobile.v2.core.Result;
+
+import java.util.Map;
+
+public interface MobileDataInstallService {
+    public String queryDataInstallByOrg(String org_id);
+    public  Map<String, String> queryBSSProject(String work_order_id);
+    public Result queryOBDInfo(String qrCode, String wkOrderId);
+
+    public  Map<String, String> querymakeProcessData(String work_order_id);
+    public Result processDataInstall( Map<String, Object> paramMap);
+}

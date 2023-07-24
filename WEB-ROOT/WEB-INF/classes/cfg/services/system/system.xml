@@ -1,0 +1,22 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="system" extends="common-component-define"
+		namespace="/system">						
+		
+		<action name="QueryMenuByModuleAction"
+			class="com.ztesoft.mobile.system.action.QueryMenuByModuleAction">
+		</action>
+		<action name="InsertOuterSysLoginLogAction"
+			class="com.ztesoft.mobile.system.action.InsertOuterSysLoginLogAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		<action name="MobMuneTreeAction"
+			class="com.ztesoft.mobile.systemMobMgr.action.MobMuneTreeAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+	</package>
+</xwork>
+

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data> 
+  <QueryMethod>waitSecondReasonSaForEBiz</QueryMethod>
+  <Return> 
+    <Result>000</Result>  
+    <ErrorDesc>待装二级原因</ErrorDesc> 
+  </Return>  
+  <ReasonList> 
+    <Reason> 
+      <ReasonCode>2001</ReasonCode>  
+      <ReasonName>待装二级原因1</ReasonName> 
+    </Reason>  
+    <Reason> 
+      <ReasonCode>2002</ReasonCode>  
+      <ReasonName>待装二级原因2</ReasonName>  
+    </Reason>  
+    <Reason> 
+      <ReasonCode>2003</ReasonCode>  
+      <ReasonName>待装二级原因3</ReasonName>   
+    </Reason>  
+    <Reason> 
+      <ReasonCode>2004</ReasonCode>  
+      <ReasonName>待装二级原因4</ReasonName>  
+    </Reason> 
+  </ReasonList> 
+</Data>

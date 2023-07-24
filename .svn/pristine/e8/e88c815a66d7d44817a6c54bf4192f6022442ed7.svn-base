@@ -1,0 +1,23 @@
+package com.ztesoft.mobile.v2.controller.sn;
+
+import com.ztesoft.mobile.common.dao.BaseDAO;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+
+import java.sql.SQLException;
+import java.util.Map;
+
+public interface SnPublicService extends BaseDAO {
+
+
+    public Map<String,Object> selBySystem(String staffId) throws DataAccessException, SQLException;
+
+    public Map<String,Object> selBySystem1() throws DataAccessException, SQLException;
+
+    public Map<String,Object> selBySnCode(String sncode) throws DataAccessException, SQLException;
+
+    public Map<String,Object> selByWkOrderId(String wk_order_id) throws DataAccessException, SQLException;
+
+
+
+
+}

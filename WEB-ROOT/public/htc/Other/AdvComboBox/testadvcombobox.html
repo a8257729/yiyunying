@@ -1,0 +1,50 @@
+<html>
+	<head>
+		<TITLE></TITLE>
+		<?XML:NAMESPACE PREFIX=AdvComboBox />
+		<?IMPORT NAMESPACE=AdvComboBox IMPLEMENTATION="AdvComboBox.htc">	
+</head>
+
+<script language="javascript">
+function onInit()
+{
+		
+}
+
+function reset_onclick()
+{
+	document.all("a2").defaultValue=null;
+}
+
+function a1_onchanged()
+{
+		var curVal = event.curValue;
+		var control =event.srcElement;
+		
+		if(control.controlType=="ComboBox")		
+		{			
+			alert(control.value);
+		}			
+}
+</script>	
+
+<body onload="onInit();">
+			<AdvComboBox:AdvComboBox id="a2" multipleChoice="true" defaultValue='002,003'onchanged="a1_onchanged();">			
+				<AdvComboBox:Property>
+					<AdvComboBox:Item text="16岁以下" value="001"></AdvComboBox:Item>
+					<AdvComboBox:Item text="16岁～28岁" value="002"></AdvComboBox:Item>
+					<AdvComboBox:Item text="28岁～40岁" value="003"></AdvComboBox:Item>
+					<AdvComboBox:Item text="40岁以上" value="004"></AdvComboBox:Item>
+				</AdvComboBox:Property>				
+			</AdvComboBox:AdvComboBox>
+
+	<table border="1" borderColorDark="lavender" borderColorLight="black" cellPadding="0" cellSpacing="0" width="98%" align="center" name="tblProperty" ID="tblProperty">
+		<tr>
+			<td>
+				aaaa
+			</td>
+		</tr>
+	</table>
+	<input type="button" id="reset" value="清空" onclick="reset_onclick();" NAME="reset">
+</body>
+</html>

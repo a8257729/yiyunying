@@ -1,0 +1,190 @@
+package com.ztesoft.mobile.v2.service.resource;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import net.sf.json.JSONObject;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.dom4j.Node;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ztesoft.mobile.common.dao.BaseDAOFactory;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import com.ztesoft.mobile.common.helper.Base64It;
+import com.ztesoft.mobile.common.helper.MD5Utils;
+import com.ztesoft.mobile.message.dao.MobileMessageDAO;
+import com.ztesoft.mobile.message.dao.MobileMessageDAOImpl;
+import com.ztesoft.mobile.systemMonitor.dao.MobileSessionRecordDAO;
+import com.ztesoft.mobile.systemMonitor.dao.MobileSessionRecordDAOImpl;
+import com.ztesoft.mobile.v2.Constants;
+import com.ztesoft.mobile.v2.core.BaseService;
+import com.ztesoft.mobile.v2.core.Result;
+import com.ztesoft.mobile.v2.dao.app.MobileAppDAO;
+import com.ztesoft.mobile.v2.dao.app.MobileAppDAOImpl;
+import com.ztesoft.mobile.v2.dao.app.MobileFrameAppDAO;
+import com.ztesoft.mobile.v2.dao.app.MobileFrameAppDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileCommonDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileCommonDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileDownloadLogDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileDownloadLogDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileExceptionDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileExceptionDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileFeedbackDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileFeedbackDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileNoticeDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileNoticeDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileParamDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileParamDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobilePhotoRecordDAO;
+import com.ztesoft.mobile.v2.dao.common.MobilePhotoRecordDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileStaffShortcutDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileStaffShortcutDAOImpl;
+import com.ztesoft.mobile.v2.dao.common.MobileUploadLogDAO;
+import com.ztesoft.mobile.v2.dao.common.MobileUploadLogDAOImpl;
+import com.ztesoft.mobile.v2.dao.interf.MobileRestServLogDAO;
+import com.ztesoft.mobile.v2.dao.interf.MobileRestServLogDAOImpl;
+import com.ztesoft.mobile.v2.dao.interf.MobileStaffInfoDAO;
+import com.ztesoft.mobile.v2.dao.interf.MobileStaffInfoDAOImpl;
+import com.ztesoft.mobile.v2.dao.interf.MobileStaffMappingDAO;
+import com.ztesoft.mobile.v2.dao.interf.MobileStaffMappingDAOImpl;
+import com.ztesoft.mobile.v2.dao.menu.MobileMenuConfigDAO;
+import com.ztesoft.mobile.v2.dao.menu.MobileMenuConfigDAOImpl;
+import com.ztesoft.mobile.v2.dao.menu.MobileMenuDAO;
+import com.ztesoft.mobile.v2.dao.menu.MobileMenuDAOImpl;
+import com.ztesoft.mobile.v2.dao.resource.ResourceDAO;
+import com.ztesoft.mobile.v2.dao.resource.ResourceDAOImpl;
+import com.ztesoft.mobile.v2.entity.app.MobileApp;
+import com.ztesoft.mobile.v2.entity.app.MobileFrameApp;
+import com.ztesoft.mobile.v2.entity.common.JobInfo;
+import com.ztesoft.mobile.v2.entity.common.MobileExceptionLog;
+import com.ztesoft.mobile.v2.entity.common.MobileFeedback;
+import com.ztesoft.mobile.v2.entity.common.MobileNotice;
+import com.ztesoft.mobile.v2.entity.common.MobilePhotoRecord;
+import com.ztesoft.mobile.v2.entity.common.MobileStaffShortcut;
+import com.ztesoft.mobile.v2.entity.common.StaffControls;
+import com.ztesoft.mobile.v2.entity.common.StaffInfo;
+import com.ztesoft.mobile.v2.entity.common.VersionInfo;
+import com.ztesoft.mobile.v2.entity.interf.MobileRestServLog;
+import com.ztesoft.mobile.v2.entity.interf.MobileRestService;
+import com.ztesoft.mobile.v2.entity.interf.MobileStaffMapping;
+import com.ztesoft.mobile.v2.entity.menu.MobileMenu;
+import com.ztesoft.mobile.v2.entity.menu.MobileMenuCatalog;
+import com.ztesoft.mobile.v2.entity.menu.MobileMenuConfig;
+import com.ztesoft.mobile.v2.entity.workform.xinjiang.bz.WorkOrderBz;
+import com.ztesoft.mobile.v2.entity.workform.xinjiang.kt.WorkOrderKt;
+import com.ztesoft.mobile.v2.util.CryptUtils;
+
+/**
+ *资源预判模块服务
+ *
+ */
+@Service("resourceService")
+public class ResourceServiceImpl extends BaseService implements ResourceService {
+	
+	private static final Logger logger = Logger.getLogger(ResourceServiceImpl.class);
+
+	 private ResourceDAO getResourceDAO() {
+	        String daoName = ResourceDAOImpl.class.getName();
+	        return (ResourceDAO) BaseDAOFactory.getImplDAO(daoName);
+	    }
+
+	public Result getResourceInfoByQrcode(String qrCode) {
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		resultMap = getResourceDAO().getResourceInfoByQrcode(qrCode);
+		if (resultMap == null || resultMap.size() == 0) {
+			resultData.put("data_info", resultMap);
+			result = Result.buildFailure();
+			result.setResultData(resultData);
+			return result;
+		}
+		resultData.put("data_info", resultMap);
+		result = Result.buildSuccess();
+		result.setResultData(resultData);
+		return result;
+	}
+
+	public Result queryUserInfo(String portId,String qrCode) {
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		resultMap = getResourceDAO().queryUserInfo(portId,qrCode);
+		if (resultMap == null || resultMap.size() == 0) {
+			resultData.put("data_info", resultMap);
+			result = Result.buildFailure();
+			result.setResultData(resultData);
+			return result;
+		}
+		resultData.put("data_info", resultMap);
+		result = Result.buildSuccess();
+		result.setResultData(resultData);
+		return result;
+	}	
+	
+	
+	
+	public Result commonQueryObjectBySql(String sqlStr,Map paramMap,String wherePatternStr){
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		resultMap = getResourceDAO().commonQueryObjectBySql(sqlStr,paramMap,wherePatternStr);
+		if (resultMap == null || resultMap.size() == 0) {
+			resultData.put("data_info", resultMap);
+			result = Result.buildFailure();
+			result.setResultData(resultData);
+			return result;
+		}
+		resultData.put("data_info", resultMap);
+		result = Result.buildSuccess();
+		result.setResultData(resultData);
+		return result;
+	}
+
+	public Result commonQueryListBySql(String sql, Map<String, Object> paramMap, String wherePatternStr) {
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		resultMap = getResourceDAO().commonQueryListBySql(sql,paramMap,wherePatternStr);
+		if (resultMap == null || resultMap.size() == 0) {
+			resultData.put("data_info", resultMap);
+			result = Result.buildFailure();
+			result.setResultData(resultData);
+			return result;
+		}
+		resultData.put("data_info", resultMap);
+		result = Result.buildSuccess();
+		result.setResultData(resultData);
+		return result;
+	}
+	
+	public Result commonQueryObjectByProcedure(String procedureName, List paramList, int inParamLength,String[] outParam) {
+		Result result = null;
+		Map<String,Object> resultMap = new HashMap<String,Object>();
+		Map<Object, Object> resultData = new HashMap<Object, Object>();
+		resultMap = getResourceDAO().commonQueryObjectByProcedure(procedureName,paramList,inParamLength,outParam);
+		if (resultMap == null || resultMap.size() == 0) {
+			resultData.put("data_info", resultMap);
+			result = Result.buildFailure();
+			result.setResultData(resultData);
+			return result;
+		}
+		resultData.put("data_info", resultMap);
+		result = Result.buildSuccess();
+		result.setResultData(resultData);
+		return result;
+	}
+	
+
+	
+}

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>在途装机工单</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/data-bind.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js"></script>
+		<script src="../js/template.min.js"></script>
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			
+			<h1 id="title" class="mui-title">在途装机工单</h1>
+
+		</header>
+		<div class="mui-content">
+			<div id="content"></div>
+			<script id="tpl" type="text/html">
+				<table id="tabel" freezeRowNum="1" freezeColumnNum="1" class="am-table am-table-bordered am-table-centered am-table-striped">
+					<thead>
+						<tr>
+							<th rowspan="2">州市</th>
+							<th rowspan="2">在途工单总数</th>
+							<th colspan="3">在途时长维度</th>
+							<th colspan="2">代维单位维度</th>
+							<th colspan="6">当前环节</th>
+						</tr>
+						<tr>
+							<th>在途≤3天</th>
+							<th>3＜在途≤7天</th>
+							<th>在途＞7天</th>
+							<th>铁通 </th>
+							<th>非铁通</th>
+							<th>订单接收</th>
+							<th>宽带资源配置</th>
+							<th>自动激活施工</th>
+							<th>装机</th>
+							<th>资源竣工（自动）</th>
+							<th>资料竣工（自动）</th>
+
+						</tr>
+					</thead>
+					<tbody>
+						{{each dataArr as item i}}
+						<tr class="mui-tr">
+							<th areaid="{{item.areaId}}" class="area-name">{{item.area_name}}</th>
+							<td>{{item.V_ZZTD}}</td>
+							<td>{{item.transit_less_3}}</td>
+							<td>{{item.transit_greater_3_less_7}}</td>
+							<td>{{item.transit_greater_7}}</td>
+							<td>{{item.railcom}}</td>
+							<td>{{item.railcom_not}}</td>
+							<td>{{item.V_DDJS}}</td>
+							<td>{{item.V_ZYPZ}}</td>
+							<td>{{item.V_ZDJHSG}}</td>
+							<td>{{item.V_ZJ}}</td>
+							<td>{{item.V_ZYJG}}</td>
+							<td>{{item.V_ZLJG}}</td>
+						</tr>
+						{{/each}}
+
+					</tbody>
+				</table>
+			</script>
+		</div>
+
+		<script>
+			var areaId = '';
+			var beginDateStr = '';
+			var endDateStr = '';
+			mui.plusReady(function() {
+				var currwebview = plus.webview.currentWebview();
+				areaId = currwebview.areaId;
+				beginDateStr = currwebview.beginDateStr;
+				endDateStr = currwebview.endDateStr;
+
+				query_report_data(getDataCallBack, areaId, beginDateStr, endDateStr,"2");
+
+				function getDataCallBack(jsondataStr) {
+					var jsondata = JSON.parse(jsondataStr);
+					var data = {
+						dataArr: jsondata
+					};
+					console.log(JSON.stringify(data));
+					if(jsondata.length == 0) {
+						mui.alert("未查询到数据");
+						return;
+					}
+					var html = template('tpl', data);
+					document.getElementById('content').innerHTML = html;
+
+					//增加列表项点击事件
+					$('.mui-tr').on('tap', 'th', function() {
+						var id = 'report2-1-1.html';
+						var areaId = this.getAttribute('areaid');
+						mui.openWindow({
+							url: id,
+							id: id,
+							styles: {
+								popGesture: 'close'
+							},
+							show: {
+								aniShow: ''
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+								areaId: areaId,
+								beginDateStr: beginDateStr,
+                                endDateStr: endDateStr
+							}
+						});
+
+					});
+
+					freezeTableInit();
+				}
+
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,7 @@
+<!-- @edit moejoe(lmh_user@hotmail.com) -->
+<public:component>
+<public:attach event="ondocumentready" onevent="init()" />
+<script language="JScript" type="Text/JScript">
+function init(){var o=element;var c=o.style.width;if(!isNaN(c)){c=130;o.style.width=c;}else if(c.indexOf('%')>-1)o.style.width ='100.4%';var b=o.outerHTML;b = b.replace(/select_htc/,'select_nohtc');if(b.indexOf('OVERFLOW: auto')>-1)b = b.replace(/OVERFLOW: auto/,'behavior:expression(window.SelectOverflow!=null?window.SelectOverflow(this):0)');element.outerHTML = '<span class="select_box_1" style="width:'+c+'"><div class="select_box_2">'+b+'</div></span>';}
+</script>
+</public:component>

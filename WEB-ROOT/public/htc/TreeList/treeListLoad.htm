@@ -1,0 +1,391 @@
+<html xmlns:ZTESOFT>
+<head>
+<title>简单DataGrid</title>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<style type="text/css">
+body{font-size:13px}
+.treelist{selectedBgColor:#AFDAFF;behaviorPath:;}
+</style>
+<?IMPORT NAMESPACE="ZTESOFT" IMPLEMENTATION="TreeListLoad.htc" />
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<div>
+  <ZTESOFT:treelist id="adv" class="treelist" width="100%" height="200" showHead="true"
+     showCheck="false" checkAll="true" checkChildren="true"
+     onItemClick="" onItemDblClick="alert(this.id);" onItemContextMenu="alert('itemMenu')"
+     onDivContextMenu="alert('DivMenu')" onItemChecked="alert('check')">
+    <ZTESOFT:columns>
+      <ZTESOFT:column width="20%" display="true" displayText="id" propertyName="id"  />
+      <ZTESOFT:column width="30%" display="true" displayText="名称" propertyName="name" />
+      <ZTESOFT:column width="50%" display="true" displayText="描述" propertyName="text" displayTip="true" />
+    </ZTESOFT:columns>
+  </ZTESOFT:treelist>
+</div>
+<div id="cont1C" align="right">&nbsp;</div>
+<br>
+<br>
+<table width="100%"  border="1" cellspacing="0" cellpadding="3" style="border-collapse : collapse">
+  <tr>
+    <td colspan=4 bgcolor="#F3F3F3" style="font-size:13px">&nbsp;操作</td>
+  </tr>
+  <tr>
+    <td><input type="button" value="loadByXML数据" id="b1" onmousedown="cursorWait(this)" onClick="loadByXML()"></td>
+    <td><input type="button" value="loadByData数据" id="b1_1" onmousedown="cursorWait(this)" onClick="loadByData()"></td>
+    <td><input type="button" value="对象load数据" id="b1_3" onmousedown="cursorWait(this)" onClick="loadObject()"></td>
+    <td><input type="button" value="获得总节点数" id="b4_1" onClick="getItemsLen()"></td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td><input type="button" value="删除节点" id="b10" onClick="remove()"></td>
+    <td><input type="button" value="更新节点数据" id="b7" onClick="updateNode()"></td>
+  </tr>
+  <tr>
+    <td><input type="button" value="设置节点属性" id="b11" onClick="setProperty()"></td>
+    <td><input type="button" value="获得选择行的数据" id="b3" onClick="getSelItem1()"></td>
+    <td><input type="button" value="获得选择行的子节点数据" id="b4" onClick="getSelChildren()"></td>
+    <td><input type="button" value="获得所有节点的集合" id="b15" onClick="getAllItems()"></td>
+  </tr>
+  <tr>
+    <td><input type="button" value="获得checked选择状态" id="b13" onClick="getChecked()"></td>
+    <td><input type="button" value="设置checked不选" id="b2" onClick="setChecked()"></td>
+    <td><input type="button" value="获得checked选择集合" id="b2" onClick="getCheckedItems()"></td>
+    <td><input type="button" value="清空数据" id="b5" onClick="clear1()"></td>
+  </tr>
+</table>
+</body>
+</html>
+<script language="javascript">
+<!--
+
+/* 获得所有节点的集合 */
+function getAllItems(){
+  var adv1 = document.all.adv;
+  var allItems = adv1.items;   //返回数组
+  if(allItems.length)
+    alert("节点总数："+ allItems.length);
+}
+
+/* 获得id */
+function getId(){
+  alert(document.all.adv.name);
+}
+
+/* 通过对象载入 */
+function loadObject(){
+  var adv1 = document.all.adv;
+  if(!adv1) return;
+
+  var l2 = (new Date()).getTime();
+
+  var i=0;
+  var ntl = adv1.newTreeList();
+
+  ntl.addItem(++i, "l"+i, "m"+i);
+  var items1;  //临时
+  for(;i<114;){
+   items1 = ntl.addItemGroup(++i, "l"+i, ntl.blank);
+      items1.addItem(++i, ntl.blankRepl(null), "m"+i);
+      items1.addItem(++i, "l"+i, "m"+i);
+      items1.addItem(++i, "l"+i, "m"+i);
+      items1.addItem(++i, "l"+i, "m"+i);
+  }
+
+  ntl.loaded();  //装载显示数据
+  ntl.destroy; ntl = null; //销毁
+
+
+  document.all.cont1C.innerHTML = "共 <font color='#CC3333'>"+ i +"</font> 行，控件耗时：<font color='#CC3333'>"+((new Date()).getTime()-l2) +"ms</font>&nbsp;&nbsp;";
+}
+
+/* 获得选择check集合 */
+function getCheckedItems(){
+  var arr = document.all.adv.checkedItems;
+  if(arr.length>0)
+    alert("check个数："+ arr.length +"  一节点描述："+ arr[0].text);
+  else
+    alert("没有check选择节点！");
+}
+
+/* 设置check不选 */
+function setChecked(){
+  var adv1 = document.all.adv;
+  var selItem = adv1.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.setChecked(false);
+}
+
+/* 获得选择节点的check状态 */
+function getChecked(){
+  var adv1 = document.all.adv;
+  var selItem = adv1.selectedItem;
+  if(selItem==null)return;
+  //
+  alert(selItem.getChecked());
+}
+
+/* 获得选择节点的子节点 */
+function getSelChildren(){
+  var adv1 = document.all.adv;
+  var selItem = adv1.selectedItem;
+  if(selItem==null)return;
+  //
+  if(selItem.items!=null){
+    alert("子个数："+ selItem.items.length +" 一节点名称："+  selItem.items[0].name +" 一节点描述："+ selItem.item(0).text);
+  }else{
+    alert("本节点没有子节点!");
+  }
+}
+
+/* 获得选择行的描述 */
+function getSelItem1(){
+  var adv1 = document.all.adv;
+  var selItem = adv1.selectedItem;
+  if(selItem==null)return;
+
+  alert("节点描述："+ selItem.text);
+}
+
+/* 设置节点属性 */
+function setProperty(){
+  var adv1 = document.all.adv;
+  var selItem = adv1.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.setChecked(true);
+  selItem.setImage("images/openicon.gif");
+  selItem.setBgColor("#F4F4F4");
+  selItem.setFontColor("#009");
+}
+
+/* 更新节点 */
+function updateNode(){
+  var adv1 = document.all.adv;
+  var node = adv1.selectedItem;
+  if(node==null){alert("没有数据");return;}
+
+  node.setAttribute("id","999");
+  node.setAttribute("text","外面");
+  node.setAttribute("name","世界");
+
+  node.refresh();
+}
+
+/* 删除节点 */
+function remove(){
+  var adv1 = document.all.adv;
+  var selItem = adv1.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.remove();
+}
+
+/* 增加根节点 */
+function addRootNode(){
+  var adv1 = document.all.adv;
+  var node = adv1.createTreeNode();
+  adv1.add(node);
+  //
+  node.id   = "888";
+  node.name = "ndd";
+  node.text = "好人";
+  node.age = "29";
+  node.refresh();
+  node.setSelected();
+}
+
+/* 增加子节点 */
+function addChildNode(){
+  var adv1 = document.all.adv;
+  var selItem = adv1.selectedItem;
+  if(selItem==null)return;
+  //
+  var node = adv1.createTreeNode();
+  selItem.add(node);
+  //
+  node.id   = "888";
+  node.name = "ndd";
+  node.text = "好人";
+  node.refresh();
+  node.setSelected();
+}
+
+/* 获得总节点数 */
+function getItemsLen(){
+  alert(document.all.adv.itemsLength);
+}
+
+/* 清空 */
+function clear1(){
+  document.all.adv.clear();
+}
+
+/* 载入数据 */
+function loadByXML(){
+  var i=0;
+  var tmpArr = new Array();
+  tmpArr.push('<items>'+
+      '<item id="'+ (++i) +'" name="中兴1" text="软创1" FONT_COLOR="#C33">'+
+        '<item id="'+ (++i) +'" name="中兴11" text="软创11">'+
+          '<item id="'+ (++i) +'" name="中兴111" text="软创111" />'+
+          '<item id="'+ (++i) +'" name="中兴112" text="软创112" />'+
+        '</item>'+
+        '<item id="'+ (++i) +'" name="中兴12" text="软创12"/>'+
+      '</item>'+
+      '<item id="'+ (++i) +'" name="中兴2" text="软创2">');
+
+     for(var j=0; j<300; j++){
+       tmpArr.push('<item id="'+ (++i) +'" name="中兴21" text="软创21" />');
+     }
+
+  tmpArr.push('</item>'+
+      '<item id="'+ (++i) +'" name="中兴3" text="南京中兴软创科技有限责任公司 研发部南京市雨花台区紫荆花路68号中兴研发基地">'+
+        '<item id="'+ (++i) +'" name="中兴31" text="软创21"/>'+
+        '<item id="'+ (++i) +'" name="中兴32" text="软创32" BG_COLOR="#F4F4F4" FONT_COLOR="#C33" />'+
+        '<item id="'+ (++i) +'" name="中兴33" text="软创33">'+
+          '<item id="'+ (++i) +'" name="中兴331" text="软创331" />'+
+        '</item>'+
+    '</item>');
+  for(j=0;j<11;j++){
+    tmpArr.push('<item id="'+ (++i) +'" name="中兴-n" text="软创-n">'+
+        '<item id="'+ (++i) +'" name="中兴-n1" text="软创-n1"/>'+
+        '<item id="'+ (++i) +'" name="中兴-n2" text="软创-n2">'+
+          '<item id="'+ (++i) +'" name="中兴-n21" text="软创-n21" />'+
+          '<item id="'+ (++i) +'" name="中兴-n22" text="软创-n22" />'+
+          '<item id="'+ (++i) +'" name="中兴-n23" text="软创-n23" />'+
+          '<item id="'+ (++i) +'" name="中兴-n24" text="软创-n24" />'+
+          '<item id="'+ (++i) +'" name="中兴-n25" text="软创-n25" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+          '<item id="'+ (++i) +'" name="中兴-n21" text="软创-n21" />'+
+          '<item id="'+ (++i) +'" name="中兴-n22" text="软创-n22" />'+
+          '<item id="'+ (++i) +'" name="中兴-n23" text="软创-n23" />'+
+          '<item id="'+ (++i) +'" name="中兴-n24" text="软创-n24" />'+
+          '<item id="'+ (++i) +'" name="中兴-n25" text="软创-n25" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+          '<item id="'+ (++i) +'" name="中兴-n21" text="软创-n21" />'+
+          '<item id="'+ (++i) +'" name="中兴-n22" text="软创-n22" />'+
+          '<item id="'+ (++i) +'" name="中兴-n23" text="软创-n23" />'+
+          '<item id="'+ (++i) +'" name="中兴-n24" text="软创-n24" />'+
+          '<item id="'+ (++i) +'" name="中兴-n25" text="软创-n25" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+          '<item id="'+ (++i) +'" name="中兴-n22" text="软创-n22" />'+
+          '<item id="'+ (++i) +'" name="中兴-n23" text="软创-n23" />'+
+          '<item id="'+ (++i) +'" name="中兴-n24" text="软创-n24" />'+
+          '<item id="'+ (++i) +'" name="中兴-n25" text="软创-n25" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+          '<item id="'+ (++i) +'" name="中兴-n21" text="软创-n21" />'+
+          '<item id="'+ (++i) +'" name="中兴-n22" text="软创-n22" />'+
+          '<item id="'+ (++i) +'" name="中兴-n23" text="软创-n23" />'+
+          '<item id="'+ (++i) +'" name="中兴-n24" text="软创-n24" />'+
+          '<item id="'+ (++i) +'" name="中兴-n25" text="软创-n25" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+          '<item id="'+ (++i) +'" name="中兴-n22" text="软创-n22" />'+
+          '<item id="'+ (++i) +'" name="中兴-n23" text="软创-n23" />'+
+          '<item id="'+ (++i) +'" name="中兴-n24" text="软创-n24" />'+
+          '<item id="'+ (++i) +'" name="中兴-n25" text="软创-n25" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+          '<item id="'+ (++i) +'" name="中兴-n22" text="软创-n22" />'+
+          '<item id="'+ (++i) +'" name="中兴-n23" text="软创-n23" />'+
+          '<item id="'+ (++i) +'" name="中兴-n24" text="软创-n24" />'+
+          '<item id="'+ (++i) +'" name="中兴-n25" text="软创-n25" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+          '<item id="'+ (++i) +'" name="中兴-n21" text="软创-n21" />'+
+          '<item id="'+ (++i) +'" name="中兴-n22" text="软创-n22" />'+
+          '<item id="'+ (++i) +'" name="中兴-n23" text="软创-n23" />'+
+          '<item id="'+ (++i) +'" name="中兴-n24" text="软创-n24" />'+
+          '<item id="'+ (++i) +'" name="中兴-n25" text="软创-n25" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+          '<item id="'+ (++i) +'" name="中兴-n21" text="软创-n21" />'+
+          '<item id="'+ (++i) +'" name="中兴-n22" text="软创-n22" />'+
+          '<item id="'+ (++i) +'" name="中兴-n23" text="软创-n23" />'+
+          '<item id="'+ (++i) +'" name="中兴-n24" text="软创-n24" />'+
+          '<item id="'+ (++i) +'" name="中兴-n25" text="软创-n25" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+          '<item id="'+ (++i) +'" name="中兴-n21" text="软创-n21" />'+
+          '<item id="'+ (++i) +'" name="中兴-n22" text="软创-n22" />'+
+          '<item id="'+ (++i) +'" name="中兴-n23" text="软创-n23" />'+
+          '<item id="'+ (++i) +'" name="中兴-n24" text="软创-n24" />'+
+          '<item id="'+ (++i) +'" name="中兴-n25" text="软创-n25" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+        '</item>'+
+        '<item id="'+ (++i) +'" name="中兴-n3" text="软创-n3"/>'+
+      '</item>');
+  }
+  tmpArr.push('</items>');
+  //
+  var l2 = (new Date()).getTime();
+  document.all.adv.loadByXML(tmpArr.join(""));
+  //document.all.adv.loadByXML('<items></items>');
+  document.all.cont1C.innerHTML = "共 <font color='#CC3333'>"+ i +"</font> 行，控件耗时：<font color='#CC3333'>"+
+                                  ((new Date()).getTime()-l2) +"ms</font>&nbsp;&nbsp;";
+}
+
+/* 对象载入 */
+function loadByData(){
+
+ var a1 = new Array();
+   a1[0] = new Object();
+   a1[0].id = "1";
+   a1[0].name ="中兴0";
+   a1[0].text ="软创0";
+   a1[0].FONT_COLOR ="#F00";
+   a1[0].children = new Array();
+     a1[0].children[0] = new Object();
+     a1[0].children[0].id="0.0";
+     a1[0].children[0].name ="中兴0.0";
+     a1[0].children[0].text ="软创0.0";
+   //
+   a1[1] = new Object();
+   a1[1].id = "2";
+   a1[1].name ="中兴1";
+   a1[1].text ="南京中兴软创科技有限责任公司 研发部南京市雨花台区紫荆花路68号中兴研发基地";
+   a1[1].BG_COLOR ="#F4F4F4";
+   a1[1].children = new Array();
+     a1[1].children[0] = new Object();
+     a1[1].children[0].id="2.0";
+     a1[1].children[0].name ="中兴2.0";
+     a1[1].children[0].text ="软创2.0";
+   /////
+   var i=4;
+   for(var m=2; m<16; m++){
+     a1[m]=new Object();
+     a1[m].id = m;
+     a1[m].name ="中兴"+ m;
+     a1[m].text ="软创"+ m;
+     a1[m].children = new Array();
+     i++;
+     for(var n=0;n<70;n++){
+       a1[m].children[n] = new Object();
+       a1[m].children[n].id = "0"+ n;
+       a1[m].children[n].name ="中兴0"+ n;
+       a1[m].children[n].text ="软创0"+ n;
+       i++
+     }
+   }
+
+  var l2 = (new Date()).getTime();
+  document.all.adv.loadByData(a1);
+  //document.all.adv.loadByData(new Array());
+  //
+  document.all.cont1C.innerHTML = "共 <font color='#CC3333'>"+ i +"</font> 行，控件耗时：<font color='#CC3333'>"+ ((new Date()).getTime()-l2) +"ms</font>&nbsp;&nbsp;";
+}
+
+
+/* 链接1事件 */
+function event1(){
+  alert("名称："+ document.all.adv.selectedItem.name);
+}
+/* 链接2事件 */
+function event2(){
+  alert("描述："+ document.all.adv.selectedItem.text);
+}
+function cursorWait(ObjP){
+ ObjP.style.cursor = "wait";
+ ObjP.onmouseup = function(){this.style.cursor='default'};
+}
+////////////////////////////////////////////////////////////
+//-->
+</script>

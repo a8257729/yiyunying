@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>刷新缓存</title>
+<meta name="viewport"
+	content=" width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+<script src="../report/js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<style>
+.weui-toast {
+	width: 10.6em;
+}
+
+.weui-toast_content {
+	color: white;
+}
+</style>
+<body>
+	<div>
+	<form>
+	   <input type="button" value="刷新缓存" onclick="submitRefresh()">
+	
+	</form>
+	
+	</div>
+	
+  <script type="text/javascript">
+     function submitRefresh(){
+    	 console.log("刷新开始");
+    	 $.ajax({
+				type: "post",
+				url: '/MOBILE/api/client/assisstant/refreshConfig',
+				dataType: "json",
+				data: JSON.stringify({}),
+				contentType: "application/json",
+				success: function(data) {
+					console.log(JSON.stringify(data,null,2));
+					if(data.resultCode == '1000'){
+						alert("刷新成功！");
+					}else{
+						alert("刷新失败！");
+					}
+					
+				},
+				error: function() {
+					alert("刷新失败！");
+				}
+			});
+     }
+  </script>	
+</body>
+</html>

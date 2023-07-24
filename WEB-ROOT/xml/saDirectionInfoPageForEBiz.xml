@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+  <QueryMethod>saDirectionInfoPageForEBiz</QueryMethod>
+  <Return>
+    <ContentList>
+      <Content>
+        <Public>
+          <DireId>1403754</DireId>
+          <DireName>局向名称1</DireName>
+        </Public>
+      </Content>
+      <Content>
+        <Public>
+          <DireId>2403754</DireId>
+          <DireName>局向名称2</DireName>
+        </Public>
+      </Content>
+      <Content>
+        <Public>
+          <DireId>3403754</DireId>
+          <DireName>局向名称3</DireName>
+        </Public>
+      </Content>
+    </ContentList>
+    <Result>000</Result>
+    <ErrorDesc>查找成功</ErrorDesc>
+    <PageSize>20</PageSize>
+    <PageNum>1</PageNum>
+    <TotalPage>1</TotalPage>
+    <TotalNum>3</TotalNum>
+  </Return>
+</Data>

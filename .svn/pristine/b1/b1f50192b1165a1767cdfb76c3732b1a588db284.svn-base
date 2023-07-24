@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+  <QueryMethod>querySaWorkOrderForMonitor</QueryMethod>
+  <Return>
+    <ContentList>
+      <Content>
+        <Public>
+          <PartyType/>
+          <OrderTitle>移动宽带_故障_8400318667</OrderTitle>
+          <WorkOrderID>755024</WorkOrderID>
+          <OrderID>76033</OrderID>
+          <WorkOrderCode>20130819048680</WorkOrderCode>
+          <AccNbr>8400318667</AccNbr>
+          <ContactName>刘丽华</ContactName>
+          <DealManName>刘丽华(中山)</DealManName>
+          <ContactTel>15860028008</ContactTel>
+          <Address>广东省中山市大信新都花园30-101</Address>
+          <BokTime>2014-01-05 16:25:31</BokTime>
+          <FaultPhenomenaComment>宽带无法上网</FaultPhenomenaComment>
+          <IsPause>1</IsPause>          
+          <AlertState>10V</AlertState>
+          <AcceptDate>2013-08-19 14:43:33</AcceptDate>
+          <BookState>1</BookState>
+          <AcceptStaff>1</AcceptStaff>
+        </Public>
+      </Content>
+      <Content>
+        <Public>
+          <OrderTitle>模拟_故障_84999984</OrderTitle>
+          <WorkOrderID>760393</WorkOrderID>
+          <OrderID>760393</OrderID>
+          <WorkOrderCode>20130925050351</WorkOrderCode>
+          <AccNbr>84999984</AccNbr>
+          <ContactName>11123123</ContactName>
+          <ContactTel>1123123</ContactTel>
+          <DealManName>网运部</DealManName>
+          <Address>东</Address>
+          <BokTime></BokTime>
+          <FaultPhenomenaComment>部分台收不到</FaultPhenomenaComment>
+          <IsPause>0</IsPause>          
+          <AlertState>10V</AlertState>
+          <AcceptDate>2013-08-19 14:43:33</AcceptDate>
+          <BookState>0</BookState>
+          <AcceptStaff>1</AcceptStaff>
+        </Public>
+      </Content>
+      <Content>
+        <Public>
+          <OrderTitle>模拟_故障_84999984</OrderTitle>
+          <WorkOrderID>760393</WorkOrderID>
+          <OrderID>760393</OrderID>
+          <WorkOrderCode>20130925050351</WorkOrderCode>
+          <AccNbr>84999984</AccNbr>
+          <ContactName>11123123</ContactName>
+          <ContactTel>1123123</ContactTel>
+          <DealManName>平台人(网运部)</DealManName>
+          <Address>东</Address>
+          <BokTime>2013-08-19 14:43:33</BokTime>
+          <FaultPhenomenaComment>部分台收不到</FaultPhenomenaComment>
+          <IsPause>0</IsPause>          
+          <AlertState>10V</AlertState>
+          <AcceptDate>2013-08-19 14:43:33</AcceptDate>
+          <BookState>1</BookState>
+          <AcceptStaff>1</AcceptStaff>
+        </Public>
+      </Content>
+    </ContentList>
+    <Result>000</Result>
+    <ErrorDesc>查询成功</ErrorDesc>
+    <PageSize>10</PageSize>
+    <PageNum>1</PageNum>
+    <TotalPage>1</TotalPage>
+    <TotalNum>3</TotalNum>
+  </Return>
+</Data>

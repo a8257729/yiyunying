@@ -1,0 +1,1 @@
+var __RES_={a:"Frist",b:"Prev",c:"Next",d:"Last",e:"Total",f:"PageSize",g:"Page",h:"Goto",i:"Please enter number!",j:""}

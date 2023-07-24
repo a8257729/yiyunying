@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+	<QueryMethod>queryWorkOrderDetailForEBiz</QueryMethod>
+	<Return>
+		<Content>
+			<Public>
+			    <WorkOrderID>1403754</WorkOrderID>
+          		<OrderID>748543</OrderID>
+				<OrderCode>297884</OrderCode>
+				<AcceptStaff>杨秀妹3</AcceptStaff>
+				<CreateDate>2013-08-15 13:12:42</CreateDate>
+				<AcceptDate>2013-08-15 13:12:42</AcceptDate>
+				<BokTime>2013-08-15 13:12:42</BokTime>
+				<CustName>陈志业</CustName>
+				<CustOrderCode>ZS71509550</CustOrderCode>
+				<CustAddress>广东省中山市岐头新村龙凤街8号B幢首层1卡</CustAddress>
+				<Address>广东省中山市岐头新村龙凤街8号B幢首层1卡</Address>
+				<Comments>用户办理真高清49元B套餐（捆绑天华四套）承诺至少使用一年，期间不能办理产品转换、变更、销户、停机。一年后用户可办理转换为其它高清套餐。设备使用满六年后归用户所有。一后六年内办理停机的每月收取20元/台的资源占用费，
+				</Comments>
+				<ContactPhone>13640428417</ContactPhone>
+				<CustLinkPerson>农先生</CustLinkPerson>
+				<CustLinkPhone>13640428411</CustLinkPhone>
+				<TacheName>施工调度</TacheName>
+				<TacheCode>QGDD</TacheCode>
+				<ServiceName>单向高清-安装</ServiceName>	
+				<SlaTime>120</SlaTime>
+				<AccNbr>8627777</AccNbr>
+			</Public>
+			<Resource>
+				<Resinfo />
+				<Oldresinfo />
+			</Resource>
+		</Content>
+		<Result>000</Result>
+		<ErrorDesc>查询成功</ErrorDesc>
+	</Return>
+</Data>

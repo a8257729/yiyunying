@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content=" width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="/MOBILE/report/broadband/css/broadbandQuestionIndex.css"/>
+		<script type="text/javascript" src="/MOBILE/report/js/jquery-3.2.1.min.js" ></script>
+	</head>
+	<div id="index">
+		<div id="log">
+			<img src="/MOBILE/report/broadband/img/log.png"/ >
+			<span id="biaoti">湖南宽带客服系统</span>
+			<img id="back" src="/MOBILE/report/broadband/img/nav_icon_arrow.png"  onclick="javascript:window.history.back(-1);" style="width:10%;height:35px;position: absolute;top:5%;"/>
+		</div>
+		<div id="question">
+			<div id="into_customer_service">进入客服</div> 									 		
+			<div id="question_bank" >问题题库</div>										  											                                                                                                                                                                                                             	
+		</div>
+		<div id="hot" >
+			<span style="font-size:15px;color:red;">热门问题</span>	
+		</div>
+		<div id="hotDiv">
+			
+		</div>
+	<script type="text/javascript">
+		var staff_id = "73316";
+		var mobile_tel = "18570326363";
+		var acronym = "0731";
+		
+		window.onload=function(){
+			//从url中获取staff_id=73316&mobile_tel=18570326363&acronym=0731
+			//查询热门问题
+			staff_id = getUrlParam("staff_id");
+			mobile_tel = getUrlParam("mobile_tel");
+			acronym = getUrlParam("acronym");
+			
+			var paramIds ={};
+			
+			$.ajax({
+				url:"/MOBILE/api/broadband/question_bank/query/hot",
+				type:"post",
+				data:JSON.stringify(paramIds),
+				contentType:"application/json",
+				dataType:"json",
+				success:function(data){
+					console.log("参数查询成功！");
+					var hotQustion =  data.resultData.hotQustion
+					for(var i=0;i<hotQustion.length;i++){
+						var html = "<div class='tr'>"+
+										"<span >"+(i+1)+"、<span>"+hotQustion[i].QUESTION_TITLE+"</span></span>"+
+									"</div>";
+									
+						$("#hotDiv").append(html);
+							
+					}
+					
+					//跳转到问题题库查询子问题
+					$(".tr").unbind("click").click(function(){
+						debugger;
+						var smallTitle = $(this).find("span span").text();
+						url = encodeURI("/MOBILE/report/broadband/questionDetail.html?smallTitle="+smallTitle);
+						location.href=url;
+					});
+					
+					
+				},
+				error:function(e){
+					console.log("参数查询失败");
+				}
+			})
+			
+		}
+		
+		
+		function getUrlParam(name) {
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 构造一个含有目标参数的正则表达式对象
+			var r = window.location.search.substr(1).match(reg);  // 匹配目标参数
+			if (r != null) return unescape(r[2]); return null; // 返回参数值
+		}
+
+		
+		//进入客服
+		$("#into_customer_service").click(function(){
+			window.location.href="https://ltkefu.hnzmtq.com/kefu_isset_record.html?staff_id="+staff_id+"&mobile_tel="+mobile_tel+"&acronym="+acronym;
+		});
+		
+		
+		
+		//问题题库
+		$("#question_bank").click(function(){
+			console.log("进入问题库");
+			window.location.href="/MOBILE/report/broadband/broadbandQuestionBank.html";
+		});
+		
+	</script>
+</html>

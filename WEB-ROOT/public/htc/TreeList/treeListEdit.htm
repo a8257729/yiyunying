@@ -1,0 +1,302 @@
+<html xmlns:ZTESOFT>
+<head>
+<title>编辑DataGrid</title>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<style type="text/css">
+body{font-size:13px}
+.treelist{selectedBgColor:#AFDAFF;behaviorPath:;}
+</style>
+<?IMPORT NAMESPACE="ZTESOFT" IMPLEMENTATION="TreeListEdit.htc" />
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+
+<div  style="display:none"></div>
+
+<div id="tldiv1">
+  <ZTESOFT:treelist id="tlDemo" class="treelist" width="100%" height="200"  contBorder="true"
+     pagiClient="true" checkParent="true"
+     showTitleCheck="true" sorted="true" showImage="true" showBorder="false" showCheck="true" checkAll="false" checkChildren="true"
+     onItemClick="" onItemDblClick="alert('dblclick')" onItemContextMenu="alert('itemMenu')"
+     onDivContextMenu="alert('DivMenu')" onItemChecked="alert('check')">
+    <ZTESOFT:columns>
+      <ZTESOFT:column width="50%" display="true" displayText="ID" propertyName="id" sortType="Number" titleStyle="color:#FF0000" displayTip="true" />
+      <ZTESOFT:column width="30%" display="true" displayText="名称名称" propertyName="name" sortType="String" editType="text" titleStyle="text-align:left" displayTip="true" />
+      <ZTESOFT:column width="20%" display="true" displayText="数字" propertyName="text" editType="text" checkProperty="numberValidate" />
+    </ZTESOFT:columns>
+  </ZTESOFT:treelist>
+  
+</div>
+<div id="cont1C" align="right">&nbsp;</div>
+<table width="100%"  border="1" cellspacing="0" cellpadding="3" style="border-collapse : collapse">
+  <tr>
+    <td colspan="4" bgcolor="#F3F3F3" style="font-size:13px">&nbsp;操作</td>
+  </tr>
+  <tr>
+    <td><input type="button" value="loadByXML数据" id="b1" onmousedown="cursorWait(this)" onClick="loadByXML()"></td>
+    <td><input type="button" value="loadByData数据" id="b1_1" onmousedown="cursorWait(this)" onClick="loadByData()"></td>
+    <td>&nbsp;</td>
+    <td><input type="button" value="获得总节点数" id="b4_1" onClick="getItemsLen()"></td>
+  </tr>
+  <tr>
+    <td><input type="button" value="新增根节点" id="b9" onClick="addRootNode()"></td>
+    <td><input type="button" value="删除节点" id="b10" onClick="remove()"></td>
+    <td><input type="button" value="更新节点数据" id="b7" onClick="updateNode()"></td>
+    <td><input type="button" value="改变第1列的名字" onClick="change0Name()"></td>
+  </tr>
+  <tr>
+    <td><input type="button" value="设置节点属性" id="b11" onClick="setProperty()"></td>
+    <td><input type="button" value="获得选择行的数据" id="b3" onClick="getSelItem1()"></td>
+    <td><input type="button" value="id列排序" id="b31" onClick="idSort()"></td>
+    <td><input type="button" value="设置checkbox无效" onClick="checkDisabled()"></td>
+  </tr>
+  <tr>
+    <td><input type="button" value="获得checked选择状态" id="b13" onClick="getChecked()"></td>
+    <td><input type="button" value="设置checked不选" id="b2" onClick="setChecked()"></td>
+    <td><input type="button" value="获得checked选择集合" id="b2" onClick="getCheckedItems()"></td>
+    <td><input type="button" value="清空数据" id="b5" onClick="clear1()"></td>
+  </tr>
+</table>
+<input type="button" value="显示" onClick="setDisplay()">
+
+</body>
+</html>
+<script language="javascript">
+<!--
+/* 校验函数 */
+function numberValidate(value){
+  _val = value.replace(/(^\s*)|(\s*$)/g, "");
+  if(isNaN(parseInt(_val,10))){
+    alert("请录入数字！");
+    return false; //校验失败
+  }
+  return true; //校验成功
+}
+
+
+function setDisplay(){
+  document.all.tldiv1.style.display = "";
+}
+
+/* 点击事件 */
+function clickEvt(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  alert(selItem.id);
+
+}
+
+/* 改变第1列的名字 */
+function change0Name(){
+  var tl2 = document.all.tlDemo;
+  tl2.setDisplayText(0,"标识");
+}
+
+/* 后台分页函数 */
+function qryPagination(pPage){
+  var tl2 = document.all.tlDemo;
+  //正式
+  //var recVal = callRemoteFunction("","" ,pPage ,tl2.pageSize);
+  //分页
+  //tl2.setPagiRecords(recVal.totalRecords, pPage);
+  //tl2.loadByXML(recVal.data);
+
+  //测试
+  tl2.paginate(100, pPage);
+  //loadByXML();
+  //alert("分页完成!");
+}
+//qryPagination(2);
+
+/* id列排序 */
+function idSort(){
+  //
+  var tl2 = document.all.tlDemo;
+  tl2.sort("id");
+}
+/* 设置checkbox无效 */
+function checkDisabled(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.setCheckDisabled(true);
+}
+
+/* 通过对象载入 */
+function loadObject(){
+  var tl2 = document.all.tlDemo;
+  if(!tl2) return;
+
+  var ntl = tl2.newTreeList();  //创建treelistDom
+  for(var i=0;i<100;){
+    ntl.addItem(++i, "中兴fasdfasdfasdfasdafasdfasdfsadf"+i, "软创d"+i);
+  }
+
+  var l2 = (new Date()).getTime();
+  ntl.loaded();  //装载显示数据
+  ntl.destroy; ntl = null; //销毁
+
+  document.all.cont1C.innerHTML = "共 <font color='#CC3333'>"+ i +"</font> 行，控件耗时：<font color='#CC3333'>"+((new Date()).getTime()-l2) +"ms</font>&nbsp;&nbsp;";
+}
+
+
+/* 获得选择check集合 */
+function getCheckedItems(){
+  var arr = document.all.tlDemo.checkedItems;
+  if(arr.length>0)
+    alert("check个数："+ arr.length +"  一节点描述："+ arr[0].text);
+  else
+    alert("没有check选择节点！");
+}
+
+/* 设置check不选 */
+function setChecked(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.setChecked(false);
+}
+
+/* 获得选择节点的check状态 */
+function getChecked(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  alert(selItem.getChecked());
+}
+
+/* 获得选择行的描述 */
+function getSelItem1(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+
+  alert("节点描述："+ selItem.name);
+}
+
+/* 设置节点属性 */
+function setProperty(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.setChecked(true);
+  selItem.setImage("images/openicon.gif");
+  selItem.setBgColor("#F4F4F4");
+  selItem.setFontColor("#009");
+}
+
+/* 更新节点 */
+function updateNode(){
+  var tl2 = document.all.tlDemo;
+  var node = tl2.selectedItem;
+  if(node==null){alert("没有数据");return;}
+
+  node.setAttribute("id","999");
+  node.setAttribute("text","外面");
+  node.name="世界";
+
+  node.refresh();
+}
+
+/* 删除节点 */
+function remove(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.remove();
+}
+
+/* 增加根节点 */
+function addRootNode(){
+  var tl2 = document.all.tlDemo;
+  var node = tl2.createTreeNode();
+
+  node.id   = "888";
+  node.name = "ndd";
+  node.text = "好人";
+  node.age = "29";
+
+  tl2.add(node);
+  //把该节点选择上，如果批量插入，建议不要选择
+  node.setSelected();
+}
+
+/* 获得总节点数 */
+function getItemsLen(){
+  alert(document.all.tlDemo.itemsLength);
+}
+
+/* 清空 */
+function clear1(){
+  document.all.tlDemo.clear();
+}
+
+/* 载入数据 */
+function loadByXML(){
+  var tmpArr = new Array();
+
+  tmpArr.push('<items>');
+  for(var j=0;j<100;j++){
+    tmpArr.push('<item id="'+ j +'" name="中兴dfgdfgsdfgsdfgsdfgsdfgsdf'+ j +'" text="软创-nsdfasdfasdfasdfad" age="23" />');
+  }
+  tmpArr.push('</items>');
+  //
+  var l2 = (new Date()).getTime();
+  document.all.tlDemo.loadByXML(tmpArr.join(""));
+  document.all.cont1C.innerHTML = "共 <font color='#CC3333'>"+ j +"</font> 行，控件耗时：<font color='#CC3333'>"+
+                                  ((new Date()).getTime()-l2) +"ms</font>&nbsp;&nbsp;";
+}
+/* 对象载入 */
+function loadByData(){
+
+ var a1 = new Array();
+   a1[0] = new Object();
+   a1[0].id = "1";
+   a1[0].name ="中兴0";
+   a1[0].text ="软创0";
+   a1[0].FONT_COLOR ="#F00";
+   //
+   a1[1] = new Object();
+   a1[1].id = "2";
+   a1[1].name ="中兴1";
+   a1[1].text ="软创1";
+   a1[1].BG_COLOR ="#F4F4F4";
+   /////
+   var i=2;
+
+   for(var m=2; m<3; m++){
+     a1[m]=new Object();
+     a1[m].id = m;
+     a1[m].name ="中兴"+ m;
+     a1[m].text ="软创"+ m;
+     i++;
+   }
+
+
+  var l2 = (new Date()).getTime();
+  document.all.tlDemo.loadByData(a1);
+  //document.all.tlDemo.loadByData(new Array());
+  //
+  document.all.cont1C.innerHTML = "共 <font color='#CC3333'>"+ i +"</font> 行，控件耗时：<font color='#CC3333'>"+((new Date()).getTime()-l2) +"ms</font>&nbsp;&nbsp;";
+}
+
+/* 链接1事件 */
+function event1(){
+  alert("名称："+ document.all.tlDemo.selectedItem.name);
+}
+/* 链接2事件 */
+function event2(){
+  alert("描述："+ document.all.tlDemo.selectedItem.id);
+}
+function cursorWait(ObjP){
+ ObjP.style.cursor = "wait";
+ ObjP.onmouseup = function(){this.style.cursor='default'};
+}
+////////////////////////////////////////////////////////////
+//-->
+</script>

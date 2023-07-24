@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+  <QueryMethod>querySaPrivateWorkOrderForEBiz</QueryMethod>
+  <Return>
+    <ContentList>
+      <Content>
+        <Public>
+          <OrderTitle>(退)数字_故障_8400575234</OrderTitle>
+          <WorkOrderID>1394522</WorkOrderID>
+          <WorkOrderCode>2549920130815043369FWBZ_CL2</WorkOrderCode>
+          <ProfType>数字</ProfType>
+          <AccNbr>8400575234</AccNbr>
+          <CustLinkPerson>林玉满</CustLinkPerson>
+          <CustLinkPhone>88381673</CustLinkPhone>
+          <Address>广东省中山市东区顺景花园13幢503</Address>
+          <BokTime>2014-01-04 23:42:49</BokTime>
+          <FaultPhenomenaComment>机顶盒不能开机至“首页”</FaultPhenomenaComment>
+          <WorkOrderState>N</WorkOrderState>
+          <OrderState>2</OrderState>
+          <OrderCode>2549920130815043369</OrderCode>
+          <FirstDealTime>2013-08-15 11:39:52</FirstDealTime>
+          <AlertState>10V</AlertState>
+          <AcceptStaff>543</AcceptStaff>
+　　　　　　<BookState>1</BookState>
+        </Public>
+      </Content>      
+      <Content>
+        <Public>
+          <OrderTitle>模拟_故障_84999982</OrderTitle>
+          <WorkOrderID>1411253</WorkOrderID>
+          <WorkOrderCode>20130925050291FWBZ_CL1</WorkOrderCode>
+          <ProfType>模拟</ProfType>
+          <AccNbr>84999982</AccNbr>
+          <CustLinkPerson>1</CustLinkPerson>
+          <CustLinkPhone>1</CustLinkPhone>
+          <Address>东部</Address>
+          <BokTime></BokTime>
+          <FaultPhenomenaComment>无信号</FaultPhenomenaComment>
+          <WorkOrderState>2</WorkOrderState>
+          <OrderState>2</OrderState>
+          <OrderCode>20130925050291</OrderCode>
+          <FirstDealTime>2013-09-25 16:47:07</FirstDealTime>
+          <AlertState>10V</AlertState>
+          <BookState>0</BookState>
+          <AcceptStaff>1</AcceptStaff>
+        </Public>
+      </Content>    
+    </ContentList>
+    <Result>000</Result>
+    <ErrorDesc>查找成功</ErrorDesc>
+    <PageSize>10</PageSize>
+    <PageNum>1</PageNum>
+    <TotalPage>2</TotalPage>
+    <TotalNum>19</TotalNum>
+  </Return>
+</Data>

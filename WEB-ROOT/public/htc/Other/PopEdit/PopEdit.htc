@@ -1,0 +1,200 @@
+<public:component tagName="PopEdit">
+	<public:defaults viewLinkContent/>	
+	<public:property name="value"  get="getObjValue" put="setObjValue"/>
+	<public:property name="openUrl"  put="setOpenUrl"/>
+	<public:property name="dispStyle" put="setStyle"/>
+	<public:property name="initDialog" get="getinitDialogObj" put="setinitDialogObj"/>
+	<public:property name="disable"  put="setDisabled"/>
+	<public:property name="txtDisabled"  put="setTxtDisabled"/>
+	<public:property name="btnDisabled"  put="setBtnDisabled"/>
+	<public:property name="winOpen"  put="setWinOpen"/>
+	<public:property name="width" put="setWidth" />
+	<public:property name="txtValue" get="getTxtValue" />
+	<public:property name="oldValue" get="getOldValue" />
+	<public:method name="onTxtFocus"/>
+	<public:event name="onEditBlur" id="_onBlur"/>
+	<PUBLIC:EVENT Name="onchange" ID="_onchange" />	
+	<public:event name="onWinReturn" id="_onWinReturn"/>
+	<public:event name="onWinNotOpen" id="_onWinNotOpen"/>
+	
+
+</public:component>
+<link href=""/IOMPROJ/public/css/style.css" rel="stylesheet" type="text/css">
+<table border="0" cellpadding=0 cellspacing=0 bgcolor=##6699cc  height=20  id="Table10">
+        <tr bgcolor=#ffffff> 
+          <td width=100% align="left" valign="middle"><INPUT id="_editName" type="text" style="width:110px" onchange="_onchange.fire();" onblur="txtOnBlur();"><span id="_spanImg"><input ID="_popBt" type="image" class="button_img" ONCLICK="showDilog()" onmouseover="fncOnMouseOver();" src="/IOMPROJ/public/htc/DateTimeText/popedit.gif" align="top" width="18" height="19" border="0" hspace="1" vspace="1"></span></td>
+        </tr>	
+ </table>
+ 
+ <script language="javascript">
+ var g_openUrl;
+ var g_style;
+ var _oldDisplayName="";
+ var g_objValue=new Object();
+ var gBtnDisabled;
+ var _winOpen=true;
+ var _initDialogObj=new Object();//对弹出窗体进行初始化的对象
+ function showDilog()
+ {
+	if (gBtnDisabled==true)
+	{
+		return false;
+	}
+	if (g_style==null)
+		g_style="dialogWidth:700px;dialogHeight:300px";
+	if (_winOpen)
+	{
+		var reqSel = window.showModalDialog(g_openUrl,_initDialogObj,g_style+";status:no");
+		if(reqSel!=null)
+		{
+			_oldDisplayName=_editName.value;
+			_editName.value=reqSel.DisplayName;
+			g_objValue=reqSel;
+			_initDialogObj.selectedList=reqSel;
+			var evt=createEventObject();
+			_onWinReturn.fire(evt);
+		}
+	}
+	else
+	{
+		var vet=createEventObject();
+		_onWinNotOpen.fire(vet);
+	}
+}
+
+function setOpenUrl(str){
+	g_openUrl=str;
+}
+
+function setStyle(_style)
+{
+	g_style=_style;
+}
+
+function setObjValue(_objValue)
+{	
+	g_objValue=_objValue;
+	if (g_objValue==null)
+	{
+		_editName.value="";
+		g_objValue= new Object();
+	}
+	else
+	{
+		_editName.value=g_objValue.DisplayName;	
+	}
+}
+
+function getObjValue()
+{
+	if (_editName.value=="")
+	{
+		return null;
+	}
+	g_objValue.DisplayName=_editName.value;
+	return g_objValue;
+}
+
+function getinitDialogObj()
+{
+	return _initDialogObj;
+}
+
+function setinitDialogObj(obj)
+{
+	_initDialogObj=obj;
+}
+
+function setDisabled(value)
+{
+	if (value=="true" || value==true)
+	{
+		_editName.disabled=true;
+		gBtnDisabled=true;
+	}
+	else
+	{
+		_editName.disabled=false;
+		gBtnDisabled=false;
+	}
+}
+
+function setWidth(value)
+{
+	_editName.style.width=value-17;
+}
+
+function txtOnBlur()
+{
+	if (_editName.value!="")
+	{
+		var evt=createEventObject();
+		_onBlur.fire(evt);
+	}
+}
+
+function getTxtValue()
+{
+	return _editName.value;
+}
+
+function onTxtFocus()
+{
+	_editName.focus();
+}
+
+function setTxtDisabled(value)
+{
+	if (value==true || value=="true")
+	{
+		_editName.disabled=true;
+	}
+	else
+	{
+		_editName.disabled=false;
+	}
+}
+
+function setBtnDisabled(value)
+{
+	if (value=="true" || value==true)
+	{
+		_spanImg.disabled=true;
+		gBtnDisabled=true;
+	}
+	else
+	{
+		_spanImg.disabled=false;
+		gBtnDisabled=false;
+	}
+}
+
+function getOldValue()
+{
+	return _oldDisplayName;
+}
+
+function setWinOpen(value)
+{
+	if (value==true || value=="true")
+	{
+		_winOpen=true;
+	}
+	else
+	{
+		_winOpen=false;
+	}
+}
+
+function fncOnMouseOver()
+{
+	if (gBtnDisabled)
+	{
+		_popBt.style.cursor="default";
+	}
+	else
+	{
+		_popBt.style.cursor="hand";
+	}
+}
+</script>

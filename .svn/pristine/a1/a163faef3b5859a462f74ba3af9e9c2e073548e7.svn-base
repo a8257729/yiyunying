@@ -1,0 +1,583 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head >
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content=" width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" /> 
+    <title>查询页面</title>
+</head>
+
+<style type="text/css">
+	*{padding:0px; margin:0px;}
+   #tab{width:100%;}
+   #tab ul{list-style:none; height:30px;line-
+   height:30px;
+        border-bottom:2px #C88 solid;}
+   #tab ul li{background:#FFF;cursor:pointer;float:left;text-align: center;
+    list-style:none height:35px;width:49.3%;line-height:35px;
+    border:1px solid #BBB; border-bottom:2px solid #88B2CC;}
+   #tab ul li.on{border-top:2px solid gray; border-bottom:2px solid #FFF;}
+   #tab div{height:80px;width:100%;line-height:80px;text-align: center;  
+             border:1px solid #336699;}
+   .hide{display:none;}
+   .search_value:focus{border:1px solid orange;}
+	table th{
+        text-align:center;
+        text-align:justify;
+        text-justify:distribute-all-lines;
+        text-align-last:justify
+	}
+	th{width:32%;color:#336699;font-size:14px}
+	td{color:#336699;font-size:14px;position:absolute;margin-left:2%}
+	#end {
+			
+			border: 1px solid transparent;
+			width: 100%;
+			height: 180px;
+			margin-top:50px;
+		}
+		
+		/* #bind {
+			position: absolute;
+			border: 1px solid transparent;
+			border-radius: 15px;
+			background-color: orange;
+			width: 120px;
+			height: 50px;
+			margin-left:31%;
+			margin-top:50px;
+			text-align: center;
+			line-height: 50px;
+		}
+		
+		
+		#unbind {
+			position: absolute;
+			border: 1px solid transparent;
+			border-radius: 15px;
+			background-color: #1c80d5;
+			width: 80px;
+			height: 50px;
+			margin-left:58%;
+			margin-top:50px;
+			text-align: center;
+			line-height: 50px;
+			
+		} */
+		#bind,#bt_modify_HD,#bt_reset_acc{
+			border:1px solid transparent;
+			width:120px;
+			height:35px;
+			/*margin-left:10%;*/
+			color:white;
+		}
+		#bind{
+			background-color: orange;
+		}
+		#bt_modify_HD{
+			background-color: #FFA500;
+		}
+		#bt_reset_acc{
+			background-color: #FF0000;
+		}
+		.black_overlay {
+				display: none;
+				position: absolute;
+				top: 0%;
+				left: 0%;
+				width: 100%;
+				height: 100%;
+				background-color: black;
+				z-index: 1001;
+				-moz-opacity: 0.8;
+				opacity: .80;
+				filter: alpha(opacity=80);
+			}
+			
+			.white_content {
+				display: none;
+				position: absolute;
+				top: 38%;
+				left: 6%;
+				width: 80%;
+				height: 28%;
+				border: 16px solid lightblue;
+				background-color: white;
+				z-index: 1002;
+				overflow: auto;
+			}
+			
+			.top {
+				border: 1px solid transparent;
+				width: 99%;
+				height: 40px;
+				text-align: center;
+				line-height: 40px;
+			}
+			#modify {
+			background-color: #1B9AF7;
+			color: white;
+			margin-left: 15px;
+			padding: 2px 2px;
+		}
+		
+</style>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+   
+  window.onload = function(){
+    var myTab = document.getElementById("tab");    //整个div
+    var myUl = myTab.getElementsByTagName("ul")[0];//一个节点
+    var myLi = myUl.getElementsByTagName("li");    //数组
+    var myDiv = myTab.getElementsByTagName("div"); //数组	
+    for(var i = 0; i<myLi.length;i++){
+        myLi[i].index = i;
+        myLi[i].onclick = function(){
+            for(var j = 0; j < myLi.length; j++){
+                myLi[j].className="off";
+                myDiv[j].className = "hide";
+            }
+            this.className = "on";
+            myDiv[this.index].className = "show";
+        }
+      }
+    }
+</script>
+<body>
+<div id="box_tops" style="width:100%;height: 33px;border: 1px solid transparent;background-color:orange;line-height:33px;text-align:center;color:white;font-size:20px;">
+			查询页面
+</div>
+<div id = "tab">
+        <ul>
+        	<li class="on" id="case_left">根据业务账号查询</li>
+        	<li class="off" id="case_right">根据MAC查询</li>
+        </ul>
+    <div id="firstPage" class="show" style="border:1px solid transparent">
+           <input  type="text"  id="search_value1" class="search_value"  placeholder="业务号码格式如2351351A@tv"    style="width:220px;height:30px;"/>
+		   <input  type="button"  id="bt1" value="查询"    style="width:50px;height:32px;font-size:14px;background-color:orange;color:white;" onclick="account()"/>	
+    </div>
+    <div id="secondPage" class="hide" style="border:1px solid transparent">
+           <input  type="text"  id="search_value2" class="search_value"  placeholder="请输入您需要查询MAC"    style="width:220px;height:30px;"/>
+		   <input  type="button"  id="bt2" value="查询"    style="width:50px;height:32px;font-size:14px;background-color:orange;color:white;" onclick="mac()"/>	
+    </div>
+</div>
+<div id="rs1" style="border: 1px transparent ;height: auto;display:none;margin-left:12%">
+    	
+</div>
+<div id="rs2" style="border: 1px transparent ;height: auto;display:none;margin-left:12%">
+    	
+</div>
+<div id="fade" class="black_overlay"></div>
+		<div id="MyDiv" class="white_content">
+			<div style="text-align: right; cursor: default; height: 40px;" id="move">
+				<span style="font-size: 16px;" onclick="CloseDiv('MyDiv','fade')">关闭</span>
+			</div>
+			<div  class="top" >
+				<input type="text" id="search_value" name="search_value" style="width:58%;height:22px;" />
+				<input type="button" id="bt" value="绑定" style="width:50px;height:29px;font-size:14px;" />
+			</div>
+		</div>
+		
+<div id="fade1" class="black_overlay"></div>
+		<div id="MyDiv1" class="white_content">
+			<div style="text-align: right; cursor: default; height: 40px;" id="move1">
+				<span style="font-size: 16px;" onclick="CloseDiv1('MyDiv1','fade1')">关闭</span>
+			</div>
+			该号码已被绑定，如需绑定，请先解绑！
+		</div>
+		
+		
+<div id="end" style="display:none;text-align:center">
+		<input type="button" id="bind" value="绑定" />
+		<!--<input type="button" id="bt_modify_HD" value="修改高清" onclick="modifyHDByAccount()"/>
+		<input type="button" id="bt_reset_acc" value="复机" onclick="resetByAccount()"/>
+		-->
+</div>
+</body>
+<script type="text/javascript">
+	
+	//显示弹出层
+	function ShowDiv(show_div,bg_div){
+		debugger;
+		document.getElementById(show_div).style.display='block';
+		document.getElementById(bg_div).style.display='block' ;
+		var bgdiv = document.getElementById(bg_div);
+		bgdiv.style.width = document.body.scrollWidth;
+		// bgdiv.style.height = $(document).height();
+		$("#"+bg_div).height($(document).height());
+	};
+	
+	
+	
+	
+	//关闭弹出层
+	function CloseDiv(show_div,bg_div){
+		debugger;
+		document.getElementById(show_div).style.display='none';
+		document.getElementById(bg_div).style.display='none';
+	};
+
+	
+	function ShowDiv1(show_div,bg_div){
+		debugger;
+		document.getElementById(show_div).style.display='block';
+		document.getElementById(bg_div).style.display='block' ;
+		var bgdiv = document.getElementById(bg_div);
+		bgdiv.style.width = document.body.scrollWidth;
+		// bgdiv.style.height = $(document).height();
+		$("#"+bg_div).height($(document).height());
+	};
+	
+	function CloseDiv1(show_div,bg_div){
+		debugger;
+		document.getElementById(show_div).style.display='none';
+		document.getElementById(bg_div).style.display='none';
+	};
+	
+	
+	
+	//根据业务号码查询
+	function account(){
+		debugger;
+		var command = "QA";
+		var account = $("#search_value1").val();
+		if(account==""||account==null){
+			alert("查询的账号不能为空");
+			return;
+		}
+		$.ajax({
+				type:"get",
+				url:"/MOBILE/userInfoServlet",
+				data:{"loginAccount":account,"command":command},
+				contentType:"json",
+				success:function(data){
+					debugger;
+					var rs = JSON.parse(data);
+					if(rs.result==1){
+						alert("用户不存在");
+						return;
+					}else{
+					var status = "";
+					var platformid= "";
+					if(rs.status=="1"){
+						status = "正常";
+					}else if(rs.status=="2"){
+						status = "停机";
+					}else if(rs.status=="3"){
+						status = "销户";
+					}
+					
+					if(rs.platformid=="1"){
+						platformid="华为";
+					}else if(rs.platformid=="2"){
+						platformid="中兴";
+					}
+					
+					var html="";
+						html+= "<table border='0px ' cellspacing='0' cellpadding='0' style='width:100%'>"+
+									"<tr >"+
+											"<td colspan='2' style='text-align:left;margin-button:3%;font-size:18px'><b></b></td>"+
+									"</tr>"+
+									"<tr>"+
+											"<th >IPTV账号:</th>"+
+											"<td id='account'>"+rs.loginAccount+"</td>"+
+									"</tr>"+
+									"<tr>"+
+											"<th >IPTV状态:</th>"+
+											"<td>"+status+"</td>"+
+									"</tr>"+
+									"<tr>"+
+											"<th>手机号:</th>"+
+											"<td >"+rs.phoneNum+"</td>"+
+									"</tr>"+
+									"<tr>" +
+											"<th >高清标识:</th>" +
+											"<td id='termtype'>" + rs.termtype + "<input type='button' value='修改' style='background-color:#32CD32;width:50px' id='modify' onclick='modifyHd();'/></td>" +
+									"</tr>"+
+									"<tr>" +
+											"<th >童锁密码:</th>" +
+											"<td id='pwd'>" + "" + "</td>" +
+									"</tr>" +
+									"<tr>" +
+											"<th >机顶盒版本:</th>" +
+											"<td >" + '' + "</td>" +
+									"</tr>" +
+									"<tr>" +
+											"<th >最后登录时间:</th>" +
+											"<td >" + '' + "</td>" +
+									"</tr>" +
+									"<tr id='mac_tr'>"+
+											"<th >绑定MAC:</th>"+
+											"<td id='mac'>"+rs.mac+"</td>"+
+									"</tr>"+
+									"<tr>"+
+											"<th >区域标识:</th>"+
+											"<td id='areano'>"+rs.areano+"</td>"+
+									"</tr>"+
+									"<tr>"+
+											"<th >归属平台:</th>"+
+											"<td >"+platformid+"</td>"+
+									"</tr>"+
+								"</table>";
+					$("#rs1").html(html);
+					$("#rs1").css("display","block");					
+					$("#end").css("display","block");
+					queryChildLock();
+					}
+				},
+				error:function(){
+					alert("账号查询执行异常，请联系系统管理员");
+				}	
+		});
+	}
+	
+	
+	//根据MAC查询
+	function mac(){
+		debugger;
+		var command = "QM";
+		var mac = $("#search_value2").val();
+		if(mac==""||mac==null){
+			alert("查询的MAC不能为空");
+			return;
+		}
+		$.ajax({
+				type:"get",
+				url:"/MOBILE/userInfoServlet",
+				data:{"mac":mac,"command":command},
+				contentType:"json",
+				success:function(data){
+					debugger;
+					var rs = JSON.parse(data);
+					if(rs.result==1){
+						alert("用户不存在");
+						return;
+					}else{
+					var groupid ="";
+					var platformType ="";
+					if(rs.groupid=="0"){
+						groupid="公众";
+					}else if(rs.groupid=="1"){
+						groupid="酒店";
+					}
+					
+					if(rs.platformType=="1"){
+						platformType="华为";
+					}else if(rs.platformType=="2"){
+						platformType="中兴";
+					}
+					var html="";
+						html+= "<table border='0px' cellspacing='0' cellpadding='0'>"+
+									"<tr>"+
+											"<td colspan='2' style='text-align:left;font-size:18px'><b></b></td>"+
+									"</tr>"+
+									"<tr >"+
+											"<th>绑定MAC:</th>"+
+											"<td id='mac'>"+rs.mac+"</td>"+
+									"</tr>"+
+									"<tr>"+
+											"<th>IPTV账号:</th>"+
+											"<td>"+rs.username+"</td>"+
+									"</tr>"+
+									"<tr>"+
+											"<th>IPTV密码:</th>"+
+											"<td>"+rs.password+"</td>"+
+									"</tr>"+
+									"<tr>"+
+											"<th>平台标识:</th>"+
+											"<td>"+platformType+"</td>"+
+									"</tr>"+
+									"<tr>"+
+											"<th>分组标识:</th>"+
+											"<td>"+groupid+"</td>"+
+									"</tr>"+
+									"<tr>"+
+											"<th>区域标识:</th>"+
+											"<td>"+rs.areano+"</td>"+
+									"</tr>"+
+								"</table>"
+									;
+
+					$("#rs2").html(html);
+					}
+				},
+				error:function(){
+					alert("MAC查询执行异常");
+				}
+				
+			});
+	}
+	
+	
+	//根据业务账号复机
+	function resetByAccount(){
+		debugger;
+		var command = "R";
+		var account = $("#search_value1").val();
+		var HD =  $("#termtype").text();
+		if(account==""||account==null){
+			alert("账号不能为空，复机操作被取消");
+			return;
+		}	
+		$.ajax({
+				type:"get",
+				url:"/MOBILE/userInfoServlet",
+				data:{"loginAccount":account,"command":command,"HD":HD},
+				contentType:"json",
+				success:function(data){
+					debugger;
+					var JsonStringObj = JSON.parse(data);
+					if(0==JsonStringObj.result){
+						alert("复机成功！");
+					}else{
+						alert("复机失败！");
+					}
+				},
+				error:function(){
+					alert("复机操作执行失败，请联系系统管理员!");
+				}
+			});
+	}
+	
+	//根据业务账号修改用户高清类型
+	function modifyHd(){
+		debugger;
+		var loginAccount =  $("#account").text();
+		window.location.href="modifyHD.html?loginAccount="+loginAccount;
+	}
+	
+	
+	//业务号码选显卡
+	$("#case_left").click(function(){
+		$("#rs1").css("display","block");
+		$("#rs2").css("display","none");
+	});
+	
+	//mac选显卡
+	$("#case_right").click(function(){
+		$("#rs2").css("display","block");
+		$("#rs1").css("display","none");
+	});
+	
+	
+	
+	//绑定
+	$("#bind").click(function(){
+		debugger;
+		$("#unbind_rs").remove();//移除解绑的结果
+		var mac=$("#mac").text();
+		if(mac!=""&&mac!=null){
+			ShowDiv1('MyDiv1','fade1');
+		}else{
+		ShowDiv('MyDiv','fade');
+		
+		}	
+	});
+	
+	
+	$("#bt").click(function(){
+			var bind_result = $("#bind_rs td").text();//获取绑定的内容
+			$("#bind_rs").remove();//移除绑定的结果
+			
+			var loginAccount =$("#account").text();
+			var areano =$("#areano").text();
+			var mac=$("#mac").text();
+			var search_value = $("#search_value").val();
+			$.ajax({
+						type:"get",
+						url:"/MOBILE/bindServlet",
+						data:{"mac":search_value,"loginAccount":loginAccount,"areano":areano},
+						success:function(data){
+							var rs = eval('('+data+')');
+							CloseDiv('MyDiv','fade');
+							var	tr ="<tr id='bind_rs'>"+
+										"<th>绑定结果:</th>"+
+										"<td>"+rs.resultDesc+"</td>"+
+									"</tr>";
+							$("table").append(tr);	
+							if(rs.resultCode=="000"){
+								$("#mac").replaceWith("<td id='mac'>"+search_value+"</td>");
+							}
+							
+
+						}
+					});				
+		});
+	
+	
+		
+		//查询童锁
+		function queryChildLock() {
+			debugger;
+			var command = 'query';
+			var requestURL = "/MOBILE/ChdPassServlet?";
+			var logicdevno = $("#search_value1").val(); //输入的账号
+			$.ajax({
+				type: "post",
+				url: requestURL + "logicdevno=" + logicdevno + "&command=" + command,
+				/* data:JSON.stringify(param), */
+				contentType: "json",
+				success: function(data) {
+					debugger;
+					var JsonStringObj = JSON.parse(data);
+					console.log("result:" + JsonStringObj);
+					var result = JsonStringObj.returnInfo;
+					if('0000' == result.code) {
+						$("#pwd").text(result.data.password);
+					} else {
+						console.log("未查询到结果，确认账号是否输入有误");
+						//alert("未查询到结果，确认账号是否输入有误");
+					}
+				},
+				error: function() {
+					console.log("未查询到结果，确认账号是否输入有误");
+					//alert("请求失败!");
+				}
+			});
+		}
+	
+	
+	//解绑    此功能待恢复，暂时不使用，请不要删除
+		/*$("#unbind").click(function() {
+	
+			$("#bind_rs").remove();//移除绑定的结果
+			$("#unbind_rs").remove();//移除解绑的结果
+			
+			
+			//发送到后台的参数
+			var mac = ""
+			if($("#mac").text()!=null){
+				mac = $("#mac").text();
+			}
+			var mac = $("#mac").text();
+			var loginAccount =$("#account").text();
+			var areano =$("#areano").text();
+			
+			
+			
+				
+				$.ajax({
+						type:"get",
+						url:"/MOBILE/unBindServlet",
+						data:{"mac":mac,"loginAccount":loginAccount,"areano":areano},
+						success:function(data){	
+							var rs = eval('('+data+')');
+							var	tr ="<tr id='unbind_rs'>"+
+										"<th>解绑结果:</th>"+
+										"<td >"+rs.resultDesc+"</td>"+
+									"</tr>";
+							
+							$("table").append(tr);
+							if(rs.resultCode=='000'){
+								$("#mac").replaceWith("<td id='mac'></td>");
+								
+							}
+							//$("#bind_rs").css("display","none");
+						}
+					});					
+				
+		});*/
+
+</script>
+</html>
+

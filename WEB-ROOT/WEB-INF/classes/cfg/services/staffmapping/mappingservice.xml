@@ -1,0 +1,23 @@
+<!DOCTYPE xwork PUBLIC
+    "-//OpenSymphony Group//XWork 1.1.1//EN"
+    "http://www.opensymphony.com/xwork/xwork-1.1.1.dtd"
+ >
+<xwork>
+	<package name="mappingService" extends="common-component-define"
+		namespace="/mappingService">
+		<!-- for insert -->
+		<action name="InsertStaffMappingAction"
+			class="com.ztesoft.mobile.outsystem.action.InsertStaffMappingAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+		
+		<action name="QryStaffMappingByIpAction"
+			class="com.ztesoft.mobile.outsystem.action.QryStaffMappingByIpAction">
+		</action>
+		
+		<action name="OptMobileStaffMappingAction"
+			class="com.ztesoft.mobile.v2.action.app.OptMobileStaffMappingAction">
+			<interceptor-ref name="transactionController" />
+		</action>
+	</package>
+</xwork>

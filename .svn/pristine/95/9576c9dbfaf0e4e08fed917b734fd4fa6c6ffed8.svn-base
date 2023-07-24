@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link title="slate" href="../public/css/style01.css" rel="stylesheet" type="text/css"/>     
+		<link title="blue" href="../resources/css/style1.css" rel="stylesheet" type="text/css" disabled="true"/>
+		<link title="olive" href="../resources/css/style3.css" rel="stylesheet" type="text/css" disabled="true"/>
+		<link title="red" href="../resources/css/style2.css" rel="stylesheet" type="text/css" disabled="true"/>
+		<link title="purple" href="../resources/css/style4.css" rel="stylesheet" type="text/css" disabled="true"/>
+		<link title="midnight" href="../resources/css/style5.css" rel="stylesheet" type="text/css" disabled="true"/>
+		<link title="orange" href="../resources/css/style6.css" rel="stylesheet" type="text/css" disabled="true"/>
+		<link title="green" href="../resources/css/style7.css" rel="stylesheet" type="text/css" disabled="true"/>
+		<link title="access" href="../resources/css/style8.css" rel="stylesheet" type="text/css" disabled="true"/>
+		<script language="javascript" src="../public/script/helper.js"></script>
+		<script language="javascript" src="../public/script/XmlInter.js"></script>
+		<script language="javascript" src="../public/script/xworkAction.js"></script>
+		<script type="text/javascript" src="../ext/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="../ext/ext-all-debug.js"></script>
+
+		<script type="text/javascript">
+ 				var session1 = GetSession();
+				function getStyle(){
+					var styles = document.getElementsByTagName("link");
+					for(var i=0;i<styles.length;i++){
+						var a = styles[i];
+						if(a.getAttribute("rel").indexOf("style") != -1&& a.getAttribute("title") ){
+							a.disabled = true;
+							
+							if(a.getAttribute("title")==session1.style){
+								
+								a.disabled=false;
+							}
+						}
+					}
+				}
+				getStyle();
+		</script>
+		<title></title>
+	</head>
+
+<body  background="../public/image/index_bg.png" style="margin:0;overflow:hidden">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td>&nbsp;<br><br><br><br><br></td></tr>
+	</table>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr >
+			<td>
+				<img src="../public/image/index_main.png" width="800" height="300"/>
+			</td>
+		</tr>
+	</table>
+</body>
+<!-- 525 -->
+</html>

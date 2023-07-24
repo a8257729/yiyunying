@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>装移机测速合格率</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css"
+			href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/echarts-all.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/common5.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js"></script>
+		<script src="../js/template.min.js"></script>
+		<script src="../js/data-bind.js"></script>
+		<script src="../js/global.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		<a class="mui-icon mui-icon-left-nav mui-pull-left" onClick="back_index()"></a>
+		<a class="mui-pull-right mui-icon iconfont icon-rili"
+			id="showUserPicker"></a>
+		<h1 id="title" class="mui-title">
+			装移机测速合格率
+		</h1>
+		</header>
+		<div class="mui-content">
+			<div id="content"></div>
+			<script id="tpl" type="text/html">
+		<table id="tabel" freezeRowNum="3" freezeColumnNum="0" class="am-table am-table-bordered am-table-centered am-table-striped">
+				<thead>
+					<tr>
+						<th id="time" rowspan="1" colspan="6">时间</th>
+					</tr>
+					<tr>
+					   	<th style="min-width:50px;" ></th>
+						<th >地市名称</th>
+						<th style="min-width:55px;" >总单数</th>
+						<th >测速数量</th>
+						<th style="min-width:55px;" >合格数</th>
+						<th style="min-width:58px;" >合格率</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{each dataArr as item i}}
+					<tr class="mui-tr" grad_pc={{item.grad_pc}} area_name = {{item.area_name}} area_id = {{item.area_id}} is_dw ={{item.is_dw}} >
+						{{if item.grad_pc.length == 4 || (item.grad_pc==0 && item.area_name=='湖南省') || item.area_name == "长沙" || item.area_name == "岳阳" || item.area_name == "湘潭" || item.area_name == "株洲"|| item.area_name == "衡阳"|| item.area_name == "郴州"|| item.area_name == "常德"|| item.area_name == "益阳"|| item.area_name == "娄底"|| item.area_name == "邵阳"|| item.area_name == "湘西"|| item.area_name == "张家界"|| item.area_name == "怀化"|| item.area_name == "永州"}}
+
+						<th style="font-weight:bold;min-width:50px;width:50px;" grad_pc={{item.grad_pc}} area_name = {{item.area_name}} area_id = {{item.area_id}} is_dw ={{item.is_dw}}>...</th>
+
+						<td style="font-weight:bold">{{item.area_name}}</td>
+
+						<td style="font-weight:bold;min-width:55px;">{{item.total}}</td>
+
+						<td style="font-weight:bold;">{{item.is_cesu}}</td>
+
+						<td style="font-weight:bold;min-width:55px;" >{{item.is_dabiao}}</td>
+
+						<td style="font-weight:bold;min-width:58px;">{{item.SCORE}}</td>
+
+						{{else}}
+
+						<th style="min-width:50px;width:50px;" grad_pc={{item.grad_pc}} area_name = {{item.area_name}} area_id = {{item.area_id}} is_dw ={{item.is_dw}}>...</th>
+						
+						<td>{{item.area_name}}</td>
+
+						<td style="min-width:55px;width:55px;">{{item.total}}</td>
+						<td>{{item.is_cesu}}</td>
+						<td style="min-width:55px;" >{{item.is_dabiao}}</td>
+						<td style="min-width:58px;">{{item.SCORE}}</td>
+	
+						{{/if}}
+	
+					</tr>
+					{{/each}}
+					
+				</tbody>
+			</table>
+			</script>
+		</div>
+		<script>
+			var nowDate = new Date();
+		    var beginDateStr = hsTools.getParam("beginDateStr");
+		    var indexDateStr = hsTools.getParam("beginDateStr");
+		    var endDateStr = createQueryEndDateStr(nowDate);
+		    var areaId = 26;
+		    var staffId = hsTools.getParam("staffId");
+		    var type = hsTools.getParam("type");
+		    var timeType = "date";
+		    var id = hsTools.getParam("id");
+
+		    //mui.plusReady(function() {
+		    if(type == "month"){
+		    	$('#title').text($('#title').text()+'(月报)');
+		    	timeType = "month";
+		    }else if(type == "day"){
+		    	$('#title').text($('#title').text()+'(日报)');
+		    	timeType = "date";
+		    }
+		    
+		    //时间选择器
+			var picker = new mui.DtPicker({
+					"type": timeType
+			});
+			
+			var showUserPickerButton = document.getElementById('showUserPicker');
+			showUserPickerButton.addEventListener('tap', function(event) {
+				picker.show(function(items) {
+					var date = new Date(items.value);
+					endDateStr = createQueryEndDateStr(date);
+					beginDateStr = items.value.replace(/-/g,"")
+                    query_report_data(getDataCallBack, areaId,beginDateStr,endDateStr,staffId,id);
+				});
+
+			}, false);
+			
+			query_report_data(getDataCallBack, areaId,beginDateStr,endDateStr,staffId,id);
+			
+			function getDataCallBack(jsondataStr) {
+					if(jsondataStr.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+			
+					var jsondata = JSON.parse(jsondataStr);
+					var data = {
+						dataArr: jsondata
+					};
+					console.log(JSON.stringify(data));
+					if(jsondata.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+
+					var html = template('tpl', data);
+					document.getElementById('content').innerHTML = html;
+					$('#time').text("时间："+beginDateStr);
+					//增加列表项点击事件
+					$('.mui-tr').on('tap', function() {
+						var grad_pc = this.getAttribute('grad_pc');
+						var area_name = this.getAttribute('area_name');
+						showData(grad_pc,area_name);
+					});
+					
+					$('.mui-tr').on('tap',"th", function() {
+						var grad_pc = this.getAttribute('grad_pc');
+						var area_name = this.getAttribute('area_name');
+						var area_id =this.getAttribute('area_id');
+						showDwData(grad_pc,area_name,area_id);
+						return false;//防止事件冒泡
+					});
+					showData(0,'');
+					freezeTableInit();
+				}
+			function back_index(){
+				//跳转首页  
+        		window.location.href='report_index.html?type='+type+'&staffId='+staffId+'&indexDateStr='+indexDateStr; 
+			}	
+		</script>
+	</body>
+
+</html>

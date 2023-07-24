@@ -1,0 +1,19 @@
+<!-- @edit moejoe(lmh_user@hotmail.com)name useDate useTime width readonly disabled,value, onchanged checkType getSysDate  -->
+<public:component lightweight="true">
+<public:attach event="oncontentready" onevent="comInit()" />
+<script type="text/javascript">
+function comInit(){
+var o=element;
+var now = null;
+if(o.getSysDate){
+try{
+	var retObj = invokeAction("/orgAndStaff/GetCurrentTimeAction");
+	now = retObj.currentTime;
+	if(now.constructor == String) now = StringToDate(now,true); 
+}catch(e){
+now = new Date();
+}
+}
+o.useDate=o.useDate||"true";element.outerHTML="<INPUT TYPE='text' id='"+ o.name +"' name='"+ o.name +"' onchange='if(PopDtCheck__(this,1)==true) "+o.onchanged+"' "+((o.useDate)?" useDate="+o.useDate:"")+((o.useTime)?" useTime="+o.useTime:"")+((o.checkType)?" checkType="+o.checkType:"")+((o.width)?" style='width:"+o.width+"'":"")+((o.value)?" value='"+o.value+"'":((o.getSysDate)?" value='"+DateToString((now),o.useTime)+"'":""))+" class='input_datetime' "+((o.readonly||o.disabled)?((o.disabled)?"disabled":"readonly"):" ondeactivate='PopDtCheck__(this)'")+"><INPUT TYPE='button' style='width:18; height:19; padding:0; border:0 none #FFFFFF; background-image:url("+o.currentStyle.behaviorPath+"popedit.gif);' onclick='PopC__(this.previousSibling, \""+((o.onchanged)?o.onchanged:"")+"\")'"+((o.disabled)?" disabled":"")+" >";};
+</script>
+</public:component>

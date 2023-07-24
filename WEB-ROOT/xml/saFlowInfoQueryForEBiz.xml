@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+	<QueryMethod>saFlowInfoQueryForEBiz</QueryMethod>
+	<Return>
+		<Content>
+			<Public>
+			      <OrderCode>1403754</OrderCode>
+				  <OrderTitle>开通电话</OrderTitle>
+		          <FlowInfo>
+			         <TacheName>网络激活</TacheName>
+			          <SystemName>激活系统</SystemName>
+			          <BeginDate>2014-01-17 17:08:33</BeginDate>
+			          <FinishDate>2014-01-17 17:08:37</FinishDate>
+			          <TotalTime>0</TotalTime>
+		          </FlowInfo>
+		          <FlowInfo>
+			         <TacheName>施工调度</TacheName>
+			          <SystemName>IOM</SystemName>
+			          <BeginDate>2014-01-17 17:09:41</BeginDate>
+			          <FinishDate>2014-01-18 17:09:46</FinishDate>
+			          <TotalTime>1440</TotalTime>
+		         </FlowInfo>
+		          
+			</Public>			
+		</Content>
+		<Result>000</Result>
+		<ErrorDesc>查询成功</ErrorDesc>
+	</Return>
+</Data>

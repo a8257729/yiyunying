@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>流量使用统计</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    
+    <!-- 
+    <script type="text/javascript" src="/MOBILE/api/assets/zepto/zepto.min.js"></script>
+     -->
+     
+     <link rel="stylesheet" href="/MOBILE/api/assets/jquery/mobile/jquery.mobile-1.3.1.css">
+     
+    <script type="text/javascript" src="/MOBILE/api/assets/jquery/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/MOBILE/api/highcharts/js/highcharts.js"></script>
+	<script type="text/javascript" src="/MOBILE/api/highcharts/js/modules/canvas-tools.js"></script>
+	
+	<script type="text/javascript" src="/MOBILE/api/assets/jquery/mobile/jquery.mobile-1.3.1.min.js"></script>
+	
+	<script type="text/javascript">
+		$(function () {
+		
+			//统计流量
+			function doStat1(json) {
+			
+				var nameList = json["nameList"];
+				var dataList = json["dataList1"];
+
+		        $('#container1').highcharts({
+		            chart: {
+		                type: 'bar'
+		            },
+		            title: {
+		                text: '服务调用流量统计'
+		            },
+		            subtitle: {
+		                text: ''
+		            },
+		            xAxis: {
+		                categories: nameList,
+		                title: {
+		                    text: '服务名称'
+		                }
+		            },
+		            yAxis: {
+		                min: 0,
+		                title: {
+		                    text: '单位(字节)',
+		                    align: 'high'
+		                },
+		                labels: {
+		                    overflow: 'justify'
+		                }
+		            },
+		            tooltip: {
+		                valueSuffix: '字节'
+		            },
+		            plotOptions: {
+		                bar: {
+		                    dataLabels: {
+		                        enabled: true
+		                    }
+		                }
+		            },
+		            legend: {
+		                layout: 'vertical',
+		                align: 'right',
+		                verticalAlign: 'top',
+		                x: -100,
+		                y: 100,
+		                floating: true,
+		                borderWidth: 1,
+		                backgroundColor: '#FFFFFF',
+		                shadow: true
+		            },
+		            credits: {
+		                enabled: false
+		            },
+		            series: [{
+		                name: '调用服务',
+		                data: dataList
+		            }]
+		        });
+			}
+			
+			//统计调用耗时
+			function doStat2(json) {
+			
+				var nameList = json["nameList"];
+				var dataList = json["dataList1"];
+
+		        $('#container2').highcharts({
+		            chart: {
+		                type: 'bar'
+		            },
+		            title: {
+		                text: '用户使用流量统计'
+		            },
+		            subtitle: {
+		                text: ''
+		            },
+		            xAxis: {
+		                categories: nameList,
+		                title: {
+		                    text: '用户名'
+		                }
+		            },
+		            yAxis: {
+		                min: 0,
+		                title: {
+		                    text: '单位(字节)',
+		                    align: 'high'
+		                },
+		                labels: {
+		                    overflow: 'justify'
+		                }
+		            },
+		            tooltip: {
+		                valueSuffix: '字节'
+		            },
+		            plotOptions: {
+		                bar: {
+		                    dataLabels: {
+		                        enabled: true
+		                    }
+		                }
+		            },
+		            legend: {
+		                layout: 'vertical',
+		                align: 'right',
+		                verticalAlign: 'top',
+		                x: -100,
+		                y: 100,
+		                floating: true,
+		                borderWidth: 1,
+		                backgroundColor: '#FFFFFF',
+		                shadow: true
+		            },
+		            credits: {
+		                enabled: false
+		            },
+		            series: [{
+		                name: '用户使用流量情况',
+		                data: dataList
+		            }]
+		        });
+			}
+			
+			$.ajax({
+			  url: '/MOBILE/api/web/stat/shanghai/serv/flow',
+			  dataType: 'json',
+			  success: function(data) {
+			  	doStat1(data);
+			  },
+			  error: function() {
+			  	alert("加载数据失败");
+			  }
+			});
+			
+			$.ajax({
+			  url: '/MOBILE/api/web/stat/shanghai/serv/flow/staff',
+			  dataType: 'json',
+			  success: function(data) {
+			  	doStat2(data);
+			  },
+			  error: function() {
+			  	alert("加载数据失败");
+			  }
+			});
+				
+		});
+	
+
+	</script>
+
+  </head>
+  
+  <body>
+		<!-- 
+		<div data-role="collapsible" data-collapsed-icon="arrow-d" data-expanded-icon="arrow-u">
+		    <h4>查询条件: </h4>
+			<div data-role="controlgroup">
+	            <input type="checkbox" name="checkbox-1-a" id="checkbox-1-a">
+	            <label for="checkbox-1-a">One</label>
+	            <input type="checkbox" name="checkbox-2-a" id="checkbox-2-a">
+	            <label for="checkbox-2-a">Two</label>
+	            <input type="checkbox" name="checkbox-3-a" id="checkbox-3-a">
+	            <label for="checkbox-3-a">Three</label>
+        	</div>
+		</div>-->
+		
+		<div id="container1" >
+		</div>
+		<br />
+		<br />
+		<div id="container2" >
+		</div>
+	</body>
+</html>

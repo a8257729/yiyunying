@@ -1,0 +1,145 @@
+package com.ztesoft.mobile.v2.service.app;
+
+import com.ztesoft.mobile.v2.controller.speed.SpeedController;
+import com.ztesoft.mobile.v2.core.Result;
+import com.ztesoft.mobile.v2.dao.app.MobileDataInstallDAO;
+import com.ztesoft.mobile.v2.dao.app.MobileDataInstallDAOImpl;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class MobileDataInstallServiceImpl implements MobileDataInstallService {
+    private static final Logger logger = Logger.getLogger(MobileDataInstallServiceImpl.class);
+    private MobileDataInstallDAO mbDAO = new MobileDataInstallDAOImpl();
+    public String queryDataInstallByOrg(String org_id)
+    {
+        String result = "";
+        try
+        {
+            Map<String, String> map =   mbDAO.queryDataInstallByOrg(org_id);
+            result =  map.get("flag");
+        }catch (Exception e)
+        {
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+        }
+
+
+        return result;
+    }
+
+    public  Map<String, String> queryBSSProject(String work_order_id)
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        try
+        {
+             map =   mbDAO.queryBSSProject(work_order_id);
+
+        }catch (Exception e)
+        {
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+    public  Map<String, String> queryPowerModel(String base_order_id,String hgu_sn,String staffId,String staffName)
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        try
+        {
+            map =   mbDAO.queryPowerModel(base_order_id,hgu_sn,staffId,staffName);
+
+        }catch (Exception e)
+        {
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+    public  Map<String, String> querymakeProcessData(String work_order_id)
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        try
+        {
+            map =   mbDAO.querymakeProcessData(work_order_id);
+
+        }catch (Exception e)
+        {
+            logger.info("querymakeProcessData :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+    public  Map<String, String> queryPixianCode(String work_order_id)
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        try
+        {
+            map =   mbDAO.queryPixianCode(work_order_id);
+
+        }catch (Exception e)
+        {
+            logger.info("querymakeProcessData :"+e.getMessage());
+        }
+
+
+        return map;
+    }
+
+    public Result queryOBDInfo(String qrCode, String wkOrderId)
+    {
+        Map<Object, Object> resultData = new HashMap<Object, Object>();
+        Map<Object, Object>   resultMap =new HashMap<Object, Object>();
+        Result result = null;
+        try
+        {
+            resultMap =   mbDAO.queryOBDInfo(qrCode,wkOrderId);
+
+        }catch (Exception e)
+        {
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+        }
+
+
+        resultData.put("data_info", resultMap);
+        result = Result.buildSuccess();
+        result.setResultData(resultData);
+
+
+        return result;
+    }
+
+    public Result processDataInstall( Map<String, Object> paramMap)
+    {
+        Map<Object, Object> resultMap = new HashMap<Object, Object>();
+        Map<Object, Object> resultData = new HashMap<Object, Object>();
+        Result result = null;
+        try
+        {
+            resultMap =   mbDAO.processDataInstall(paramMap);
+
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            logger.info("queryDataInstallByOrg :"+e.getMessage());
+            result = Result.buildFailure();
+            return result;
+        }
+
+        resultData.put("data_info", resultMap);
+        result = Result.buildSuccess();
+        result.setResultData(resultData);
+
+
+        return result;
+    }
+
+}

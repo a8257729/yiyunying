@@ -1,0 +1,12 @@
+.mainDiv{
+	margin:0 auto; width:270px;overflow-y:hidden;overflow-x:hidden;
+}
+.subDiv{
+	background:#ddd;width: 100px; height: 90px;
+}
+.mainUl{
+	list-style-type: none; margin: 0; padding: 0; width: 270px;
+}
+.subLi{
+	margin: 6px 3px 10px 0; padding: 1px; float: left;  font-size: 4em; text-align: center;
+}

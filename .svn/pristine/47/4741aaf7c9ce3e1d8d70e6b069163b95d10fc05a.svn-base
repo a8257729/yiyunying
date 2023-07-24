@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+    http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    id="WebApp_1210126726750">
+
+    <description>Mobile2.0</description>
+
+    <welcome-file-list>
+        <welcome-file>logon.jsp</welcome-file>
+    </welcome-file-list>
+
+    <session-config>
+        <!-- web.xml expects the session timeout in minutes: -->
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring.xml</param-value>
+	</context-param>
+
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>/WEB-INF/log4j.properties</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>log4jRefreshInterval</param-name>
+        <param-value>60000</param-value>
+    </context-param>
+
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+   <!-- 
+    <filter>
+		<filter-name>Charset Encoding</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>GB2312</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>Charset Encoding</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	-->
+    
+    <!-- shiro security filter
+	<filter> -->
+    <!-- 这里的filter-name要和spring的applicationContext-shiro.xml里的
+            org.apache.shiro.spring.web.ShiroFilterFactoryBean的bean name相同 
+	    <filter-name>shiroSecurityFilter</filter-name>
+	    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	    <init-param>
+	        <param-name>targetFilterLifecycle</param-name>
+	        <param-value>true</param-value>
+	    </init-param>
+	</filter>
+	<filter-mapping>
+    	<filter-name>shiroSecurityFilter</filter-name>
+    	<url-pattern>/api/*</url-pattern>
+	</filter-mapping>
+	-->
+	
+	
+	
+	<servlet>
+		<servlet-name>ChdPassServlet</servlet-name>
+		<servlet-class>com.ztesoft.mobile.v2.hnlt.iptv.servlet.ChdPassServlet</servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>ChdPassServlet</servlet-name>
+        <url-pattern>/ChdPassServlet</url-pattern>
+    </servlet-mapping>
+	
+	<servlet>
+		<servlet-name>logonservlet</servlet-name>
+		<servlet-class>com.ztesoft.iom.web.LogonServlet</servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>logonservlet</servlet-name>
+        <url-pattern>/logonin</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+		<servlet-name>AddFileInNewsServlet</servlet-name>
+		<servlet-class>
+			com.ztesoft.eoms.common.upload.AddFileInNewsServlet
+		</servlet-class>
+	</servlet>
+
+    <servlet-mapping>
+        <servlet-name>AddFileInNewsServlet</servlet-name>
+        <url-pattern>/addFileInNewsServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StartupServlet</servlet-name>
+        <servlet-class>
+            com.ztesoft.mobile.common.initialization.StartupServlet
+        </servlet-class>
+        <load-on-startup>40</load-on-startup>
+    </servlet>
+
+	<servlet>
+		<servlet-name>busifacadeservlet</servlet-name>
+		<servlet-class>com.ztesoft.mobile.common.web.BusiFacadeServlet</servlet-class>
+		<init-param>
+			<param-name>jndi.properties.file</param-name>
+			<param-value>/WEB-INF/jndi.properties</param-value>
+		</init-param>
+		<init-param>
+			<param-name>runtime.tier</param-name>
+			<param-value>javaBean</param-value>
+		</init-param>
+		<init-param>
+			<param-name>remoteServerHost</param-name>
+			<param-value>http://10.41.42.103:18049/IOMPROJ</param-value>
+		</init-param>
+		<load-on-startup>10</load-on-startup>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>busifacadeservlet</servlet-name>
+        <url-pattern>/busifacadeservlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+		<servlet-name>ActionInvocation</servlet-name>
+		<servlet-class>com.ztesoft.mobile.common.web.ActionInvocationServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>ActionInvocation</servlet-name>
+        <url-pattern>/ActionInvocation</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+		<servlet-name>ExtServlet</servlet-name>
+		<servlet-class>com.ztesoft.mobile.common.extservice.ExtServlet</servlet-class>
+		<load-on-startup>40</load-on-startup>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>ExtServlet</servlet-name>
+        <url-pattern>/ExtServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>springServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring-webmvc.xml</param-value>
+        </init-param>
+        <load-on-startup>18</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>springServlet</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+		<servlet-name>AndrServlet</servlet-name>
+		<servlet-class>com.ztesoft.android.common.AndrServlet</servlet-class>
+		<load-on-startup>80</load-on-startup>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>AndrServlet</servlet-name>
+        <url-pattern>/AndrServlet</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+		<servlet-name>AttachmentServlet</servlet-name>
+		<servlet-class>com.ztesoft.eoms.web.AttachmentServlet</servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>AttachmentServlet</servlet-name>
+        <url-pattern>/AttachmentServlet</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+		<servlet-name>UploadPhotoServlet</servlet-name>
+		<servlet-class>com.ztesoft.eoms.common.upload.UploadPhotoServlet
+		</servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>UploadPhotoServlet</servlet-name>
+        <url-pattern>/uploadPhotoServlet</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+		<servlet-name>UpdateServlet</servlet-name>
+		<servlet-class>
+			com.ztesoft.android.servlet.UpdateServlet
+		</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateServlet</servlet-name>
+        <url-pattern>/updatemob</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+		<servlet-name>AddFileServlet</servlet-name>
+		<servlet-class>com.ztesoft.mobile.common.extservice.AddFileServlet</servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>AddFileServlet</servlet-name>
+        <url-pattern>/addFileServlet</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+		<servlet-name>pushlet</servlet-name>
+		<servlet-class>nl.justobjects.pushlet.servlet.Pushlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>pushlet</servlet-name>
+        <url-pattern>/pushlet.srv</url-pattern>
+    </servlet-mapping>
+
+	<servlet>
+         <servlet-name>ExtPagingServlet</servlet-name>
+         <servlet-class>com.ztesoft.eoms.common.ext.paging.ExtPagingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ExtPagingServlet</servlet-name>
+        <url-pattern>/ExtPagingServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+		<servlet-name>AxisServlet</servlet-name>
+		<servlet-class>
+			org.apache.axis.transport.http.AxisServlet
+		</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/servlet/AxisServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>*.jws</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/services/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>QuestionLibraryServlet</servlet-name>
+		<servlet-class>com.ztesoft.mobile.v2.hnlt.iptv.servlet.QuestionLibraryServlet</servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>QuestionLibraryServlet</servlet-name>
+        <url-pattern>/questionLibraryServlet</url-pattern>
+    </servlet-mapping> 
+
+  
+  <servlet>
+    <servlet-name>BlurSelTitleServlet</servlet-name>
+    <servlet-class>com.ztesoft.mobile.v2.hnlt.iptv.servlet.BlurSelTitleServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BlurSelTitleServlet</servlet-name>
+    <url-pattern>/blurSelTitleServlet</url-pattern>
+  </servlet-mapping>
+	
+   <servlet>
+    <servlet-name>DetailsServlet</servlet-name>
+    <servlet-class>com.ztesoft.mobile.v2.hnlt.iptv.servlet.DetailsServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DetailsServlet</servlet-name>
+    <url-pattern>/detailsServlet</url-pattern>
+  </servlet-mapping>
+	
+   <servlet>
+    <servlet-name>AssessServlet</servlet-name>
+    <servlet-class>com.ztesoft.mobile.v2.hnlt.iptv.servlet.AssessServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AssessServlet</servlet-name>
+    <url-pattern>/assessServlet</url-pattern>
+  </servlet-mapping>
+
+	
+  <servlet>
+    <servlet-name>ClassNameServlet</servlet-name>
+    <servlet-class>com.ztesoft.mobile.v2.hnlt.iptv.servlet.ClassNameServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ClassNameServlet</servlet-name>
+    <url-pattern>/classNameServlet</url-pattern>
+  </servlet-mapping>	
+  
+   <servlet>
+    <servlet-name>UserInfoServlet</servlet-name>
+    <servlet-class>com.ztesoft.mobile.v2.hnlt.iptv.servlet.UserInfoServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserInfoServlet</servlet-name>
+    <url-pattern>/userInfoServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>BindServlet</servlet-name>
+    <servlet-class>com.ztesoft.mobile.v2.hnlt.iptv.servlet.BindServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BindServlet</servlet-name>
+    <url-pattern>/bindServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>UnBindServlet</servlet-name>
+    <servlet-class>com.ztesoft.mobile.v2.hnlt.iptv.servlet.UnBindServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UnBindServlet</servlet-name>
+    <url-pattern>/unBindServlet</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet>
+		<servlet-name>IptvFaultDiagnose</servlet-name>
+		<servlet-class>com.ztesoft.mobile.v2.hnlt.iptv.servlet.IptvFaultDiagnose</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>IptvFaultDiagnose</servlet-name>
+		<url-pattern>/iptvFaultDiagnose</url-pattern>
+	</servlet-mapping>
+    <!-- 
+	<servlet>
+        <servlet-name>CXFServlet</servlet-name> 
+        <servlet-class> 
+            org.apache.cxf.transport.servlet.CXFServlet 
+        </servlet-class> 
+        <load-on-startup>1</load-on-startup> 
+    </servlet> 
+    <servlet-mapping> 
+        <servlet-name>CXFServlet</servlet-name> 
+        <url-pattern>/rest/*</url-pattern> 
+    </servlet-mapping>
+ 	-->
+ 	
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+
+    <!-- 配置缓存清除监听器,负责处理由 JavaBean Introspector 功能而引起的缓存泄露  -->
+    <listener>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>  
+
+</web-app>

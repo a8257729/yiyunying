@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+			content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>全省考核指标情况</title>
+		<link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" href="../css/layout.css" />
+		<link rel="stylesheet" href="../css/common.css" />
+		<link rel="stylesheet" type="text/css"
+			href="../css/mui.picker.min.css" />
+		<script src="../js/jquery-2.1.1.js"></script>
+		<script src="../js/jquery-migrate-1.2.1.js"></script>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/echarts-all.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/common5.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/new_file.js"></script>
+		<script src="../js/template.min.js"></script>
+		<script src="../js/data-bind.js"></script>
+		<script src="../js/global.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<a class="mui-pull-right mui-icon iconfont icon-rili"
+			id="showUserPicker"></a>
+		<h1 id="title" class="mui-title">
+			全省考核指标情况
+		</h1>
+		</header>
+		<div class="mui-content">
+			<div id="content"></div>
+			<script id="tpl" type="text/html">
+			<table id="tabel" freezeRowNum="1" freezeColumnNum="0" class="am-table am-table-bordered am-table-centered am-table-striped">
+				<thead>
+					
+					<tr>
+						<th>日期</th>
+						<th >指标</th>
+						<th >目标值</th>
+						<th >实际值</th>
+						<th >不合格地区</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{each dataArr as item i}}
+					<tr class="mui-tr">
+						<th>{{item.date}}</th>
+						<td>{{item.quato}}</td>
+						<td>{{item.target_val}}</td>
+						{{if item.target_val > item.actual_val}}
+						<td style='color:red;'>{{item.actual_val}}</i></td>
+						{{else}}
+						<td>{{item.actual_val}}</td>
+						{{/if}}
+						<td>{{item.unqualified_region}}</td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			</script>
+		</div>
+		<script>
+			var nowDate = new Date();
+		    var beginDateStr = '2017-01-01 00:00:00';
+		    var endDateStr = createQueryEndDateStr(nowDate);
+		    var areaId = 26;//当前登录员工的区域
+		    var staffId = hsTools.getParam("staffId");//当前登录员工工号
+		    //mui.plusReady(function() {
+		    //时间选择器
+			var picker = new mui.DtPicker({
+					"type": "date"
+			});
+			var showUserPickerButton = document.getElementById('showUserPicker');
+			showUserPickerButton.addEventListener('tap', function(event) {
+				picker.show(function(items) {
+					var date = new Date(items.value);
+					endDateStr = createQueryEndDateStr(date);
+                       query_report_data(getDataCallBack, areaId,beginDateStr,endDateStr,staffId,"1");
+				});
+
+			}, false);
+			
+			query_report_data(getDataCallBack, areaId,beginDateStr,endDateStr,staffId,"1");
+			
+			function getDataCallBack(jsondataStr) {
+					var jsondata = jsondataStr;
+					var data = {
+						dataArr: jsondata
+					};
+					console.log(JSON.stringify(data));
+					if(jsondata.length==0){
+						mui.alert("未查询到数据");
+						return;
+					}
+
+					var html = template('tpl', data);
+					document.getElementById('content').innerHTML = html;
+
+					//增加列表项点击事件
+					$('.mui-tr').on('tap', 'td', function() {
+						var id = 'report2-1.html';
+						var areaId = this.getAttribute('areaid');
+						mui.openWindow({
+							url: id,
+							id: id,
+							styles: {
+								popGesture: 'close'
+							},
+							show: {
+								aniShow: ''
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+                                areaId: areaId,
+                                beginDateStr: beginDateStr,
+                                endDateStr: endDateStr,
+                                staffId:staffId
+							}
+						});
+
+					});
+
+					freezeTableInit();
+				}
+				//});
+		</script>
+	</body>
+
+</html>

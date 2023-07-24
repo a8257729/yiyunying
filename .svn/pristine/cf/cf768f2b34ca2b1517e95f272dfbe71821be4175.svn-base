@@ -1,0 +1,1201 @@
+<!--************************************************************
+	版权说明: 
+	文件名: PropertyList.htc
+	文件创建日期: 2004-05-11
+	作者: lin.zhaohua
+	功能描述: 实现（产品）属性的数据采集功能，
+	          支持下拉框（ComboBox） 、日期时间（DateTimePicker） 、文本输入（TextBox）	
+	帮助文档：PropertyList控件使用说明.doc
+	************************************************************
+	[属性]:
+	totalColumn: 总体分为几大列显示，默认为 2 列
+	columnSpan:  大列之间间隔的宽度
+	isGroup:     是否分组，true/false，默认不分组(false)
+	isGroupName: 是否显示分组的名称描述，true/false，默认不显示(false)
+	isTitleRow:  是否显示标题行([产品属性名]、[产品属性值]),true/false，默认不显示(false)
+	************************************************************		
+	[方法]：
+	loadArrayDesc：导入数组描述信息	
+	loadXmlDesc：导入XML描述信息	
+	saveData：保存界面上，已采集的数据，包括输入、选择、设置	
+	loadData：导入已采集、保存的数据			
+	************************************************************
+	[事件]：
+	onitemchanged：数据发生变化后，对外响应的事件		 
+	************************************************************
+	[变更记录]
+	1)
+	修改人： shi.qiong
+	修改日期： 2004-05-25
+	修改记录列表： 增加功能：分列、分组
+	增加[属性]：
+				totalColumn：所分列的总数
+				columnSpan：列之间的空距
+				isGroup：是否分组，默认为否
+				isTitle：是否需要标题，默认为否
+	2)
+	修改人： lin.zhaohua
+	修改日期： 2004-06-22
+	修改记录列表： 
+	
+	
+	3)
+	修改人： wenwen
+	修改日期： 2004/7/26
+	修改记录：链接样式表
+	          修改表格背景色、表格borderColorDark='#E3F2FF',borderColorLight='#cccccc'
+	
+	3)
+	修改人： yangjingyun
+	修改日期： 2005/12/7
+	修改记录：链接样式表
+	          修改表格背景色、表格borderColorDark='#E3F2FF',borderColorLight='#cccccc'
+
+	************************************************************  -->
+<public:component tagName="DynamicProperty">
+	<public:defaults viewLinkContent/>		
+	<public:property name="totalColumn" get="getTotalColumn" put="setTotalColumn"/>
+	<public:property name="columnSpan" get="getColumnSpan" put="setColumnSpan"/>
+	<public:property name="listHeight" get="getListHeight" put="setListHeight"/>
+	<public:property name="isGroup" get="getIsGroup" put="setIsGroup"/>
+	<public:property name="isGroupName" get="getIsGroupName" put="setIsGroupName"/>	
+	<public:property name="isTitleRow" get="getIsTitleRow" put="setIsTitleRow"/>
+	<public:property name="errorMessage" get="getErrorMessage"/>
+	<public:method name="loadArrayDesc" />	
+	<public:method name="loadXmlDesc" />	
+	<public:method name="saveData" />	
+	<public:method name="loadData" /> 	
+	<public:event name="onitemchanged" id="_evtonitemchanged" />
+</public:component>
+
+<!--link REL="stylesheet" TYPE="text/css" HREF="formcommon.css"-->
+<?XML:NAMESPACE PREFIX="TextBox" />
+<?IMPORT NAMESPACE="TextBox" IMPLEMENTATION="/IOMPROJ/public/htc/Other/TextBox/TextBox.htc">
+
+<?XML:NAMESPACE PREFIX="PopSelect" />
+<?IMPORT NAMESPACE="PopSelect" IMPLEMENTATION="/IOMPROJ/public/htc/Other/PopSelect/PopSelect.htc">
+
+<?XML:NAMESPACE PREFIX="AdvComboBox" />
+<?IMPORT NAMESPACE="AdvComboBox" IMPLEMENTATION="/IOMPROJ/public/htc/Other/AdvComboBox/AdvComboBox.htc">
+
+<?XML:NAMESPACE PREFIX="DateTimePicker" />
+<?IMPORT NAMESPACE="DateTimePicker" IMPLEMENTATION="/IOMPROJ/public/htc/Other/DateTimePicker/DateTimePicker.htc">
+<link href="/IOMPROJ/public/css/style.css" rel="stylesheet" type="text/css">
+
+<table  border=0 cellPadding="0" cellSpacing="1" width="98%" align="center" name="tblProperty" ID="tblProperty">
+</table>
+<script language="javascript" src="ProtoType.js"></script>
+<script language="javascript">
+//Z轴的控制变量
+var zIndex = 100;
+var g_totalColumn = 2;
+var g_columnSpan = 5;
+var g_listHeight = "100%";
+var g_isGroup = false;
+var g_isGroupName = false;
+var g_IsTitleRow = false;
+var g_arrGroups = new Array();
+var g_groupCheckValid = true;
+var g_errorMessage = "";
+
+//对象属性对应的属性列表
+var propControlMapping = new Object();
+
+
+function getErrorMessage()
+{
+	return g_errorMessage;
+}
+
+function getTotalColumn()
+{
+	return g_totalColumn;
+}
+
+function setTotalColumn(val)
+{
+	if(val != null)
+	{
+		if(val>0)
+		{
+			g_totalColumn = parseInt(val);
+		}
+	}
+
+}
+
+function getColumnSpan()
+{
+	return g_columnSpan;
+}
+
+function setColumnSpan(val)
+{
+	if(val != null)
+	{
+		if(val>=0)
+		{
+			g_columnSpan = val;
+		}
+	}
+
+}
+
+function getListHeight()
+{
+	return g_listHeight;
+}
+
+function setListHeight(val)
+{
+	if(val != null)
+	{		
+		if(val>=0)
+		{
+			g_listHeight = val;	
+			tblProperty.height = g_listHeight;			
+		}		
+	}
+}
+
+function getIsGroup()
+{
+	return g_isGroup;
+}
+
+function setIsGroup(val)
+{
+ 
+	if (val == null)
+	{
+		return;
+	}
+	if (val.toString() == "true")	
+	{
+		g_isGroup = true;
+		
+	}
+	if (val.toString() == "false") 
+	{
+		g_isGroup = false;
+	}
+	
+}
+
+function getIsGroupName()
+{
+	return g_isGroupName;
+}
+
+function setIsGroupName(val)
+{
+	if (val == null)
+	{
+		return;
+	}
+	if (val.toString() == "true")	
+	{
+		g_isGroupName = true;
+	}
+	if (val.toString() == "false") 
+	{
+		g_isGroupName = false;
+	}
+}
+
+function getIsTitleRow()
+{
+	return g_IsTitleRow;
+}
+
+function setIsTitleRow(val)
+{
+	if (val == null)
+	{
+		return;
+	}
+	if (val.toString() == "true")	
+	{
+		g_IsTitleRow = true;
+	}
+	if (val.toString() == "false") 
+	{
+		g_IsTitleRow = false;
+	}
+}
+
+//初始化[PropertyList]，只保留[PropertyList]的标题行
+function clearTableRows(tbl)
+{
+	while (tbl.rows.length>0)
+	{
+		tbl.deleteRow(tbl.rows.length-1);
+	}
+}
+
+//取[Table]的行对象
+function GetRow(elm)
+{
+	if(elm==null||elm.tagName=="TR")
+		return elm;
+	else
+	{
+		return GetRow(elm.parentElement);
+	}
+}
+//通过子对象，取得该对象的(最邻近的[Table])
+function GetTable(elm)
+{
+	if(elm==null||elm.tagName=="TABLE")
+		return elm;
+	else
+	{
+		return GetTable(elm.parentElement);
+	}
+}
+
+//插入标题行
+function insertTitleRow(tbl)
+{
+	var row= tbl.insertRow();
+		
+	var cell = row.insertCell();	
+	cell.bgColor="darkgray";
+	cell.height=20;
+	cell.align = "center";
+	cell.innerText = "产品属性名";
+	
+	cell = row.insertCell();		
+	cell.innerText = "产品属性值";	
+	cell.bgColor="darkgray";
+	cell.align = "center";	
+}
+
+//通过[对象数组]的数据方式,插入一行TextBox
+function insertTextBoxRow(arrProperty,tbl)
+{
+	//判断是否可空，在名称前加星号
+	var tagStar="&nbsp;";	
+	if ( arrProperty.hasOwnProperty ("nullable") == true )
+	{		
+		if ((arrProperty.nullable == false)||(arrProperty.nullable == "false"))
+		{
+			tagStar = "<font color='#FF0000'>*</font>";
+		}
+	}
+	
+	var row= tbl.insertRow();
+	row.rowId = arrProperty.id;	
+	
+	//propControlMapping[arrProperty.id] = row;
+	
+	var cell = row.insertCell();	
+	//cell.bgColor="#E3F2FF";
+	cell.width="50%";
+	cell.height=20;
+	//cell.innerText = arrProperty.displayName + tagStar;
+	cell.innerHTML = arrProperty.displayName + tagStar;
+	cell.align = "right";
+	cell.valign = 'top';
+	cell = row.insertCell();
+	cell.width="50%";
+	cell.valign = 'top';
+	cell.innerHTML="<TextBox:TextBox id='htcCtl' style='background-color:transparent;' onchanged='onItemChanged();'></TextBox:TextBox>";
+	cell.children[0].loadArrayDesc(arrProperty);
+	
+	//设置控件的属性和保留控件指针
+	cell.children[0]._row = row;
+	propControlMapping[row.rowId] = cell.children[0];	
+	propControlMapping[row.rowId].attrName = arrProperty.displayName;
+	
+}
+
+function insertPopSelect(arrProperty,tbl)
+{
+	//判断是否可空，在名称前加星号
+	var tagStar="&nbsp;";
+	if ( arrProperty.hasOwnProperty ("nullable") == true )
+	{		
+		if( (arrProperty.nullable == false)||(arrProperty.nullable == "false"))
+		{
+			//tagStar = "* ";
+			tagStar = "<font color='#FF0000'>*</font>";
+		}
+	}
+	
+	var row= tbl.insertRow();
+	row.rowId = arrProperty.id;
+	
+	//propControlMapping[arrProperty.id]= row;
+	
+	var cell = row.insertCell();	
+	cell.width="50%";
+	cell.height=20;
+	cell.innerHTML = arrProperty.displayName + tagStar;
+	cell.align = "right";	
+	cell.valign = 'top';
+	cell = row.insertCell();
+	cell.heght="20";
+	cell.width="50%";	
+  cell.valign = 'top';
+	cell.align="left";
+	cell.innerHTML="<PopSelect:PopSelect id='htcCtl'  onchanged='onItemChanged();'></PopSelect:PopSelect>";	
+	cell.children[0].loadArrayDesc(arrProperty);
+	
+	//设置控件的属性和保留控件指针
+	cell.children[0]._row = row;
+	propControlMapping[row.rowId] = cell.children[0];
+	propControlMapping[row.rowId].attrName = arrProperty.displayName;
+}
+
+//通过[对象数组]的数据方式，插入一个Combobox框
+function insertComboboxRow(arrProperty,tbl)
+{
+	//判断是否可空，在名称前加星号
+	var tagStar="&nbsp;";
+	if ( arrProperty.hasOwnProperty ("nullable") == true )
+	{		
+		if( (arrProperty.nullable == false)||(arrProperty.nullable == "false"))
+		{
+			tagStar = "<font color='#FF0000'>*</font>";
+		}
+	}
+	
+	var row= tbl.insertRow();
+	row.rowId = arrProperty.id;
+	
+	//propControlMapping[arrProperty.id]= row;
+	
+	var cell = row.insertCell();	
+	//cell.bgColor="#E3F2FF";
+	cell.width="50%";
+	cell.height=20;
+	cell.noWrap = true;
+	cell.valign = 'top';
+	cell.innerHTML = arrProperty.displayName + tagStar;
+	cell.align = "right";	
+	cell = row.insertCell();
+	cell.heght="20";
+	cell.width="50%";	
+	cell.valign = 'top';
+	cell.align="left";
+	cell.innerHTML="<AdvComboBox:AdvComboBox id='htcCtl' style='position:absolute;z-Index:"+zIndex+"' onchanged='onItemChanged();'></AdvComboBox:AdvComboBox>&nbsp;";	
+	cell.children[0].loadArrayDesc(arrProperty);
+	
+	//设置控件的属性和保留控件指针
+	cell.children[0]._row = row;
+	propControlMapping[row.rowId] = cell.children[0];
+	propControlMapping[row.rowId].attrName = arrProperty.displayName;
+	
+}
+
+//通过[对象数组]的数据方式，插入一个DataTimePicker 时间采集控件 
+function insertDataTimePickerRow(arrProperty,tbl)
+{
+	//判断是否可空，在名称前加星号
+	var tagStar="&nbsp;";
+	if ( arrProperty.hasOwnProperty ("nullable") == true )
+	{		
+		if ((arrProperty.nullable == false)||(arrProperty.nullable == "false"))
+		{
+
+			tagStar = "<font color='#FF0000'>*</font>";
+		}
+	}
+	
+	var row= tbl.insertRow();
+	row.rowId = arrProperty.id;
+	
+	//propControlMapping[arrProperty.id]= row;
+	
+	var cell = row.insertCell();	
+	//cell.bgColor="#E3F2FF";
+	cell.width="50%";
+	cell.height=20;
+	cell.noWrap = true;
+
+	cell.innerHTML = arrProperty.displayName + tagStar;	
+	cell.align = "right";
+	
+	cell = row.insertCell();
+	cell.width="50%";		
+	cell.innerHTML="<DateTimePicker:DateTimePicker id='htcCtl' useDate='true' useTime='false' style='background-color:transparent;width=93%;' onchanged='onItemChanged();'></DateTimePicker:DateTimePicker>&nbsp;";	
+	cell.children[0].loadArrayDesc(arrProperty);
+	cell.children[0]._row =row;
+	
+	//设置控件的属性和保留控件指针
+	cell.children[0]._row = row;
+	propControlMapping[row.rowId] = cell.children[0];
+	propControlMapping[row.rowId].attrName = arrProperty.displayName;
+	
+}
+
+function insertGroupRow(groupDesc,arrPropertys)
+{
+
+	
+	if (g_isGroupName)
+	{ var row = tblProperty.insertRow();	
+		var cell = row.insertCell();
+		cell.innerText = " ";	
+		if (groupDesc != null)
+		{
+			cell.height=20;
+			cell.innerText = groupDesc;
+			//cell.innerText = "组名："+groupDesc;				
+		}
+	}
+	
+	var row2 = tblProperty.insertRow();	
+	var m=0;	
+	for(var j=1;j<g_totalColumn+1;j++)	
+	{
+		var cellTable = row2.insertCell();
+		cellTable.width = "250px";
+		cellTable.valign = 'top';
+		
+		
+		if(j<g_totalColumn)
+		{ 
+			var cellSpan = row2.insertCell();
+	   	cellSpan.width = g_columnSpan;
+	   	cellSpan.valign = 'TOP';
+	   	
+		}
+		
+			    /*cellTable.innerHTML = "<table border='10' width=100%;  borderColorDark='#E3F2FF' borderColorLight='#cccccc' cellPadding='2' cellSpacing='0' name='tblProperty1' ID='tblProperty"+j+"'></table>";*/
+	  cellTable.innerHTML = "<table border='0' width=100%  class='border4' cellPadding='0' cellSpacing='0' name='tblProperty1' ID='tblProperty"+j+"'></table>";
+
+			
+		if(g_IsTitleRow)
+		{	
+			insertTitleRow(cellTable.children[0]);
+		}
+	}
+	var cells = row2.cells;
+	
+	if (arrPropertys == null) 
+	{	
+		return;
+	}
+	
+	for(var i=0;i<arrPropertys.length;i++)
+	{		
+		var arrProperty = arrPropertys[i];
+		var input_type = arrProperty.type;
+	
+		if(arrProperty.groupDesc == groupDesc)
+		{
+			switch(input_type)
+			{
+				case "TextBox":
+					insertTextBoxRow(arrProperty,cells[m].children[0]);				
+					break;
+				case "ComboBox":
+					insertPopSelect(arrProperty,cells[m].children[0]);
+					break;
+				case "AdvComboBox":
+					insertComboboxRow(arrProperty,cells[m].children[0]);
+					break;			
+				case "DateTimePicker":				
+					insertDataTimePickerRow(arrProperty,cells[m].children[0]);
+					break;
+				default:
+					break;
+			}
+			zIndex = zIndex - 1;					
+			m=m+2;
+			if(m >= cells.length)
+			{
+				m = 0;
+			}						
+		}
+	}	
+}
+
+
+//添加前缀
+function addPrefix(id)
+{
+	return 	"_prop" + id;
+}
+
+//Group类型的校验
+function groupCheckValid()
+{
+	//可能存在多个校验分组
+	for (var i=0;i<g_arrGroups.length;i++)
+	{
+		var group = g_arrGroups[i];		
+		var validateScript = group.validateScript;
+				 
+		if (group.usage == "1")
+		{
+			var strScript = "function func_groupCheckValid()\n";			
+			strScript += "{\n";					
+			var arr = group.properties.split(',');	
+			
+			//将[控件的值]赋给[规定形式的变量]
+			for (var j=0;j<arr.length;j++)
+			{
+				var id = arr[j];
+				var _prefixId = addPrefix(id);				
+				var control = propControlMapping[id];
+				
+				//判断控件是否可用，不可用，直接赋空值
+				if (control.editable == false)
+				{
+					strScript += "var "+_prefixId+" = null;\n";
+					continue;					
+				}
+							
+				if (control.controlType=="AdvComboBox")
+				{
+					//根据控件值的数据类型作判断
+					var item = control.value;
+					if (control.multipleChoice == true)
+					{
+						//item为对象数组
+						strScript += "var "+_prefixId+" = new Array();\n";						
+						if (item != null)					
+						{							
+							strScript += "var arrItemValue = new Array();\n";	
+							for (var k=0;k<item.length;k++)
+							{								
+								strScript += "arrItemValue[arrItemValue.length] = \""+item[k].value+"\" ;\n";
+							}							
+							strScript += ""+_prefixId+" = arrItemValue ;\n";
+						}												
+					}
+					else
+					{
+						//item为对象
+						if (item == null)
+						{
+							strScript += "var "+_prefixId+" = null;\n";
+						}
+						else
+						{
+							strScript += "var "+_prefixId+" = \""+item.value+"\";\n";
+						}						
+					}					
+				}
+				else if (control.controlType=="ComboBox")
+				{
+					//根据控件值的数据类型作判断
+					var item = control.value;
+				//item为对象
+					if (item == null)
+					{
+						strScript += "var "+_prefixId+" = null;\n";
+					}
+					else
+					{
+						strScript += "var "+_prefixId+" = \""+item.value+"\";\n";
+					}						
+				}	
+				else
+				{	
+					//根据控件值的数据类型作判断
+					if (control.value == null)
+					{
+						strScript += "var "+_prefixId+" = null;\n";
+					}
+					else
+					{
+						switch (control.dataType)
+						{
+							case 'int':
+							case 'float':
+								{
+									if (control.value == "")
+									{
+										strScript += "var "+_prefixId+" = 0 ;\n";
+									}
+									else
+									{
+										strScript += "var "+_prefixId+" = "+control.value+";\n";										
+									}									
+									break;	
+								}
+							case 'string':								
+									strScript += "var "+_prefixId+" = \""+control.value+"\";\n";
+									break;	
+						}					
+					}				
+				}
+				
+			}
+						
+			strScript += "if ("+validateScript+")\n";
+			strScript += "return true;\n";
+			strScript += "else\n";
+			strScript += "return false;\n";			
+			strScript += "}\n";
+			strScript += "g_groupCheckValid = func_groupCheckValid();\n";	
+			
+			//alert(strScript);
+								
+			try
+			{
+				eval(strScript);	
+			}
+			catch (e)
+			{
+				//alert(e);
+				//ErrorHandle("错误", 1, 1, "产品动态属性，执行校验出错", e);
+				g_errorMessage = e;
+				throw e;
+			}			
+			
+			if(g_groupCheckValid == false)
+			{				
+				//alert(group.ExceptionMessage);
+				//ErrorHandle("警告", 2, 1,group.ExceptionMessage,null);
+				g_errorMessage = group.ExceptionMessage;
+				throw group.ExceptionMessage;
+			}		
+		}
+	}	
+}
+
+
+function getObjectFromControl(id,attrName,value)
+{
+	var obj = new Object();
+	obj.AttrId = id;	
+	obj.Value = value;
+	obj.AttrName = attrName;
+	return obj;	
+}
+
+
+//通过[对象数组]的数据方式,导入描述信息
+function loadArrayDesc(arrPropertys)
+{
+	//清空对象
+	propControlMapping=new Object();
+	
+	//清空数据行	
+	clearTableRows(tblProperty);
+	
+	if (arrPropertys == null)
+	{
+		return;
+	}
+		
+	var m=0;
+	
+	if(!g_isGroup)
+	{ 
+		var row = tblProperty.insertRow();
+		for(var j=1;j<g_totalColumn+1;j++)	
+		{
+			var cellTable = row.insertCell();
+			cellTable.valign = 'top'
+			cellTable.width = "250px";
+			if(j<g_totalColumn)
+			{
+				var cellSpan = row.insertCell();
+				cellSpan.width = g_columnSpan;
+			}
+		
+			cellTable.innerHTML = "<table border='0' width=100%;  borderColorDark='#E3F2FF' borderColorLight='#cccccc' cellPadding='2' cellSpacing='2' name='tblProperty1' ID='tblProperty"+j+"'></table>";
+
+			if(g_IsTitleRow)
+			{	
+				insertTitleRow(cellTable.children[0]);
+			}
+		}
+		
+		var cells = row.cells;
+	
+		if (arrPropertys == null) 
+		{	
+			return;
+		}
+	
+		for(var i=0;i<arrPropertys.length;i++)
+		{		
+			var arrProperty = arrPropertys[i];
+			var input_type = arrProperty.type;
+		
+			switch(input_type)
+			{
+				case "TextBox":
+					insertTextBoxRow(arrProperty,cells[m].children[0]);				
+					break;
+				case "ComboBox":
+					insertPopSelect(arrProperty,cells[m].children[0]);
+					break;
+				case "AdvComboBox":
+					insertComboboxRow(arrProperty,cells[m].children[0]);
+					break;			
+				case "DateTimePicker":				
+					insertDataTimePickerRow(arrProperty,cells[m].children[0]);
+					break;
+				default:
+					break;
+			}
+			zIndex = zIndex - 1;					
+			m=m+2;
+			if(m >= cells.length)
+			{
+				m = 0;
+			}						
+		}	
+	}
+	else
+	{
+		if(arrPropertys && arrPropertys.length>0){
+			var groupDesc = arrPropertys[0].groupDesc;
+			
+			insertGroupRow(groupDesc,arrPropertys);
+			
+			for(var k=1;k<arrPropertys.length;k++)
+			{
+				var arrProperty = arrPropertys[k];
+				for(var n=0;n<k;n++)
+				{					
+					if(arrProperty.groupDesc == arrPropertys[n].groupDesc)
+					{
+						groupDesc = arrProperty.groupDesc;						
+					}
+				}
+				if(arrProperty.groupDesc != groupDesc)
+				{
+					insertGroupRow(arrProperty.groupDesc,arrPropertys);
+				}
+			}
+		}
+	}
+	
+	
+	
+	//处理每一个AdvComboBox的当前值，显示相应控件
+	for (var id in propControlMapping)
+	{
+		var control = propControlMapping[id];
+		
+		if (control.editable == false)
+		{		
+			showControlEditableByControl(control,false);		
+		}
+		
+		if(control.controlType=="AdvComboBox")
+		{			
+			//如果当前值为空，即没有选择，也要置所有影响属性为不可见
+			affectControlsIneditableTotal(control.userData);
+						
+			var curVal = control.value;			
+			if (curVal != null)
+			{
+				if (control.multipleChoice == true)
+				{
+					for (var i=0;i<curVal.length;i++)
+					{
+						affectControlsEditableCurrent(curVal[i].affectProperties);					
+					}	
+				}
+				else
+				{
+					affectControlsEditableCurrent(curVal.affectProperties);	
+				}			
+			}				
+		}
+		else if(control.controlType=="ComboBox")
+		{			
+			//如果当前值为空，即没有选择，也要置所有影响属性为不可见
+			affectControlsIneditableTotal(control.userData);
+						
+			var curVal = control.value;			
+			if (curVal != null)
+			{
+				affectControlsEditableCurrent(curVal.affectProperties);			
+			}				
+		}    
+	}		
+}
+
+
+//将XML的描述，转化为 对象或 对象数组的描述
+function changeXmlDesctoArrDesc(xmlNode)
+{	
+	if (xmlNode == null)
+	{
+		return;
+	}
+	
+	var arr = new Array();
+	for(var i=0;i<xmlNode.length;i++)
+	{
+		var nodeObj = new Object();					
+		for (var j=0;j<xmlNode[i].attributes.length;j++)
+		{
+			nodeObj[xmlNode[i].attributes[j].nodeName] = xmlNode[i].attributes[j].text;			
+		}
+				
+		if ( (xmlNode[i].childNodes != null) && (xmlNode[i].childNodes.length!= 0) )
+		{			
+			nodeObj.items = changeXmlDesctoArrDesc(xmlNode[i].childNodes);
+		}
+					    
+		arr[arr.length] = nodeObj;					
+	}		
+	return arr;		
+}
+
+//通过[XML文档]的数据方式,导入描述信息
+function loadXmlDesc(xmlNode)
+{
+	//清空数据行
+	clearTableRows(tblProperty);
+	
+	if (xmlNode == null) 
+	{	
+		return;
+	}	
+	
+	//重置默认值	
+	zIndex = 100;
+	//g_totalColumn = 2;
+	//g_columnSpan = 5;
+	//g_isGroup = false;
+	g_isGroupName = false;
+	g_IsTitleRow = false;
+	g_arrGroups = new Array();
+	g_groupCheckValid = true;
+	g_errorMessage = "";
+		
+			
+	//取本身PropertyList 的属性
+	setTotalColumn(xmlNode.getAttribute("totalColumn"));	
+	setColumnSpan(xmlNode.getAttribute("columnSpan"));
+	setIsGroup(xmlNode.getAttribute("isGroup"));
+	setIsGroupName(xmlNode.getAttribute("isGroupName"));
+	setIsTitleRow(xmlNode.getAttribute("isTitleRow"));
+		
+	//将XML转化成对象数组描述	
+	//控件的属性描述
+	var arrPropertys = new Array();	
+	var children = xmlNode.selectNodes("Property");	
+	arrPropertys = changeXmlDesctoArrDesc(children);
+	
+	//控件的分组校验描述
+	children = xmlNode.selectNodes("Group");	
+	g_arrGroups = changeXmlDesctoArrDesc(children);
+	
+	//通过[对象数组],导入描述信息,生成相应控件
+	loadArrayDesc(arrPropertys);	
+
+}
+
+
+//通过[产品属性ID](行的id属性),置控件所在的行，可见和不可见
+function showControlVisible(id,bVisible)
+{
+	var control = propControlMapping[id];	
+	
+	if (control == null)
+	{
+		return;
+	}	
+	var row = control._row;	
+	
+	if(row != null)
+	{
+		row.style.display = (bVisible?"":"none");	
+	}
+
+}
+
+//通过[产品属性ID](行的id属性),置控件所在的行，可用和不可用
+function showControlEditable(id,bEditable)
+{
+	if ((id == null) || (id == ""))
+	{
+		return;	
+	}	
+	var control = propControlMapping[id];	
+	
+	if (control == null)
+	{
+		return;
+	}	
+	control.editable = bEditable;
+	
+	var row = control._row;	
+	
+	if(row != null)
+	{
+		row.style.backgroundColor = (bEditable?"white":"gainsboro");		
+	}	
+}
+
+//直接通过控件,置控件所在的行，可用和不可用
+function showControlEditableByControl(control,bEditable)
+{	
+	control.editable = bEditable;
+	
+	var row = control._row;	
+	
+	if(row != null)
+	{
+		row.style.backgroundColor = (bEditable?"white":"gainsboro");		
+	}	
+}
+
+
+//将所有受Combox影响的控件，设为不可见
+function affectControlsInvisibleTotal(totalProperties)
+{	
+	if(totalProperties==null)
+	{
+		return;
+	}			
+	for(var i=0;i<totalProperties.length;i++)
+	{
+		showControlVisible(totalProperties[i],false);
+	}	
+}
+
+function affectControlsIneditableTotal(totalProperties)
+{	
+	if(totalProperties==null)
+	{
+		return;
+	}			
+	for(var i=0;i<totalProperties.length;i++)
+	{
+		showControlEditable(totalProperties[i],false);
+	}	
+}
+
+
+
+//将当前Combox所选的值，所影响的控件，设为可见
+function affectControlsVisibleCurrent(visibleProperties)
+{	
+	if(visibleProperties != null)
+	{	
+		var arr = visibleProperties.split(',');	
+		for(var i=0;i<arr.length;i++)
+		{
+			showControlVisible(arr[i],true);
+		}
+	}	
+}
+
+function affectControlsEditableCurrent(editableProperties)
+{	
+	if(editableProperties != null)
+	{	
+		var arr = editableProperties.split(',');	
+		for(var i=0;i<arr.length;i++)
+		{
+			showControlEditable(arr[i],true);
+		}
+	}	
+}
+
+//数据发生变化后，对外响应的事件
+function onItemChanged()
+{
+	var control =event.srcElement;
+	var row = control._row;
+  
+	var curVal = event.curValue;
+	
+	if(control.controlType=="AdvComboBox")
+	{		
+		//affectControlsInvisibleTotal(control.userData);
+		//affectControlsVisibleCurrent(curVal.affectProperties);
+		
+		affectControlsIneditableTotal(control.userData);
+		
+		if (control.multipleChoice == true)
+		{
+			//为多选，值为对象数组
+			if (curVal != null)
+			{
+				for (var i=0;i<curVal.length;i++)
+				{
+					affectControlsEditableCurrent(curVal[i].affectProperties);					
+				}				
+			}			
+		}
+		else
+		{	
+			//若为单选，值为对象(包含value属性)	
+		    affectControlsEditableCurrent(curVal.affectProperties);
+		}
+	}
+	else if(control.controlType=="ComboBox")
+	{
+		//所有的影响节点先失效
+		affectControlsIneditableTotal(control.userData);
+			
+		affectControlsEditableCurrent(curVal.affectProperties);
+	}
+	
+	//对于ComboBox控件，若为单选，值为对象(包含value属性)；若为多选，值为对象数组
+	var evt = document.createEventObject();	
+	evt.id = row.rowId;	
+	evt.orgValue = event.orgValue;
+	evt.curValue = event.curValue;
+	_evtonitemchanged.fire(evt);   
+}
+
+//保存界面上，已采集的数据，包括输入、选择、设置
+//返回值为一个对象数组
+function saveData()
+{
+	//先校验界面数据
+	groupCheckValid();	
+	
+	//throw "llll";
+	
+	//return null;
+	
+	var arrObj = new Array();
+		
+	for (var id in propControlMapping)
+	{
+		var control = propControlMapping[id];		
+		var curVal = control.value;
+		var attrName = control.attrName;
+		//只有控件可用才取值
+		if (!control.editable)
+		{
+			//continue;
+		}				
+		if(control.controlType=="AdvComboBox")
+		{
+			if (curVal != null)
+			{
+				if (control.multipleChoice == true)
+				{				
+					var sValue=null;
+					for (var i=0;i<curVal.length;i++)
+					{
+						if (sValue == null)
+						{
+							sValue = curVal[i].value;
+						}
+						else
+						{
+							sValue += ',' + curVal[i].value; 
+						}					
+					}									
+					arrObj[arrObj.length] = getObjectFromControl(id,attrName,sValue);
+				}
+				else
+				{					
+					arrObj[arrObj.length] = getObjectFromControl(id,attrName,curVal.value);
+				}			
+			}
+			else
+			{				
+				arrObj[arrObj.length] = getObjectFromControl(id,attrName,curVal);
+			}			
+		}
+		else if(control.controlType=="ComboBox")
+		{
+			if (curVal != null)
+			{
+				arrObj[arrObj.length] = getObjectFromControl(id,attrName,curVal.value);		
+			}
+			else
+			{				
+				arrObj[arrObj.length] = getObjectFromControl(id,attrName,curVal);
+			}
+		}
+		else
+		{			
+			arrObj[arrObj.length] = getObjectFromControl(id,attrName,curVal);
+		}
+		   
+	}
+		
+	return arrObj;			
+}
+
+//导入已采集、保存的数据
+function loadData(arrObj)
+{
+	if (arrObj == null)
+	{
+		return;
+	}
+/*
+	for (var id in propControlMapping)
+	{
+		showControlEditable(id,false);		
+	}
+*/		
+	for(var i=0;i<arrObj.length;i++)
+	{
+		var id = arrObj[i].AttrId;
+		var curVal = arrObj[i].Value;		
+		var control = propControlMapping[id];
+		if (control==null)
+		{
+			continue;
+		}
+		if (control.editable == false)
+		{		
+			showControlEditableByControl(control,false);		
+		}
+		else
+		{
+		  showControlEditableByControl(control,true);
+		}
+					
+			
+		if(control.controlType=="AdvComboBox")
+		{
+			if (control.multipleChoice == true)
+			{	
+				
+				affectControlsIneditableTotal(control.userData);
+		
+				//为多选，值为对象数组
+				if (curVal != null)
+				{
+					for (var j=0;j<curVal.length;j++)
+					{
+						affectControlsEditableCurrent(curVal[j].affectProperties);					
+					}				
+				}			
+				if (curVal != null)
+				{
+					var arr = curVal.split(',');
+					control.value = arr;
+				}
+				else
+				{
+					control.value = null;										
+				}							
+			}
+			else
+			{	
+				//若为单选，值为对象(包含value属性)	
+				affectControlsEditableCurrent(curVal.affectProperties);
+				
+				control.value = curVal;							
+			}				
+		}
+		else
+		{
+			if(control.controlType=="ComboBox")
+			{
+				//所有的影响节点先失效
+				//affectControlsIneditableTotal(control.userData);
+				//affectControlsEditableCurrent(curVal.affectProperties);
+			}
+			
+			control.value = curVal || "";
+		}				
+	}	
+}
+</script>

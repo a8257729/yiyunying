@@ -1,0 +1,41 @@
+package com.ztesoft.mobile.v2.dao.app;
+
+import com.ztesoft.mobile.common.dao.BaseDAO;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
+public interface MobileDataInstallDAO extends BaseDAO {
+    public Map<String,String> queryDataInstallByOrg(String org_id) throws SQLException;
+
+    public Map<String,String> querySelOrgByAccount(String account) throws SQLException;
+
+    public Map<String,String> queryBSSProject(String work_order_id) throws SQLException;
+
+    public Map<Object,Object> queryOBDInfo(String qrCode, String wkOrderId) throws SQLException;
+
+    public Map<String,String> querymakeProcessData(String work_order_id) throws SQLException;
+    public Map<Object,Object> processDataInstall( Map<String,Object> paramMap) throws SQLException;
+    public Map<Object,Object> processDataInstall1( Map<String,Object> paramMap) throws SQLException;
+
+    public Map<String,String> queryPowerModel(String base_order_id,String hgu_sn,String staffId,String staffName) throws SQLException;
+
+
+    public Map<String,String> queryPowerModel1(String order_id,String hgu_sn,String staffId,String staffName) throws SQLException;
+
+    public Map<String, String> queryPixianCode(String wk_order_id) throws SQLException;
+
+    public void insertYHCount(String qrcode,String type) throws SQLException;
+
+    public Map<String,String> queryOrderTypeById(String orderId) throws SQLException;
+
+    public String queryStaffTel(String staffId) throws SQLException;
+
+    public Map<String,Object> queryZWTSpeedInfo(String work_order_id) throws SQLException;
+
+    public List<Map> querySpotSpeedInfo(String work_order_id) throws SQLException;
+
+    public Map<String, Object> queryLightState(String orderId) throws SQLException;
+
+}

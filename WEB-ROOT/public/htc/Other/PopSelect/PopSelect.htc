@@ -1,0 +1,312 @@
+<!--************************************************************
+	版权说明: 
+	文件名: PopSelect.htc
+	文件创建日期: 2004-11-25
+	作者: jin.xiangguo
+	功能描述: 下拉框的控件，支持单选,并能够在动态控件中得到很好的支持		  
+	帮助文档：PopSelect控件使用说明.doc
+**************************************************************-->
+<public:component tagName="PopSelect">
+	<public:defaults viewLinkContent/>	
+	<PUBLIC:ATTACH event="oncontentready" onevent="initLoad()" />	
+	
+	<public:property name="controlType" get="getControlType"/>
+	<public:property name="items" get="getItems" put="setItems" />
+	<public:property name="defaultValue" put="setDefaultValue" />
+	<public:property name="nullable" get="getNullable" put="setNullable" />			
+	<public:property name="editable" get="getEditable" put="setEditable" />	
+	<public:property name="value" get="getValue" put="setValue" />	
+	<public:property name="userData" get="getUserData" put="setUserData" />	
+	
+	<public:method name="loadArrayDesc" /> 	
+	<public:method name="loadXmlDesc" />	
+	<public:method name="loadXmlItems" />
+	<public:event name="onchanged" id="_evtonchanged" />
+</public:component>
+<link  href="/IOMPROJ/public/css/style.css" rel="stylesheet" type="text/css">
+
+<table  border=0 cellPadding="0" cellSpacing="0" width="100%" align="center">
+	<tr>
+		<td height=100%><select id='sel01' style="width:100%;" onchange="fncSelChange();"></select></td>
+	</tr>
+</table>
+
+<script language=javascript>
+var g_bNullable = true;
+var g_bEditable = true;
+var g_defaultValue="";
+
+var g_selectedItems = null;
+var _xmlDoc=null;
+var g_userData = new Array();
+
+
+//装载XML数据
+function initLoad()
+{	
+	_xmlDoc=new ActiveXObject("msxml2.Domdocument");
+	var s=element.innerHTML;	
+	s =s.replace("<?XML:NAMESPACE PREFIX = PopSelect />","").replace(/PopSelect:/g,"");
+	if (s.length<1) return;	
+	loadXmlDesc(s);
+	var val=(g_defaultValue!=null?g_defaultValue:null);
+	setValue(val);
+}
+
+function getControlType()
+{
+	return "ComboBox";
+}
+
+function getUserData()
+{
+	return g_userData;
+}
+
+function setUserData(data)
+{
+	g_userData = data;
+}
+
+//common
+function GetRow(elm)
+{
+	if(elm==null||elm.tagName=="TR")
+		return elm;
+	else
+	{
+		return GetRow(elm.parentElement);
+	}
+}
+
+function GetTable(elm)
+{
+	if(elm==null||elm.tagName=="TABLE")
+		return elm;
+	else
+	{
+		return GetTable(elm.parentElement);
+	}
+}
+
+function getItems()
+{
+	var arrItems = new Array();
+	for(var i=0;i<sel01.options.length;i++)
+	{
+		arrItems[arrItems.length] = optionItemFromCell(sel01.options[i]);
+	}
+	return arrItems;
+}
+
+function verifyComboBox()
+{
+	if ( g_bNullable == false )
+	{
+		if ( (g_selectedItems == "")||(g_selectedItems == null) )
+		{				
+			ErrorHandle("警告", 2, 1, "该项不能为空，请选择", null);
+		}
+	}
+}
+
+function setItems(items)
+{
+	sel01.options.length=0;
+	for(var i=0;i<items.length;i++)
+	{
+		var option= document.createElement("OPTION");
+		option.value=items[i].value;
+		option.text=items[i].text;
+		fillCellWithOptionItem(option,items[i]);
+		sel01.add(option);
+	}
+}
+
+function getNullable()
+{
+	return g_bNullable;
+}
+
+function setNullable(inValue)
+{
+	if (inValue == null)
+	{
+		return;
+	}	
+	if (inValue.toString() == "true")	
+	{
+		g_bNullable = true;
+	}
+	if (inValue.toString() == "false") 
+	{
+		g_bNullable = false;
+	}
+}
+function getEditable()
+{
+	return g_bEditable;
+}
+
+function setEditable(bEditable)
+{
+	var vEditable = "";
+	if (bEditable == null)
+	{
+		return;
+	}	
+	if (bEditable.toString() == "true")
+	{
+		vEditable = true;
+	}
+	if (bEditable.toString() == "false")
+	{
+		vEditable = false;
+	}			
+	if ( (bEditable.toString() == "true")||(bEditable.toString() == "false") )
+	{
+		if (g_bEditable != vEditable)
+		{	
+			g_bEditable = vEditable ;
+			if(g_bEditable)
+			{
+				sel01.disabled=false;
+			}
+			else
+			{
+				sel01.disabled=true;
+			}
+		}		
+	}	
+}
+
+function setDefaultValue(defaultVal)
+{	
+	var val=(defaultVal!=null?defaultVal:null);
+	setValue(val);
+}
+
+//if multiple choice, return array; else return value;
+function getValue()
+{
+	if(g_selectedItems == null) 
+	{
+		return null;
+	}
+	else
+	{
+		return g_selectedItems;
+	}
+}
+
+function setValue(val)
+{
+	if ((val==null)||(val==''))
+	{
+		//g_selectedItems= null;
+		if(sel01.selectedIndex>=0){
+			g_selectedItems=optionItemFromCell(sel01.options[sel01.selectedIndex]);
+		}
+	}
+	else
+	{
+		sel01.value=val;
+		g_selectedItems=optionItemFromCell(sel01.options[sel01.selectedIndex]);
+	}
+
+}
+
+function loadXmlItems(xmlNode)
+{	
+	var children = xmlNode.selectNodes("Item");
+	var arrItems = new Array();
+	for(var i=0;i<children.length;i++)
+	{
+		var obj = new Object();
+		obj.text = children[i].getAttribute("text");
+		obj.value = children[i].getAttribute("value");
+		arrItems[arrItems.length]= obj;
+	}
+	setItems(arrItems);	
+}
+
+function loadXmlDesc(xml)
+{
+	_xmlDoc=new ActiveXObject("msxml2.Domdocument");
+	if (_xmlDoc.loadXML(xml))
+	{
+		var root=_xmlDoc.documentElement;
+		setNullable(root.getAttribute("nullable"));		
+		
+		setEditable(root.getAttribute("editable"));
+	
+		//设置完属性，再导入[可选择的数据]
+		loadXmlItems(root);
+	
+		//数据生成后，设置默认值
+		var vDefaultValue = root.getAttribute("defaultValue");	 
+		if ( vDefaultValue != null )
+		{		
+			setDefaultValue(vDefaultValue);	
+		}	
+		var vValue = root.getAttribute("value");
+		if ( vValue != null )
+		{	
+			setValue(vValue);
+		}
+	}
+}
+
+function optionItemFromCell(option)
+{
+	return option._item;
+}
+
+function fillCellWithOptionItem(option,item)
+{
+	option._item  = item;
+	if (item.affectProperties != null)
+	{		
+		var arr = item.affectProperties.split(',');
+		
+		for (var i=0;i<arr.length;i++)
+		{
+			g_userData[g_userData.length] = arr[i];
+		}
+	}
+}
+
+function loadArrayDesc(arrProperty)
+{	
+	//设置属性
+	if ( arrProperty.hasOwnProperty ("nullable") == true )
+	{		
+		setNullable(arrProperty.nullable);		
+	}		
+	if ( arrProperty.hasOwnProperty ("editable") == true )
+	{	
+		var bEnable = arrProperty.editable;	
+		setEditable(bEnable);
+	}
+	//通过数组，导入可选数据
+	if ( arrProperty.hasOwnProperty ("items")== true )
+	{		
+		setItems(arrProperty.items);
+	}
+	
+	//数据生成后，设置默认值
+	if ( arrProperty.hasOwnProperty ("defaultValue")== true )
+	{
+		setValue(arrProperty.defaultValue);
+	}		
+	
+}
+
+function fncSelChange()
+{
+	g_selectedItems=optionItemFromCell(sel01.options[sel01.selectedIndex]);
+	var evt=createEventObject();
+	evt.curValue=sel01.options[sel01.selectedIndex]._item;
+	_evtonchanged.fire(evt);
+}
+</script>

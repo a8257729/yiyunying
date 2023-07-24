@@ -1,0 +1,61 @@
+package com.ztesoft.mobile.v2.dao.broadband;
+
+import com.ztesoft.mobile.common.dao.BaseDAOImpl;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class BroadbandDaoImpl extends BaseDAOImpl implements BroadbandDao {
+    public Map<Object, Object> queryBigTitle() throws DataAccessException {
+        Map<Object, Object> resultDate = new HashMap<Object, Object>();
+        String sqlStr = "SELECT distinct CLASS_NAME FROM mobile.KD_QUESTION";
+        List questionList = dynamicQueryListByMap(sqlStr, null, null);
+        resultDate.put("questionList", questionList);
+        return resultDate;
+    }
+
+    public Map<Object, Object> queryQuestionByBigTitle(String bigTitle) throws DataAccessException {
+        Map<Object, Object> resultDate = new HashMap<Object, Object>();
+        String sqlStr = "SELECT QUESTION_TITLE FROM mobile.KD_QUESTION WHERE CLASS_NAME='" + bigTitle + "'";
+        List sonQuestionList = dynamicQueryListByMap(sqlStr, null, null);
+        resultDate.put("sonQuestionList", sonQuestionList);
+        return resultDate;
+    }
+
+    public Map<Object, Object> queryAnswerBySmallTitle(String smallTitle) throws DataAccessException {
+        Map<Object, Object> resultDate = new HashMap<Object, Object>();
+        String sqlStr = "SELECT QUESTION_TITLE,QUESTION_CONTENT,HELPFUL_CNT,UNHELPFUL_CNT FROM mobile.KD_QUESTION WHERE QUESTION_TITLE = '" + smallTitle + "'";
+        List sonQuestionAnswer = dynamicQueryListByMap(sqlStr, null, null);
+        resultDate.put("sonQuestionAnswer", sonQuestionAnswer);
+        return resultDate;
+    }
+
+    public Map<Object, Object> queryHotQustion() throws DataAccessException {
+        Map<Object, Object> resultDate = new HashMap<Object, Object>();
+        String sqlStr = "SELECT  CLASS_NAME,QUESTION_TITLE,QUESTION_CONTENT  FROM  mobile.KD_QUESTION  where rownum<11  ORDER BY  USE_CNT DESC ";
+        List hotQustion = dynamicQueryListByMap(sqlStr, null, null);
+        resultDate.put("hotQustion", hotQustion);
+        return resultDate;
+    }
+
+    public Map<Object, Object> blurQuery(String search) throws DataAccessException {
+        Map<Object, Object> resultDate = new HashMap<Object, Object>();
+        String sqlStr = "SELECT QUESTION_TITLE,QUESTION_CONTENT FROM  mobile.KD_QUESTION WHERE QUESTION_TITLE LIKE '%" + search + "%'";
+        List blur = dynamicQueryListByMap(sqlStr, null, null);
+        resultDate.put("blur", blur);
+        return resultDate;
+    }
+
+    public Map<Object, Object> updateAccess(String smallTitle, String id) throws DataAccessException {
+        Map<Object, Object> resultDate = new HashMap<Object, Object>();
+        String sqlStr = "";
+        if ("1".equals(id))
+            sqlStr = "UPDATE  mobile.KD_QUESTION SET HELPFUL_CNT=HELPFUL_CNT+1  WHERE QUESTION_TITLE='" + smallTitle + "'";
+        if ("0".equals(id))
+            sqlStr = "UPDATE mobile.KD_QUESTION SET UNHELPFUL_CNT=UNHELPFUL_CNT+1  WHERE QUESTION_TITLE='" + smallTitle + "'";
+        int access = dynamicUpdateBySql(sqlStr);
+        resultDate.put("access", Integer.valueOf(access));
+        return resultDate;
+    }
+}

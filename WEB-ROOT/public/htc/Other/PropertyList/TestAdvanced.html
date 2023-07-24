@@ -1,0 +1,323 @@
+<!--************************************************************
+	版权说明: 
+	文件名: TestAdvanced.html
+	文件创建日期: 2004-07-06
+	作者: lin.zhaohua
+	功能描述: 模拟受理界面,在不同的订单（订购）间切换，
+	          显示相应的产品属性的数据采集项
+	帮助文档：	
+	************************************************************	
+	[变更记录]
+	1)
+	修改人： 
+	修改日期： 
+	修改记录列表：
+	************************************************************  -->
+
+<html>
+<head>
+<title></title>
+<?XML:NAMESPACE PREFIX=DPNS />
+<?IMPORT NAMESPACE=DPNS IMPLEMENTATION="PropertyList.htc">
+<?XML:NAMESPACE PREFIX=ADVTREE />
+<?IMPORT NAMESPACE=ADVTREE IMPLEMENTATION="../TreeListView/TreeListView.htc" />
+</head>
+<!--
+<script language="javascript" src="ProtoType.js">
+-->
+		<script language="javascript" src="../../inter/js/prototype.js"></script>
+		<script language="javascript" src="../../inter/js/Const.js"></script>
+		<script language="javascript" src="../../inter/js/XmlInter.js"></script>
+		<script language="javascript" src="../../inter/js/DBOper.js"></script>		
+<script language="javascript">
+
+var objSaveData = new Object();
+
+var currentItem ;
+
+
+
+/************************************************************
+ 函数名称：initXmlTelphone()
+ 返 回 值：字符串  
+ 函数功能：取产品（ADSL）的属性列表的XML字符串;prod_spec_id = 455;
+ 输入参数：无
+ 输出参数：无 
+ 函数说明：          
+ ************************************************************/
+function initXmlTelphone()
+{
+	//调用后台取数据	
+	var xml="";
+	try
+	{
+		xml = callRemoteFunction("ProdAttrService","QueryProdAttr",455);
+		//alert(xml);
+	}
+	catch(e)
+	{
+		alert(e);
+	}	
+	return xml;	
+}
+
+
+/************************************************************
+ 函数名称：initXmlTelphone()
+ 返 回 值：字符串  
+ 函数功能：取产品的属性列表的XML字符串;prod_spec_id = 455;
+ 输入参数：无
+ 输出参数：无 
+ 函数说明：模拟数据
+ ************************************************************/
+function initXmlAdsl()
+{
+	var xml="";	
+	
+	xml+="<Properties totalColumn='' columnSpan='20' isGroup='true' isTitleRow='' isGroupName='true'>";	
+	
+	xml+="<Property id='1001' displayName='接入方式' type='ComboBox' groupDesc='1' nullable='false' defaultValue='001' multipleChoice='true'>";
+	xml+=	"<Item text='ADSL' value='001' affectProperties='1011,1012'></Item>";
+	xml+=	"<Item text='DDN' value='002' affectProperties='1013'></Item>";
+	xml+=	"<Item text='其他' value='003'></Item>";
+	xml+="</Property>";		
+	
+	xml+="<Property id='1011' displayName='ADSL帐号' type='TextBox' minLength='6' maxLength='6' groupDesc='其他'>";
+	xml+="</Property>";
+	
+	xml+="<Property id='1012' displayName='ADSL密码' type='TextBox' minLength='6' maxLength='6' groupDesc='其他'>";
+	xml+="</Property>";
+	
+	xml+="<Property id='1013' displayName='DDN接入号码' type='TextBox' minLength='1' maxLength='6' groupDesc='其他'>";
+	xml+="</Property>";	
+	
+	xml+="<Property id='1021' displayName='单价' type='TextBox' dataType='int' groupDesc='购买'>";
+	xml+="</Property>";
+	
+	xml+="<Property id='1022' displayName='数量' type='TextBox' dataType='int' groupDesc='购买'>";
+	xml+="</Property>";	
+	
+	xml+="<Property id='1023' displayName='最低价' type='TextBox' dataType='int' editable='true' defaultValue='1000' groupDesc='购买'>";
+	xml+="</Property>";
+	
+	xml+="<Property id='1024' displayName='程控业务' type='ComboBox' nullable='true' multipleChoice='true'>";
+	xml+=	"<Item text='国内直拨' value='001'></Item>";
+	xml+=	"<Item text='国际直拨' value='002'></Item>";
+	xml+=	"<Item text='来电显示' value='003'></Item>";
+	xml+="</Property>";	
+	
+	
+	xml+="<Group id='1031' usage='1' properties='1021,1022,1023' validateScript='_prop1021*_prop1022&lt;_prop1023' ExceptionMessage='不能超过最低价'>";
+	xml+="</Group>";	
+		
+	xml+="<Group id='1032' usage='1' properties='1024' validateScript='_prop1024.contains(\"003\")' ExceptionMessage='必须包含指定产品'>";
+	xml+="</Group>";	
+			
+	xml+="</Properties>";
+	
+	return xml;
+}
+
+/************************************************************
+ 函数名称：init()
+ 返 回 值：无
+ 函数功能：初始化界面数据
+ 输入参数：无
+ 输出参数：无 
+ 函数说明：有3条产品数据，第3个产品，没有产品属性
+ ************************************************************/
+function init()
+{
+	var xmlTelphone;
+	var xmlAdsl;
+	
+	xmlTelphone = initXmlTelphone();
+	xmlAdsl = initXmlAdsl();	
+
+	//模拟订购产品列表-添加3条数据
+	//第1条订购数据
+	var node=document.all.treeCart.createTreeNode();	
+	node.setAttribute("index","000222003");	
+	node.setAttribute("name","普通电话");
+	node.setAttribute("remark","住宅电话");
+	node.setAttribute("id","1");	
+	node.setAttribute("node_type","ddsw3333");
+	node.setAttribute("catg_type","ddsw332342423");		
+	node.setAttribute("xml",xmlTelphone);	
+	document.all.treeCart.add(node);
+	
+	//选择焦点停在第一条记录
+	node.setSelected();
+	
+	//第2条订购数据
+	var node=document.all.treeCart.createTreeNode();	
+	node.setAttribute("index","000222004");	
+	node.setAttribute("name","电话增装ADSL");
+	node.setAttribute("remark","包月");
+	node.setAttribute("id","2");	
+	node.setAttribute("node_type","ddsw3333");
+	node.setAttribute("catg_type","ddsw332342423");		
+	node.setAttribute("xml",xmlAdsl);	
+	document.all.treeCart.add(node);
+	
+	//第3条订购数据
+	var node=document.all.treeCart.createTreeNode();	
+	node.setAttribute("index","000222005");	
+	node.setAttribute("name","某主体产品-没有属性采集");
+	node.setAttribute("remark","无信息采集项");
+	node.setAttribute("id","3");	
+	node.setAttribute("node_type","ddsw33");
+	node.setAttribute("catg_type","ddsw33234242");		
+	node.setAttribute("xml",null);	
+	document.all.treeCart.add(node);	
+	
+	treeCartSelectedIndexChange();
+}
+
+function treeCartSelectedIndexChange()
+{
+	//保存旧选择行的数据
+	if (currentItem != null)     //表明不是初始化
+	{
+		try
+		{		
+			//旧的选择行-若有产品属性，要保存设置的值
+			var oldXml = treeCart.oldItem.getAttribute("xml");		
+			if (oldXml != null)
+			{
+				//保存产品属性	
+				objSaveData[currentItem] = document.all("DP_sample1").saveData();				
+			}
+		}
+		catch (e)
+		{
+			//异常处理说明---(技术问题)由于无法真正接住HTC中抛出的异常，
+			//因此，在HTC控件中，直接alert错误信息，这里只接异常，不显示具体的错误信息
+			//alert(e);       
+			
+			//数据保存不成功，焦点应设回原来的选择行(待处理)
+			var nodeOld = treeCart.oldItem;
+			nodeOld.setSelected();
+			return;
+		}		
+	}	
+	
+	//将PropertyList控件中的数据采集项清空
+	document.all("DP_sample1").loadXmlDesc(null);
+			
+	var selectedItem = treeCart.selectedItem;
+	if(selectedItem == null)
+	{
+		return;
+	}
+	
+	var xml = selectedItem.getAttribute("xml");	
+	currentItem = selectedItem.getAttribute("id");
+	
+	if (xml == null)
+	{	
+		return;
+	}	
+	
+	//先初始化控件，再导入保存的数据	
+	var xmlDoc = new ActiveXObject("msxml2.Domdocument");
+	xmlDoc.loadXML(xml);
+	document.all("DP_sample1").loadXmlDesc(xmlDoc.documentElement);	
+		
+	var saveData = objSaveData[currentItem];	
+	if (saveData != null)
+	{	
+		document.all("DP_sample1").loadData(saveData);
+	}		
+}
+
+function saveData()
+{
+	//保存可能显示的产品属性的设置值-因为只有产品切换，才保存数据	
+	//保存当前界面的产品属性值
+	var selectedItem = document.all("treeCart").selectedItem;				
+	var xml = selectedItem.getAttribute("xml");
+	currentItem = selectedItem.getAttribute("id");
+	
+	if (xml != null)
+	{	
+		if (currentItem != null)
+		{
+			objSaveData[currentItem] = document.all("DP_sample1").saveData();				
+		}		
+	}	
+	
+	//保存产品属性值，到相应的结构中	
+	prodLst = new Array();
+	for(var i = 0; i < treeCart.items.length; i++)
+	{	
+		//prodLst[i] = new DependProdOrderDto();	
+		prodLst[i] = new Object();
+		
+		prodLst[i].AttrDtoList = new Array();		
+		
+		//已保存在临时变量中的产品属性设置值
+		var saveData = objSaveData[treeCart.items[i].id];	
+				
+		if (saveData != null)
+		{			
+			var attrDtoList = new Array();
+			
+			for (var j=0;j<saveData.length;j++)
+			{
+				//var attrDto = new AttrDto();
+				var attrDto = new Object();
+								
+				attrDto.AttrId = saveData[j].AttrId;
+				attrDto.Value = saveData[j].Value;				
+				 
+				attrDtoList[attrDtoList.length] = attrDto;
+			}						
+			prodLst[i].AttrDtoList = attrDtoList;
+		}		
+	}
+		
+	alert(prodLst);
+}
+
+function dp1_onitemchanged()
+{
+	//数据发生变化后，触发
+	//alert(event.id + " " + event.orgValue + " "+ event.curValue );	
+}
+
+</script>
+<body onload="init();">
+	<table>
+		<tr> 
+			<td>当前订购</td>
+		</tr>
+		<tr> 
+			<td>
+				<ADVTREE:treelistview id="treeCart" width="100%" height="60px" imagesurl="/ccmweb/htc/treeListView/images"  onselectedindexchange="treeCartSelectedIndexChange();">
+					<ADVTREE:property>
+							<ADVTREE:columns>
+								<ADVTREE:column width="70%" display="true" displayText="名称" propertyName="name"></ADVTREE:column>
+								<ADVTREE:column width="30%" display="true" displayText="备注" propertyName="remark"></ADVTREE:column>
+								<ADVTREE:column display="false" propertyName="id"></ADVTREE:column>
+								<ADVTREE:column display="false" propertyName="node_type"></ADVTREE:column>
+								<ADVTREE:column display="false" propertyName="catg_type"></ADVTREE:column>
+								<ADVTREE:column display="false" propertyName="xml"></ADVTREE:column>								
+							</ADVTREE:columns>
+						</ADVTREE:property>
+				</ADVTREE:treelistview>
+				
+			</td>
+		</tr>		
+	</table>		
+	<br>	
+	<div style="overflow:Auto;width:500px;height:150px">
+		<DPNS:DynamicProperty id="DP_sample1" height="100%" totalColumn="2" columnSpan="20"  isGroup="true" isTitle="false" onitemchanged="dp1_onitemchanged();"></DPNS:DynamicProperty>		
+	</div>
+	<br>	
+	<button onclick="saveData();" id="Button1">确定(取产品属性的设置值)</button>
+	请查看该按钮后的代码
+	<br>
+	<br>
+</body>
+</html>

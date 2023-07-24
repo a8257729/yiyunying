@@ -1,0 +1,9 @@
+#光衰查询返回的光功率的属性值
+guangshuaiPowerKey=RxPower
+#光衰标准值
+guangshuaiStandardValue=-27dB
+#光衰查询没有结果时，是否需要自动生成随机数据，应付检查加的
+guangshuaiCannotNull=false
+#iptv商品订购查询退订接口地址
+iptvGoodsInterfaceAddress=http://192.168.101.11:7022/FLOWBUS_INTERFACE/services/RMSInterface
+#iptvGoodsInterfaceAddress=http://localhost:7001/dispatchWeb/services/rmsInterface

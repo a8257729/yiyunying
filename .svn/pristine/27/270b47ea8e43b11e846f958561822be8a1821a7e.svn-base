@@ -1,0 +1,485 @@
+<html xmlns:ZTESOFT>
+<head>
+<title>可操作DataGrid</title>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<style type="text/css">
+body{font-size:13px}
+.treelist{selectedBgColor:#AFDAFF;behaviorPath:;}
+</style>
+<script language="javascript">
+gLangCode="zh_cn";
+</script>
+
+<?IMPORT NAMESPACE="ZTESOFT" IMPLEMENTATION="TreeListImg.htc" />
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<div>
+
+  <ZTESOFT:treelist id="tlDemo" class="treelist" width="100%" height="200" showHead="true"
+     pagiServer="true" pagiFunction="qryPagination" pageSize="15" pagiPositon="top,left"
+     showTitleCheck="false" showImage="true" sameReload="false" showCheck="true" checkAll="true" checkChildren="true" sameReload = "false"
+     checkParent="true" onItemClick="alert('click')" onItemDblClick="alert(this.id);" onItemContextMenu="alert('itemMenu')"
+     onDivContextMenu="alert('DivMenu')" onItemChecked="alert('check')" onItemExpand="alert('expand')">
+    <ZTESOFT:columns>
+      <ZTESOFT:column width="20%" display="true" displayText="id" propertyName="id"  />
+      <ZTESOFT:column width="30%" display="true" displayText="名称名称名称名称名称" propertyName="name" linkProperty="nameClick" />
+      <ZTESOFT:column width="50%" display="true" displayText="描述" propertyName="text" displayTip="true" />
+    </ZTESOFT:columns>
+  </ZTESOFT:treelist>
+
+</div>
+<div id="cont1C" align="right">&nbsp;</div>
+<br>
+<br>
+<table width="100%"  border="1" cellspacing="0" cellpadding="3" style="border-collapse : collapse">
+  <tr>
+    <td colspan=4 bgcolor="#F3F3F3" style="font-size:13px">&nbsp;操作</td>
+  </tr>
+  <tr>
+    <td><input type="button" value="loadByXML数据" id="b1" onmousedown="cursorWait(this)" onClick="loadByXML()"></td>
+    <td><input type="button" value="loadByData数据" id="b1_1" onmousedown="cursorWait(this)" onClick="loadByData()"></td>
+    <td>&nbsp;</td>
+    <td><input type="button" value="获得总节点数" id="b4_1" onClick="getItemsLen()"></td>
+  </tr>
+  <tr>
+    <td><input type="button" value="新增根节点" id="b9" onClick="addRootNode()"></td>
+    <td><input type="button" value="新增选择行的子节点" id="b8" onClick="addChildNode()"></td>
+    <td><input type="button" value="删除节点" id="b10" onClick="remove()"></td>
+    <td><input type="button" value="更新节点数据" id="b7" onClick="updateNode()"></td>
+  </tr>
+  <tr>
+    <td><input type="button" value="设置节点属性" id="b11" onClick="setProperty()"></td>
+    <td><input type="button" value="获得选择行的数据" id="b3" onClick="getSelItem1()"></td>
+    <td><input type="button" value="获得选择行的子节点数据" id="b4" onClick="getSelChildren()"></td>
+    <td><input type="button" value="展开选择行节点" id="b11_3" onClick="expandNode()"></td>
+  </tr>
+  <tr>
+    <td><input type="button" value="获得checked选择状态" id="b13" onClick="getChecked()"></td>
+    <td><input type="button" value="设置checked不选" id="b2" onClick="setChecked()"></td>
+    <td><input type="button" value="获得checked选择集合" id="b2" onClick="getCheckedItems()"></td>
+    <td><input type="button" value="清空数据" id="b5" onClick="clear1()"></td>
+  </tr>
+  <tr>
+    <td><input type="button" value="获得所有节点的集合" id="b15" onClick="getAllItems()"></td>
+    <td><input type="button" value="获得根节点的集合"  onClick="getRootItems()"></td>
+    <td><input type="button" value="节点insertByXML数据" id="b1_4" onClick="insertByXml()" onmousedown="cursorWait(this)"></td>
+    <td><input type="button" value="节点insertByData数据" id="b1_5" onClick="insertByData()" onmousedown="cursorWait(this)"></td>
+  </tr>
+  <tr>
+    <td><input type="button" value="删除所有子节点" onClick="deleteChildren()"></td>
+    <td><input type="button" value="设置checkbox无效" onClick="checkDisabled()"></td>
+    <td><input type="button" value="折叠节点" onClick="collapseNode()"></td>
+    <td><input type="button" value="设置文字" onClick="setDisplayText()"></td>
+  </tr>
+</table>
+</body>
+</html>
+<script language="javascript">
+<!--
+
+/* 换标题 */
+function setDisplayText(){
+  var tl2 = document.all.tlDemo;
+  tl2.setDisplayText(1,"lmhlmhy");  	
+}
+
+/* 后台分页函数 */
+function qryPagination(pPage){
+  var tl2 = document.all.tlDemo;
+  //正式
+  //var recVal = callRemoteFunction("","" ,pPage ,tl2.pageSize);
+  //分页
+  //tl2.setPagiRecords(recVal.totalRecords, pPage);
+  //tl2.loadByXML(recVal.data);
+
+  //测试
+  tl2.paginate(100, pPage);
+  loadByXML();
+  //alert("分页完成!");
+}
+//qryPagination(1);
+
+
+/* 折叠节点 */
+function collapseNode(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //selItem.expand();
+  selItem.collapse();
+}
+
+/* 删除所有子节点 */
+function deleteChildren(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.removeChildren();
+}
+/* 设置checkbox无效 */
+function checkDisabled(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.setCheckDisabled(true);
+}
+
+/* 节点insertByData数据 */
+function insertByData(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+ var a1 = new Array();
+   a1[0] = new Object();
+   a1[0].id = "1";
+   a1[0].name ="中兴0";
+   a1[0].text ="软创0";
+   a1[0].FONT_COLOR ="#F00";
+   a1[0].children = new Array();
+     a1[0].children[0] = new Object();
+     a1[0].children[0].id="0.0";
+     a1[0].children[0].name ="中兴0.0";
+     a1[0].children[0].text ="软创0.0";
+   //
+   a1[1] = new Object();
+   a1[1].id = "2";
+   a1[1].name ="中兴1";
+   a1[1].text ="软创1";
+   a1[1].BG_COLOR ="#F4F4F4";
+   a1[1].children = new Array();
+     a1[1].children[0] = new Object();
+     a1[1].children[0].id="2.0";
+     a1[1].children[0].name ="中兴2.0";
+     a1[1].children[0].text ="软创2.0";
+   //
+   a1[2] = new Object();
+   a1[2].id = "5";
+   a1[2].name ="中兴1";
+   a1[2].text ="软创1";
+   /////
+   selItem.insertByData(a1);
+}
+
+/* 节点插入xml数据 */
+function insertByXml(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  var i=0;
+  var xmlStr ='<items>'+
+                '<item id="'+ (++i) +'" name="中兴111" text="软创111" />'+
+                '<item id="'+ (++i) +'" name="中兴111" text="软创111" />'+
+                '<item id="'+ (++i) +'" name="中兴1" text="软创1" FONT_COLOR="#C33">'+
+                  '<item id="'+ (++i) +'" name="中兴11" text="软创11">'+
+                    '<item id="'+ (++i) +'" name="中兴111" text="软创111" />'+
+                    '<item id="'+ (++i) +'" name="中兴112" text="软创112" />'+
+                  '</item>'+
+                  '<item id="'+ (++i) +'" name="中兴12" text="软创12"/>'+
+                '</item>'+
+              '</items>';
+  selItem.insertByXML(xmlStr);
+  selItem.expand();
+
+}
+
+/* 获得根节点的集合 */
+function getRootItems(){
+  var arr = document.all.tlDemo.rootItems;
+  if(arr.length>0)
+    alert("根节点个数："+ arr.length);
+  else
+    alert("没有根节点！");
+}
+
+/* 获得所有节点的集合 */
+function getAllItems(){
+  var tl2 = document.all.tlDemo;
+  var allItems = tl2.items;   //返回数组
+  if(allItems.length)
+    alert("节点总数："+ allItems.length);
+}
+
+/* 展开节点 */
+function expandNode(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+
+  selItem.expand();
+}
+
+/* 获得选择check集合 */
+function getCheckedItems(){
+  var arr = document.all.tlDemo.checkedItems;
+  if(arr.length>0)
+    alert("check个数："+ arr.length +"  一节点描述："+ arr[0].text);
+  else
+    alert("没有check选择节点！");
+}
+
+/* 设置check不选 */
+function setChecked(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.setChecked(false);
+}
+
+/* 获得选择节点的check状态 */
+function getChecked(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  alert(selItem.getChecked());
+}
+
+/* 获得选择节点的子节点 */
+function getSelChildren(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  if(selItem.items!=null){
+    alert("子个数："+ selItem.items.length +" 一节点名称："+  selItem.items[0].name +" 一节点描述："+ selItem.item(0).text);
+  }else{
+    alert("本节点没有子节点!");
+  }
+}
+
+/* 获得选择行的描述 */
+function getSelItem1(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+
+  alert("节点描述："+ selItem.text);
+}
+
+/* 设置节点属性 */
+function setProperty(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.setChecked(true);  //设置选择checkbox
+  //selItem.setImage("images/openicon.gif"); //设置图片
+  selItem.setBgColor("#F4F4F4");
+  selItem.setFontColor("#009");
+}
+
+/* 更新节点 */
+function updateNode(){
+  var tl2 = document.all.tlDemo;
+  var node = tl2.selectedItem;
+  if(node==null){alert("没有数据");return;}
+
+  node.setAttribute("id","999");
+  node.setAttribute("text","外面");
+  node.name="世界";
+
+  node.refresh();
+}
+
+/* 删除节点 */
+function remove(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  selItem.remove();
+}
+
+/* 增加根节点 */
+function addRootNode(){
+  var tl2 = document.all.tlDemo;
+  var node = tl2.createTreeNode();
+  //
+  node.id   = "888";
+  node.name = "ndd";
+  node.text = "好人";
+  node.age = "29";
+  //
+  tl2.add(node);
+  //把该节点选择上，如果批量插入，建议不要选择
+  node.setSelected();
+}
+
+/* 增加子节点 */
+function addChildNode(){
+  var tl2 = document.all.tlDemo;
+  var selItem = tl2.selectedItem;
+  if(selItem==null)return;
+  //
+  var node = tl2.createTreeNode();
+  //
+  node.id   = "888";
+  node.name = "ndd";
+  node.text = "好人";
+
+  selItem.add(node);
+  node.setSelected();
+}
+
+/* 获得总节点数 */
+function getItemsLen(){
+  alert(document.all.tlDemo.itemsLength);
+}
+
+/* 清空 */
+function clear1(){
+  document.all.tlDemo.clear();
+}
+
+/* 载入数据 */
+function loadByXML(){
+  var l2 = (new Date()).getTime();
+  var i=0;
+  var tmpArr = new Array();
+  
+    tmpArr.push('<items>'+
+      '<item id="'+ (++i) +'" name="中兴111" text="软创111" />'+
+      '<item id="'+ (++i) +'" name="中兴111" text="软创111" />'+
+      '<item id="'+ (++i) +'" name="中兴1" text="软创1" FONT_COLOR="#C33">'+
+        '<item/>'+
+      '</item>'+
+      '<item id="'+ (++i) +'" name="中兴2" text="软创2" nameClick="event1()" BG_COLOR="#ffc">'+
+        '<item id="'+ (++i) +'" name="中兴21" text="软创21" />'+
+        '<item id="'+ (++i) +'" name="中兴22" text="软创22" />'+
+        '<item id="'+ (++i) +'" name="中兴23" text="软创23" />'+
+      '</item>'+
+      '<item id="'+ (++i) +'" name="中兴3" text="南京中兴软创科技有限责任公司 研发部南京市雨花台区紫荆花路68号中兴研发基地" nameClick="event1()">'+
+        '<item id="'+ (++i) +'" name="中兴31" text="软创21"/>'+
+        '<item id="'+ (++i) +'" name="中兴32" text="软创32" BG_COLOR="#F4F4F4" FONT_COLOR="#C33" />'+
+        '<item id="'+ (++i) +'" name="中兴33" text="软创33">'+
+          '<item id="'+ (++i) +'" name="中兴331" text="软创331" />'+
+        '</item>'+
+    '</item>');
+    
+  /*
+  tmpArr.push('<items>'+
+      '<item id="'+ (++i) +'" name="中兴111" text="软创111" />'+
+      '<item id="'+ (++i) +'" name="中兴111" text="软创111" />'+
+      '<item id="'+ (++i) +'" name="中兴1" text="软创1" FONT_COLOR="#C33">'+
+        '<item id="'+ (++i) +'" name="中兴11" text="软创11">'+
+          '<item id="'+ (++i) +'" name="中兴111" text="软创111" />'+
+          '<item id="'+ (++i) +'" name="中兴112" text="软创112" />'+
+        '</item>'+
+        '<item id="'+ (++i) +'" name="中兴12" text="软创12"/>'+
+      '</item>'+
+      '<item id="'+ (++i) +'" name="中兴2" text="软创2" nameClick="event1()" BG_COLOR="#ffc">'+
+        '<item id="'+ (++i) +'" name="中兴21" text="软创21" />'+
+        '<item id="'+ (++i) +'" name="中兴22" text="软创22" />'+
+        '<item id="'+ (++i) +'" name="中兴23" text="软创23" />'+
+      '</item>'+
+      '<item id="'+ (++i) +'" name="中兴3" text="南京中兴软创科技有限责任公司 研发部南京市雨花台区紫荆花路68号中兴研发基地" nameClick="event1()">'+
+        '<item id="'+ (++i) +'" name="中兴31" text="软创21"/>'+
+        '<item id="'+ (++i) +'" name="中兴32" text="软创32" BG_COLOR="#F4F4F4" FONT_COLOR="#C33" />'+
+        '<item id="'+ (++i) +'" name="中兴33" text="软创33">'+
+          '<item id="'+ (++i) +'" name="中兴331" text="软创331" />'+
+        '</item>'+
+    '</item>');
+    */
+    /*
+  for(var j=0;j<9;j++){
+    tmpArr.push('<item id="'+ (++i) +'" name="中兴-n" text="软创-n">'+
+        '<item id="'+ (++i) +'" name="中兴-n1" text="软创-n1"/>'+
+        '<item id="'+ (++i) +'" name="中兴-n2" text="软创-n2">'+
+          '<item id="'+ (++i) +'" name="中兴-n21" text="软创-n21" />'+
+          '<item id="'+ (++i) +'" name="中兴-n22" text="软创-n22" />'+
+          '<item id="'+ (++i) +'" name="中兴-n23" text="软创-n23" />'+
+          '<item id="'+ (++i) +'" name="中兴-n24" text="软创-n24" />'+
+          '<item id="'+ (++i) +'" name="中兴-n25" text="软创-n25" />'+
+          '<item id="'+ (++i) +'" name="中兴-n26" text="软创-n26" />'+
+        '</item>'+
+        '<item id="'+ (++i) +'" name="中兴-n3" text="软创-n3"/>'+
+      '</item>');
+  }
+  */
+  tmpArr.push('</items>');
+  //
+  document.all.tlDemo.loadByXML(tmpArr.join(""));
+  tmpArr = null;
+  document.all.cont1C.innerHTML = "共 <font color='#CC3333'>"+ i +"</font> 行，控件耗时：<font color='#CC3333'>"+
+                                  ((new Date()).getTime()-l2) +"ms</font>&nbsp;&nbsp;";
+}
+
+
+/* 对象载入 */
+function loadByData(){
+  var l2 = (new Date()).getTime();
+
+ var a1 = new Array();
+   a1[0] = new Object();
+   a1[0].id = "1";
+   a1[0].name ="中兴0";
+   a1[0].text ="软创0";
+   a1[0].FONT_COLOR ="#F00";
+   a1[0].children = new Array();
+     a1[0].children[0] = new Object();
+     a1[0].children[0].id="0.0";
+     a1[0].children[0].name ="中兴0.0";
+     a1[0].children[0].text ="软创0.0";
+   //
+   a1[1] = new Object();
+   a1[1].id = "2";
+   a1[1].name ="中兴1";
+   a1[1].text ="软创1";
+   a1[1].BG_COLOR ="#F4F4F4";
+   a1[1].children = new Array();
+     a1[1].children[0] = new Object();
+     a1[1].children[0].id="2.0";
+     a1[1].children[0].name ="中兴2.0";
+     a1[1].children[0].text ="软创2.0";
+   //
+   a1[2] = new Object();
+   a1[2].id = "5";
+   a1[2].name ="中兴1";
+   a1[2].text ="软创1";
+   /////
+   var i=5;
+   for(var m=3; m<337; m++){
+     a1[m]=new Object();
+     a1[m].id = m;
+     a1[m].name ="中兴"+ m;
+     a1[m].text ="软创"+ m;
+     a1[m].children = new Array();
+       a1[m].children[0] = new Object();
+       a1[m].children[0].id = "0"+ m;
+       a1[m].children[0].name ="中兴0"+ m;
+       a1[m].children[0].text ="软创0"+ m;
+       a1[m].children[1] = new Object();
+       a1[m].children[1].id = "1"+ m;
+       a1[m].children[1].name ="中兴1"+ m;
+       a1[m].children[1].text ="软创1"+ m;
+
+     i += 3;
+   }
+
+  document.all.tlDemo.loadByData(a1);
+  a1 = null;
+  //document.all.tlDemo.loadByData(new Array());
+  document.all.cont1C.innerHTML = "共 <font color='#CC3333'>"+ i +"</font> 行，控件耗时：<font color='#CC3333'>"+((new Date()).getTime()-l2) +"ms</font>&nbsp;&nbsp;";
+}
+
+
+/* 链接1事件 */
+function event1(){
+  alert("名称："+ document.all.tlDemo.selectedItem.name);
+}
+/* 链接2事件 */
+function event2(){
+  alert("描述："+ document.all.tlDemo.selectedItem.text);
+}
+function cursorWait(ObjP){
+ ObjP.style.cursor = "wait";
+ ObjP.onmouseup = function(){this.style.cursor='default'};
+}
+////////////////////////////////////////////////////////////
+//-->
+</script>

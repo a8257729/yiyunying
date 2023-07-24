@@ -1,0 +1,111 @@
+package com.ztesoft.mobile.v2.dao.resource;
+
+import com.ztesoft.mobile.common.dao.BaseDAO;
+
+import java.util.List;
+import java.util.Map;
+
+public interface ResourceDAO extends BaseDAO {
+
+	Map<String, Object> getResourceInfoByQrcode(String qrCode);
+
+	Map<String, Object> queryUserInfo(String portId, String qrCode);
+
+	/**
+	 * 普通的sql查询单个对象
+	 * @param sql
+	 * @param paramMap 参数map，如：map.put("orderId","1125555");key与wherePatternStr中冒号后的名字对应
+	 * @param wherePatternStr sql字段和入参对应键值对，如："order_id:orderId,staff_id:staffId"
+	 * @return
+	 */
+	Map<String, Object> commonQueryObjectBySql(String sqlStr, Map paramMap, String wherePatternStr);
+
+	/**
+	 * 普通的sql查询数据列表
+	 * @param sql
+	 * @param paramMap 参数map，如：map.put("orderId","1125555");key与wherePatternStr中冒号后的名字对应
+	 * @param wherePatternStr sql字段和入参对应键值对，如："order_id:orderId,staff_id:staffId"
+	 * @return
+	 */
+	Map<String, Object> commonQueryListBySql(String sql, Map<String, Object> paramMap, String wherePatternStr);
+
+	/**
+	 * 调用存储过程查询map
+	 * @param procedureName 存储过程名
+	 * @param paramList 参数列表，出参为一个包含数据类型的初始化对象，如 new String(""),new BigDecimal(0)
+	 * @param intParamLength 存储过程入参个数
+	 * @param outParam 存储过程出参返回给map的key属性数组，如["orderNo","splitterName"]
+	 * @return
+	 */
+	public Map<String, Object> commonQueryObjectByProcedure(String procedureName, List paramList, int intParamLength,String[] outParam) ;
+
+	/**
+	 * 资源清查 分光器查询
+	 * @param orgId
+	 * @param direName
+	 * @param equipmentName
+	 * @param pageSize
+	 * @param pageIndex
+	 * @return
+	 * @throws Exception
+	 */
+	public String getResouceInfoList(String orgId, String direName, String equipmentName, Integer pageSize, Integer pageIndex,String staffId,String condition) throws Exception;
+	//挂测
+	public String getgcInfoList(String orgId, String equipmentName, Integer pageSize, Integer pageIndex,String staffId) throws Exception;
+
+	//资源清查分光器详情
+	public Map<String, Object> getResouceInfo(String eqpId);
+	/**
+	 * 资源清查 分光器端口信息查询
+	 * @return
+	 * @throws Exception
+	 */
+	public String getResoucePortInfoList(String eqpId) throws Exception;
+
+	/**
+	 * 覆盖地址
+	 * @return
+	 * @throws Exception
+	 */
+	public String getResouceCoverAddressInfoList(String eqpId) throws Exception;
+	/**
+	 * 覆盖地址
+	 * @return
+	 * @throws Exception
+	 */
+	public String getResouceAllCoverAddressInfoList(String address,Integer pageSize,Integer pageIndex) throws Exception;
+	/**
+	 * OLT
+	 * @return
+	 * @throws Exception
+	 */
+	public String getOltInfoList(String eqpName);
+	/**
+	 * 地址坐标
+	 * @return
+	 * @throws Exception
+	 */
+	public String bindObdCoordinate(String x,String y,String eqpId);
+	/**
+	 * 地址坐标写入数据库
+	 * @return
+	 * @throws Exception
+	 */
+	public void writeCoordinateLogToDb(String res_type_id,String res_id,String res_name,String wo_id,String new_info,String old_info,String type,String update_op);
+
+	/**
+	 * 用户信息
+	 * @return
+	 * @throws Exception
+	 */
+	public String getUserInfo(String loid);
+
+	/**
+	 * 扫码查询OBD
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> getResouceInfoByCode(String digCode);
+
+}
+  

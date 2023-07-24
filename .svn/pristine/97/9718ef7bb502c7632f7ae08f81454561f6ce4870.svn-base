@@ -1,0 +1,86 @@
+package com.ztesoft.mobile.v2.dao.weixin;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.ztesoft.mobile.common.dao.BaseDAOImpl;
+import com.ztesoft.mobile.common.exception.DataAccessException;
+import com.ztesoft.mobile.common.helper.StringUtil;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Types;
+
+import net.sf.json.JSONObject;
+
+import oracle.jdbc.internal.OracleTypes;
+
+public class WeChatDAOImpl extends BaseDAOImpl implements WeChatDAO {
+
+	
+
+
+	public Map queryUserHouseInfoByCode(String qrcode) throws DataAccessException {
+		StringBuffer sb = new StringBuffer();
+
+		sb.append("select service_num,qrcode,staff_id,staff_name,staff_phone,cust_name,cust_phone,order_time,install_addr,insert_time,update_time from house_code_inf where qrcode = '"+qrcode+"' ");
+
+		System.out.println(sb.toString());
+		return dynamicQueryObjectByMap(sb.toString(), null, null);
+
+	}
+	
+	
+	public int insertMap(String log_id,String service_num,String qrcode,String custname) throws Exception {
+		int record;
+		String insetSql = "INSERT INTO user_house_log(LOG_ID,SERVICE_NUM,QRCODE,CUST_NAME,CREATE_TIME) VALUES("+"'"+log_id+"'"+','+"'"+service_num+"'"+','+"'"+qrcode+"'"+','+"'"+custname+"'"+','+"sysdate"+")";
+		record = dynamicUpdateBySql(insetSql);
+		
+		return record;
+				
+	}
+
+
+	public String queryWorkOrderInfo(String service_num) throws Exception
+	{
+		String result =  "";
+		Connection conn = null;  
+	    CallableStatement callStmt = null;  
+		try {
+			callStmt = null; 
+			conn = getConnection();
+			callStmt = conn.prepareCall("{call proc_weixin_orderqueryplan_yh(?,?,?,?)}");
+			callStmt.setString(1, service_num);
+			callStmt.setString(2, "1SA");
+			callStmt.setString(3, "");
+			callStmt.registerOutParameter(4, OracleTypes.VARCHAR);  
+			
+			callStmt.execute();  
+			String respXML = callStmt.getString(4);
+			result = respXML;
+			
+			return result;
+		} catch (Exception e) {  
+			
+			return result;
+		} finally {
+			if (null != callStmt) {  
+				callStmt.close();  
+			}  
+			if (null != conn) {  
+				conn.close();  
+			}  
+		} 
+	}
+
+	
+	
+	
+	
+	
+}

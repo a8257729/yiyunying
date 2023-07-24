@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+body, html, #allmap {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	margin: 0;
+	font-family: "微软雅黑";
+	/* margin-top: 20px; */
+}
+</style>
+<!-- <link rel="stylesheet" href="../css/mui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/app.css" /> -->
+<script type="text/javascript"
+	src="./js/jquery.min.js"></script>
+<!-- <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=7a6QKaIilZftIMmKGAFLG7QT1GLfIncg"></script>	 -->
+<script type="text/javascript"
+	src="./js/Utils.js"></script>
+<script language="javascript" src="js/common.js" type="text/javascript"></script>
+<!-- <script type="text/javascript" src="../js/mui.min.js"></script> -->
+
+<title>装机师傅位置</title>
+</head>
+
+<body>
+	<div id="allmap"></div>
+	<div style="display: none;">
+		<input type="text" name="input_code" id="input_code" />
+	</div>
+
+</body>
+
+</html>
+<script type="text/javascript">
+	var resLongitude; //装维师傅位置经度
+	var resLatitude; //装维师傅位置纬度
+
+	var map = null;
+	var myIcon = null;
+
+	var geolocation = null;
+	var orderId;
+	
+	//var serverUrl = "http://220.248.160.253:9022";//正式地址
+	var serverUrl = "http://192.168.101.13:9022";//测试地址
+
+	$(function() {
+		/*var param = Utils.getParams(window.location.href);
+		if (param && param.orderId) {
+			orderId = param.orderId;
+		}*/
+		var requestParam = GetURLRequestParam();
+		orderId = requestParam.orderId;
+		console.log("orderId:" + orderId);
+		var webAK = 'rWEo987EbBSGEw4NnE77CbAafIrSYiFn';
+		loadJScript(webAK);
+	});
+
+	//百度地图API功能
+	function loadJScript(ak) {
+		var script = document.createElement("script");
+		script.type = "text/javascript";
+		//v2.0
+		script.src = "http://api.map.baidu.com/api?v=2.0&ak=" + ak
+				+ "&callback=init";
+		document.body.appendChild(script);
+	}
+
+	function init() {
+		map = new BMap.Map("allmap");
+		myIcon = new BMap.Icon("images/staff_pic.png", new BMap.Size(180, 180),
+				{});
+		geolocation = new BMap.Geolocation();
+		//获取订单资源点的经纬度
+		getStaffPoint(orderId, function(data) {
+			//alert(JSON.stringify(data, null, 2));
+			console.log("返回结果：" + JSON.stringify(data, null, 2));
+			resLongitude = data.resultData.data_info.longitude;
+			resLatitude = data.resultData.data_info.latitude;
+
+			//加载地图，并展示装维人员位置
+			if (resLongitude && resLongitude != null) {
+				initialize();
+			} else {
+				/* resLongitude = 113.04181878379;
+				resLatitude = 28.14755514456; */
+				alert("没有查询到装维师傅的位置");
+				initMap();
+			}
+
+		}, function(data) {
+			alert('查询装维人员位置失败');
+			console.log("查询装维人员位置失败。");
+			//获取当前位置并加载地图
+			initMap();
+		});
+
+	}
+
+	function callbackFunction() {
+
+	}
+
+	//获取装维人员的位置
+
+	function getStaffPoint(orderId, successBack, failBack) {
+		var param = {
+			orderId : orderId
+		};
+		$
+				.ajax({
+					url : serverUrl
+							+ "/MOBILE/api/client/common/commonQueryObjectBySqlForWechat",
+					type : "GET",//必须是get请求
+					dataType : "jsonp",//请求的数据类型
+					jsonp : "callback",//请求类型是回调
+					jsonpCallback : "callbackFunction",//数据请求成功时回调的方法
+					data : {
+						param : JSON.stringify(param),
+						method : "getStaffPostionByOrderId"
+					},
+					success : successBack,
+					error : failBack
+				});
+	}
+
+	//显示地图
+	function initialize() {
+		console.log("开始加载地图。。");
+		// 百度地图API功能  
+		map.addControl(new BMap.NavigationControl()); // 添加平移缩放控件  
+		map.addControl(new BMap.ScaleControl()); // 添加比例尺控件  
+		map.addControl(new BMap.OverviewMapControl()); //添加缩略地图控件  
+		map.enableScrollWheelZoom(); //启用滚轮放大缩小  
+
+		var point = new BMap.Point(resLongitude, resLatitude); // 创建点坐标  
+		map.centerAndZoom(point, 15); // 初始化地图,设置中心点坐标和地图级别。  
+
+		// 创建资源点标注对象并添加到地图   
+		var marker = new BMap.Marker(new BMap.Point(resLongitude, resLatitude),
+				{
+					icon : myIcon
+				});
+		var opts = {
+			width : 110, // 信息窗口宽度    
+			height : 10
+		// 信息窗口高度    
+		}
+		var infoWindow = new BMap.InfoWindow("装维师傅位置", opts);
+		marker.addEventListener("click", function() {
+			this.openInfoWindow(infoWindow);
+		});
+		map.addOverlay(marker);
+
+	}
+
+	function initMap() {
+		geolocation
+				.getCurrentPosition(function(position) {
+					//调取方位函数的回调方法获取经度纬度
+					alert(BMAP_STATUS_SUCCESS);
+					if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+						/* var coords = position.coords;
+						var latitude = coords.latitude;
+						var longitude = coords.longitude; */
+						var latitude = position.point.lat;
+						var longitude = position.point.lng;
+						console.log("longitude:" + longitude + ",latitude:"
+								+ latitude);
+						map.addControl(new BMap.NavigationControl()); // 添加平移缩放控件  
+						map.addControl(new BMap.ScaleControl()); // 添加比例尺控件  
+						map.addControl(new BMap.OverviewMapControl()); //添加缩略地图控件  
+						map.enableScrollWheelZoom(); //启用滚轮放大缩小  
+
+						var point = new BMap.Point(longitude, latitude); // 创建点坐标  
+						map.centerAndZoom(point, 15); // 初始化地图,设置中心点坐标和地图级别。
+					}
+				});
+	}
+</script>

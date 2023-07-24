@@ -1,0 +1,273 @@
+package com.ztesoft.mobile.v2.controller.resource;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ztesoft.mobile.v2.core.Result;
+import com.ztesoft.mobile.v2.service.resource.ResourceService;
+import com.ztesoft.mobile.v2.service.resource.ResourceServiceImpl;
+
+@Controller("ResourceController")
+public class ResourceController {
+	private static final Logger logger = Logger.getLogger(ResourceController.class);
+	private ResourceService resourceService;
+
+	public ResourceService getResourceService() {
+		return resourceService;
+	}
+
+	@Autowired(required = false)
+	public void setResourceService(ResourceService resourceService) {
+		this.resourceService = resourceService;
+	}
+
+	/**
+	 * obd二维码查询资源信息
+	 * @param data
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = { "/client/resource/resourceInfo/queryResourceInfo" })
+	public @ResponseBody Result queryResourceInfo(@RequestBody Map<String, Object> data, ModelMap model,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		logger.info("Call queryResourceInfo method");
+
+		String qrCode = data.get("qrCode") == null ? "" : (String) data.get("qrCode");
+		Result result = this.getResourceService().getResourceInfoByQrcode(qrCode);
+		return result;
+	}
+
+	//资源清查  分光器查询----------------
+	@RequestMapping(value = {"/client/resource/resources_clean/Spectroscope/search"})
+	public @ResponseBody String selSpectroscope(@RequestBody Map<String,Object> map) throws Exception {
+		String orgId = (String)map.get("orgId");
+		String direName = (String)map.get("direName");
+		String condition = (String)map.get("condition");
+		String equipmentName = (String)map.get("equipmentName");
+		Integer pageIndex = Integer.parseInt((String)map.get("pageIndex"));
+		Integer pageSize = Integer.parseInt((String)map.get("pageSize"));
+		String staffId = (String) map.get("staffId");
+		String result = this.getResourceService().getResourceInfoBySpectroscope(orgId, direName, equipmentName, pageSize, pageIndex,staffId,condition);
+		return result;
+	}
+
+
+
+	//资源清查  挂测查询----------------
+	@RequestMapping(value = {"/client/resource/resources_clean/tblprojectobddevice/search"})
+	public @ResponseBody String seltblprojectobddevice(@RequestBody Map<String,Object> map) throws Exception {
+		String orgId = (String)map.get("orgId");
+		String equipmentName = (String)map.get("equipmentName");
+		logger.info("Search tblprojectobddevice equipmentName:"+equipmentName);
+		Integer pageIndex = Integer.parseInt((String)map.get("pageIndex"));
+		Integer pageSize = Integer.parseInt((String)map.get("pageSize"));
+		String staffId = (String) map.get("staffId");
+		String result = this.getResourceService().getProjectobddevice(orgId, equipmentName, pageSize, pageIndex,staffId);
+		return result;
+	}
+
+	//资源清查  分光器详情
+	@RequestMapping(value = {"/client/resource/resources_clean/SpectroscopeInfo/search"})
+	public @ResponseBody Result selSpectroscopeInfo(@RequestBody Map<String,Object> map) throws Exception {
+		String eqpId = map.get("eqpId") == null ? "" : (String)map.get("eqpId");
+		logger.info("Search SpectroscopeInfo eqpId:"+eqpId);
+		Result result = this.getResourceService().getResourceInfoBySpectroscopeInfo(eqpId);
+		return result;
+	}
+
+	//分光器详情  端口查询
+	@RequestMapping(value = {"/client/resource/resources_clean/SpectroscopePort/search"})
+	public @ResponseBody String selSpectroscopePort(@RequestBody Map<String,Object> map) throws Exception {
+		String eqpId = map.get("eqpId") == null ? "" : (String)map.get("eqpId");
+		logger.info("Search SpectroscopePort eqpId:"+eqpId);
+		String result = this.getResourceService().getResourceInfoBySpectroscopePort(eqpId);
+		return result;
+	}
+
+	//用户信息查询
+	@RequestMapping(value = {"/client/resource/resources_clean/userLoid/search"})
+	public @ResponseBody String selUserInfo(@RequestBody Map<String,Object> map) throws Exception {
+		String loid = map.get("loid") == null ? "" : (String)map.get("loid");
+		logger.info("Search UserInfo loid:"+loid);
+		String result = this.getResourceService().getUserInfoByLoid(loid);
+		return result;
+	}
+
+	//覆盖地址  端口查询
+	@RequestMapping(value = {"/client/resource/resources_clean/CoverAddress/search"})
+	public @ResponseBody String selCoverAddress(@RequestBody Map<String,Object> map) throws Exception {
+		String eqpId = map.get("eqpId") == null ? "" : (String)map.get("eqpId");
+		logger.info("Search SpectroscopeCoverAddress eqpId:"+eqpId);
+		String result = this.getResourceService().getResourceInfoByCoverAddress(eqpId);
+		return result;
+	}
+
+	//覆盖地址查询
+	@RequestMapping(value = {"/client/resource/resources_clean/AllCoverAddress/search"})
+	public @ResponseBody String selAllCoverAddress(@RequestBody Map<String,Object> map) throws Exception {
+		String address = map.get("address") == null ? "" : (String)map.get("address");
+		logger.info("Search AllCoverAddress eqpId:"+address);
+		Integer pageIndex = Integer.parseInt((String)map.get("pageIndex"));
+		Integer pageSize = Integer.parseInt((String)map.get("pageSize"));
+		String result = this.getResourceService().getResourceInfoByAllCoverAddress(address,pageSize,pageIndex);
+		return result;
+	}
+
+	//扫码查询obd
+	@RequestMapping(value = {"/client/resource/resources_clean/sn/searchObd"})
+	public @ResponseBody Result searchOBDBySN(@RequestBody Map<String,Object> map) throws Exception {
+		String digCode = map.get("digCode") == null ? "" : (String)map.get("digCode");
+		logger.info("Search OBDBySN:"+digCode);
+		Result result = this.getResourceService().getResourceInfoBySn(digCode);
+		return result;
+	}
+
+	//OLT查询
+	@RequestMapping(value = {"/client/resource/resources_clean/oltInf/search"})
+	public @ResponseBody String selAllOltInf(@RequestBody Map<String,Object> map) throws Exception {
+		String eqpName = map.get("eqpName") == null ? "" : (String)map.get("eqpName");
+		logger.info("Search oltInf eqpName:"+eqpName);
+		String result = this.getResourceService().getOltInfoByEqpName(eqpName);
+		return result;
+	}
+
+
+	//绑定地址坐标
+	@RequestMapping(value = {"/client/resource/resources_clean/bind/addressCoordinates"})
+	public @ResponseBody String bindAddressCoordinates(@RequestBody Map<String,Object> map) throws Exception {
+		String eqpId = map.get("eqpId") == null ? "" : (String)map.get("eqpId");
+		String x = map.get("lon") == null ? "" : (String)map.get("lon");
+		String y = map.get("lat") == null ? "" : (String)map.get("lat");
+		String staffId = map.get("staffId") == null ? "" : (String)map.get("staffId");
+		logger.info("bind addressCoordinates by eqpId:"+eqpId);
+		String result = this.getResourceService().bindAddressCoordinates(x,y,eqpId,staffId);
+		return result;
+	}
+
+	//替换的OLT日志写入
+	@RequestMapping(value = {"/client/resource/resources_clean/writeReplaceOlt"})
+	public void writeReplaceOlt(@RequestBody Map<String,Object> map) throws Exception {
+		String eqpId = map.get("eqpId") == null ? "" : (String)map.get("eqpId");
+		String portId = map.get("portId") == null ? "" : (String)map.get("portId");
+		String ponId = map.get("ponId") == null ? "" : (String)map.get("ponId");
+		String staffId = map.get("staffId") == null ? "" : (String)map.get("staffId");
+		this.getResourceService().writeReplaceOltInfo(portId,ponId,eqpId,staffId);
+	}
+
+	/**
+	 * 根据端口二维码或者portId查询用户端口使用详情
+	 * @param data
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = { "/client/resource/resourceInfo/queryUserInfo" })
+	public @ResponseBody Result queryUserInfo(@RequestBody Map<String, Object> data, ModelMap model,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		logger.info("Call queryResourceInfo method");
+
+		String qrCode = data.get("qrCode") == null ? "" : (String) data.get("qrCode");
+		String portId = data.get("portId") == null ? "" : (String) data.get("portId");
+		logger.info("<<<queryUserInfo>>>,qrCode:" + qrCode + ",portId:" + portId);
+		Result result = this.getResourceService().queryUserInfo(portId,qrCode);
+		return result;
+	}
+	
+	public static void testObjectBysql() {
+		StringBuffer sbf = new StringBuffer();
+		sbf.append("  select                                               \n");
+		sbf.append("  c.port_id as portId,                                 \n");
+		sbf.append("  e.cust_name as custName,                             \n");
+		sbf.append("  SF_GET_ADDRESS_BY_RES_ID(C.PORT_ID) as custAddr,     \n");
+		sbf.append("  e.tele_no as teleNo,                                 \n");
+		sbf.append("  e.loid as serviceNum,                                \n");
+		sbf.append("  b.eqp_no as eqpNo,                                   \n");
+		sbf.append("  c.position as position,                              \n");
+		sbf.append("  d.digcode as qrCode,                                 \n");
+		sbf.append("  sf_get_onuobd_up_olt_rma(b.eqp_id) as oltIP,         \n");
+		sbf.append("  sf_get_onuobd_up_olt_name(b.eqp_id) as oltName,      \n");
+		sbf.append("  Sf_Get_Port_Id(b.node_id) as pon,                    \n");
+		sbf.append("  SF_GET_DESC_CHINA(c.OPR_STATE_ID) as portState       \n");
+		sbf.append("   from pub_two_dimension_code a,                      \n");
+		sbf.append("        rme_eqp                b,                      \n");
+		sbf.append("        rme_port               c,                      \n");
+		sbf.append("        pub_two_dimension_code d,                      \n");
+		sbf.append("        ZYQC_ftth_user_2019    e                       \n");
+		sbf.append("  where                                                \n");
+		sbf.append("  d.digcode = ?                                        \n");
+		sbf.append("  and a.delete_state = '0'                             \n");
+		sbf.append("  and a.res_id = b.eqp_id                              \n");
+		sbf.append("  and c.delete_state = '0'                             \n");
+		sbf.append("  and c.port_id = d.res_id                             \n");
+		sbf.append("  and d.res_type_id = '6024'                           \n");
+		sbf.append("  and c.super_res_id = b.eqp_id                        \n");
+		sbf.append("  and b.res_type_id = ?                                \n");
+		sbf.append("  and c.port_id = e.assign_port_id                     \n");
+		Map<String,Object> paramMap = new HashMap<String,Object>();
+		paramMap.put("qrCode", "ATC0000170");
+		paramMap.put("resTypeId", "2530");
+		String wherePatternStr = "digcode:qrCode,res_type_id:resTypeId";
+		Result result = new ResourceServiceImpl().commonQueryObjectBySql(sbf.toString(), paramMap, wherePatternStr);
+	    System.out.println(result.getResultData().toString()); 
+	}
+	
+	public static void testListBySql(){
+		StringBuffer sbf = new StringBuffer();
+		sbf.append(" select c.port_id as portId,                                                  \n");
+		sbf.append("        d.loid as serviceNum,                                                     \n");
+		sbf.append("        d.cust_name as custName,                                                \n");
+		sbf.append("        SF_GET_ADDRESS_BY_RES_ID(C.PORT_ID) as custAddr,           \n");
+		sbf.append("        SF_GET_DESC_CHINA(c.OPR_STATE_ID) as portState             \n");
+		sbf.append("   from pub_two_dimension_code a                                    \n");
+		sbf.append("   left join rme_eqp b on a.res_id = b.eqp_id                       \n");
+		sbf.append("                      and b.res_type_id = '2530'                    \n");
+		sbf.append("                      and b.delete_state = '0'                      \n");
+		sbf.append("   left join rme_port c on c.delete_state = '0'                     \n");
+		sbf.append("                       and b.eqp_id = c.super_res_id                \n");
+		sbf.append("   left join ZYQC_ftth_user_2019 d on c.port_id = d.assign_port_id  \n");
+		sbf.append("                                                                    \n");
+		sbf.append("  where a.digcode = ?                                               \n");
+		sbf.append("    and a.delete_state = ?                                        \n");
+		Map<String,Object> paramMap = new HashMap<String,Object>();
+		paramMap.put("qrCode", "AAA0000888");
+		paramMap.put("deleteState", "0");
+		String wherePatternStr = "digcode:qrCode,delete_state:deleteState";
+		Result result = new ResourceServiceImpl().commonQueryListBySql(sbf.toString(), paramMap, wherePatternStr);
+	    System.out.println(result.getResultData().toString()); 
+	}
+	
+	public static void testObjectByProcedure(){
+		List<Object> list = new ArrayList<Object>();
+		list.add("AAA0000888");
+		list.add("");list.add("");
+		list.add("");list.add("");
+		list.add("");list.add("");
+		list.add("");list.add("");
+		list.add("");
+		list.add(new BigDecimal(0));
+		list.add(new BigDecimal(0));
+		String[] outParams = {"splitterName","eqpId","workMode","protectStyle","oltIP","oltName","pon","ponId","qrCode","posX","posY"};
+		Result result = new ResourceServiceImpl().commonQueryObjectByProcedure("Sf_Get_eqpdetail_by_code(?,?,?,?,?,?,?,?,?,?,?,?)", list, 1,outParams);
+	    System.out.println(result.getResultData().toString()); 
+	}
+
+}

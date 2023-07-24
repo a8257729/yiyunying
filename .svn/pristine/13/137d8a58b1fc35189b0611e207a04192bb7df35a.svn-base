@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tables [
+<!ELEMENT tables (table*)>
+<!ELEMENT table (table_name,display_field,value_field)>
+<!ELEMENT table_name (#PCDATA)>
+<!ELEMENT display_field (#PCDATA)>
+<!ELEMENT value_field (#PCDATA)>
+<!ATTLIST table ID ID #REQUIRED>
+]>
+<!--
+-<tables>
+  <table ID="tablename">
+    <table_name>tablename1</table_name>
+    <display_field>fieldvalue1</display_field>
+    <value_field>fieldvalue2</value_field>
+  </table>
+</tables>
+-->
+<!-- 
+  author:lcq 
+  createDate:2012-09-20
+ -->
+<tables>
+  <table ID="wk_order_type">
+    <table_name>EOMS_WORK_ORDER_TYPE</table_name>
+    <display_field>WK_ORDER_TYPE_NAME</display_field>
+    <value_field>WK_ORDER_TYPE_ID</value_field>
+  </table>
+  <table ID="wk_order_status">
+    <table_name>EOMS_WORK_ORDER_STATUS</table_name>
+    <display_field>WK_ORDER_STATUS_NAME</display_field>
+    <value_field>WK_ORDER_STATUS_ID</value_field>
+  </table>
+
+
+</tables>
+

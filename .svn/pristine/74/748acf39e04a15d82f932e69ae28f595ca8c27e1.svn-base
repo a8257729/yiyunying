@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Data>
+  <QueryMethod>queryPublicWorkOrderForEBiz</QueryMethod>
+  <Return>
+    <ContentList>
+      <Content>
+        <Public>
+          <WorkOrderID>1403754</WorkOrderID>
+          <OrderID>748543</OrderID>
+          <OrderCode>297884</OrderCode>
+          <WorkOrderCode>222297884</WorkOrderCode>
+          <ServiceName>单向高清-安装</ServiceName>
+          <AccNbr>8400913689</AccNbr>
+          <CustName>陈志业</CustName>
+          <ContactPhone>8400913689</ContactPhone>
+          <AlertState>10V</AlertState>
+          <Address>广东省中山市岐头新村龙凤街8号B幢首层1卡</Address>
+          <WorkOrderType>正常工单</WorkOrderType>
+          <BokTime>2013-09-05 17:02:30</BokTime>
+          <ExtState>N</ExtState>
+          <AcceptStaff>杨秀妹3</AcceptStaff>
+          <BookState>1</BookState>
+          <CreateDate>2013-09-05 17:02:30</CreateDate>
+          <ProdCode>1000143</ProdCode>
+          <IsFtth>1</IsFtth>
+          <PerformanceTime>2014-03-05 22:17:14</PerformanceTime>
+          <IsFlowZlht>true</IsFlowZlht>
+          <IpProperty>2</IpProperty>
+          <LanId>13306</LanId>
+        </Public>
+      </Content>
+      <Content>
+        <Public>
+          <WorkOrderID>1403755</WorkOrderID>
+          <OrderID>748545</OrderID>
+          <OrderCode>297885</OrderCode>
+          <WorkOrderCode>3333297884</WorkOrderCode>
+          <ServiceName>单向高清-安装</ServiceName>
+          <AccNbr>8400913685</AccNbr>
+          <CustName>陈志业</CustName>
+          <ContactPhone>8400913689</ContactPhone>
+          <AlertState>10V</AlertState>
+          <Address>广东省中山市岐头新村龙凤街8号B幢首层1卡</Address>
+          <WorkOrderType>正常工单</WorkOrderType>
+          <BokTime></BokTime>
+          <ExtState>N</ExtState>
+          <AcceptStaff>杨秀妹3</AcceptStaff>
+          <BookState>0</BookState>
+          <CreateDate>2013-09-05 17:02:30</CreateDate>
+          <ProdCode>2000143</ProdCode>
+          <IsFtth>0</IsFtth>
+          <PerformanceTime></PerformanceTime>
+          <IsFlowZlht>false</IsFlowZlht>
+          <IpProperty>3</IpProperty>
+        </Public>
+      </Content>
+    </ContentList>
+    <Result>000</Result>
+    <ErrorDesc>查找成功</ErrorDesc>
+    <PageSize>10</PageSize>
+    <PageNum>1</PageNum>
+    <TotalPage>1</TotalPage>
+    <TotalNum>2</TotalNum>
+  </Return>
+</Data>

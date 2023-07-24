@@ -1,0 +1,34 @@
+package com.ztesoft.mobile.v2.service.app;
+
+import com.ztesoft.mobile.v2.core.Result;
+
+import java.util.List;
+import java.util.Map;
+
+public interface MobileDataInstallService {
+    public String queryDataInstallByOrg(String org_id);
+    public  Map<String, String> queryBSSProject(String work_order_id);
+    public Result queryOBDInfo(String qrCode, String wkOrderId);
+
+    public  Map<String, String> querymakeProcessData(String work_order_id);
+    public  Map<String, String> queryPixianCode(String work_order_id);
+    public Result processDataInstall( Map<String, Object> paramMap);
+
+    public Result processDataInstall1( Map<String, Object> paramMap);
+
+    public  Map<String, String> queryPowerModel(String base_order_id,String hgu_sn,String staffId,String staffName);
+
+    public  Map<String, String> queryPowerModel1(String order_id,String hgu_sn,String staffId,String staffName);
+
+    public  Result addClickYHCount(String qrcode,String type);
+
+    public Map<String,String> queryOrderTypeById(String orderId);
+    public String queryStaffTel(String staffId);
+
+    public  Map<String, Object> queryZWTSpeedInfo(String work_order_id);
+    public List<Map> querySpotSpeedInfo(String orderId);
+    public  Map<String, Object> queryLightState(String order_id);
+    public Map<String,String> submitPonChangeMachine(Map<String, Object> paramMap);
+    public  Map<String, String> queryPonChangeMachineData(String wk_order_id);
+    public  Map<String, String> queryNetOrderInfo(String orderId);
+}
